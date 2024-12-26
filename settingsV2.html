@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Setting</title>
+<meta charset="UTF-8">
+<meta name="viewport" 
+content="width=device-width, initial-scale=1">  
+ </head>
+ 
+
+ <div class="header">
+ <p1><b>Settings</b></p1>
+ 
+ </div>
+ 
+<body>
+ &nbsp;&nbsp;
+  &nbsp;&nbsp;
+   &nbsp;&nbsp;
+ 
+ <div class="radius" onclick="radiuspopUp()"><p2>Home restriction radius</p2>
+ 
+ <h4 id="radius" >10km</h4></div>
+ 
+ 
+ <!----beggining og pop up content--------->
+ <div class="radiuspopUp"   id="radiuspopUp" style="display:none;">
+ 
+ <h2>Radius Limit</h2>
+ 
+ <button onclick="hideradiuspopUp()" style="margin-left:300px; width:60px; 
+ height:40px; background-color:#37DE7A; 
+ color:grey;border:none; margin-top:-90px; " >Close</button>
+  
+ <hr>
+  &nbsp;&nbsp;
+ <p><b>Remember!</b>The restriction radius will count from your home to any km you set <b>less than 20km</b> to any direction
+ </p>
+  &nbsp;&nbsp;
+  
+ <div class="update">
+ <input type="number" placeholder="Enter radius limit">
+ 
+  &nbsp;&nbsp;
+ <button type="submit" placeholder="submit">Save</button>
+ </div>
+ 
+ </div>
+ 
+ 
+ <!----ending of pop up content--------->
+
+ 
+ <div class="acc"><p2>Account</p2>
+ 
+ <h4>Delete Account</h4></div>
+ &nbsp;&nbsp;
+ 
+ 
+ <div class="routelog" onclick="popUp()"><p2>Route log</p2></div>
+ 
+ <!----beggining og pop up content--------->
+<div class="popup"   id="popup" style="display:none;">
+ 
+ <h2>Route Logs</h2>
+
+ <button onclick="hidePopup()" style="margin-left:300px; width:60px; 
+ height:40px; background-color:#37DE7A; 
+ color:grey;border:none; margin-top:-90px; " >Close</button>
+ </div>
+ 
+ 
+ <!----ending of pop up content--------->
+ 
+ 
+ &nbsp;&nbsp;
+ 
+ <div class="about" onclick="myfunc()"><p2>Log Out</p2></div>
+ &nbsp;&nbsp;
+ <div class="policy" onclick="myfunc()"><p2>Privacy Policy</p2></div>
+ &nbsp;&nbsp;
+ <div class="about" onclick="myfunc()"><p2>About Us</p2></div>
+ 
+ 
+ &nbsp;&nbsp;
+ 
+ <div class="contact"><p2><a href="mailto:mathonzitsaone@gmail.com">Contact Us</a></p2></div>
+ 
+ &nbsp;&nbsp;
+ <center>
+ <div class="logout"><button class="logout1"><a href="login.html"><b>Log Out</b></a></button></div>
+ </center>
+ 
+ </body>
+ 
+ 
+ <div class="footer">
+ 
+ <p2><a href="home.html"> Home</a></p2>
+ 
+ <p2><a href="profile.html">Profile</a></p2>
+ <p2><a href="notifications.html">Notifications</p2>
+ <p2 style="color:#4EF591;">Settings</p2>
+ 
+ </div>
+ 
+ <style type="text/css">
+ *{
+ padding:0;
+ margin:0;
+ }
+ .header{
+ background-color:#ffff;
+ Padding:17px;
+ box-shadow: 0 3px 2px 0 rgba(235, 231, 231, 0.555), 0 1px 11px 0 rgba(0, 0, 0, 0.10);
+ 
+ }
+ body{
+ padding:0;
+ 
+ }
+ p1{
+ font-size:20px;
+ }
+ p2{
+ color:grey;
+ font-size:19px;
+ font-style:italic;
+ }
+ 
+ h4{
+ color:grey;
+ font-size:16px;
+ }
+ 
+ .acc{
+ margin-top:10px;
+ 
+ }
+ h4,p2{
+ padding:2px;
+ }
+ 
+ .footer{
+ display:flex;
+ padding:10px;
+ color:grey;
+ background-color:#fffff;
+ bottom:0px;
+ position:fixed;
+ font-size:20px;
+ gap:30px;
+ width:100%;
+ box-shadow: 0 3px 2px 0 rgba(235, 231, 231, 0.555), 0 1px 11px 0 rgba(0, 0, 0, 0.10);
+ 
+ }
+ 
+ 
+ .update{
+ display:flex;
+ justify-content:center;
+ align:center;
+ }
+ 
+input[type=number]{
+
+width: 29%;   
+color:black;
+font-size:20px;
+height:35px;
+border: 3px solid black;   
+border-radius:15px;
+}
+ 
+ button[type=submit]{
+ 
+ height:35px;
+ width:43px;
+ border-radius:9px;
+ border:none;
+ background-color:#4EF591;
+ font-size:17px;
+ color:grey;
+ }
+ .logout1{
+ padding:5px;
+ width:80%;
+ height:40px;
+ text-align:center;
+ border-radius:5px;
+ color:#ffff;
+ background-color:#37DE7A;
+ border:none;
+ }
+ 
+ button:hover{
+ background-color:brown;
+ 
+ }
+ a{
+ color:grey;
+ font-size:19px;
+text-decoration:none; 
+ }
+ .popup{
+ background-color:#ffff;
+ width:100%;
+ height:80%;
+ margin-top:-140px;
+ position:absolute;
+ box-shadow: 0 3px 2px 0 rgba(235, 231, 231, 0.555), 0 1px 11px 0 rgba(0, 0, 0, 0.10);
+ 
+ }
+ 
+ .radiuspopUp{
+ background-color:#ffff;
+ width:100%;
+ height:80%;
+ margin-top:-50px;
+ position:absolute;
+ box-shadow: 0 3px 2px 0 rgba(235, 231, 231, 0.555), 0 1px 11px 0 rgba(0, 0, 0, 0.10);
+ 
+ }
+ h2{
+ padding:2px;
+ margin-top:15px;
+ }
+ </style>
+ 
+ <script type="text/javascript">
+ 
+function myfunc(){
+alert("Sorry,Page is not available")
+};
+ 
+ function popUp(){
+   document.getElementById("popup").style.display = "block"; 
+ }
+ 
+ function hidePopup(){
+   document.getElementById("popup").style.display = "none";
+ }
+ 
+ function radiuspopUp(){
+   document.getElementById("radiuspopUp").style.display = "block"; 
+ }
+ 
+ function hideradiuspopUp(){
+   document.getElementById("radiuspopUp").style.display = "none";
+ }
+ 
+ </script>
