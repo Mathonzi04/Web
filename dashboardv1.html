@@ -67,7 +67,7 @@
     <h3>Admin Dashboard</h3>
   </div>
   <div class="datainfo">
-    <p id="names"></p>
+    <p id="name-surname"></p>
     <p >Posts : <b id="numPost" ></b>0</p>
   </div>
   <div class="post" >
@@ -88,62 +88,47 @@
 
   
   <script type="module">
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-    import $ from 'https://cdn.skypack.dev/jquery';
+          import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY8ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('user_id');
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (userId) {
-      alert(`User ID from URL: ${userId}`); // Debugging alert
-      fetchUserProfile(userId);
-    } else {
-      alert('User ID not found in URL.');
-    }
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('user_id');
 
-    async function fetchUserProfile(userId) {
-      try {
-        const { data, error } = await supabase
-          .from('mytable')
-          .select('name, surname')
-          .eq('user id', userId);
+  if (userId) {
+    // User ID retrieved successfully
+    alert(`User ID from URL: ${userId}`); // Debugging alert
+    fetchUserProfile(userId); // Fetch user data using the ID
+  } else {
+    alert('User ID not found in URL.');
+  }
 
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
+  async function fetchUserProfile(userId) {
+    try {
+      const { data, error } = await supabase
+        .from('mytable')
+        .select('name, surname')
+        .eq('user id', userId); // Use the retrieved userId
 
-        if (data && data.length > 0) {
-          const userData = data[0];
-          document.getElementById('names').innerHTML = `${userData.name} ${userData.surname}`;
-        } else {
-          document.getElementById('names').innerHTML = 'No user data found.';
-        }
-      } catch (error) {
-        alert('An unexpected error occurred: ' + error.message);
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
       }
-   
 
-    $('#create-post-form').submit((e) => {
-      e.preventDefault();
-      var title = $('#post-title').val();
-      var content = $('#post-content').val();
-      var images = [];
-      $('#image1,#image2,#image3').each(function() {
-        images.push($(this).val());
-      });
-      var data = {
-        title: title,
-        content: content,
-        images: images
-      };
-      alert(JSON.stringify(data));
-      console.log(data);
-    });
+      if (data && data.length > 0) {
+        const userData = data[0];
+        document.getElementById('username').innerHTML = `${userData.name} ${userData.surname}`;
+        document.getElementById('name-surname').innerHTML = `${userData.name} ${userData.surname}`;
+      } else {
+        alert('No user data found.');
+      }
+    } catch (error) {
+      alert('An unexpected error occurred: ' + error.message);
+    }
+  }
   </script>
 </body>
   </html>
