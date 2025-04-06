@@ -94,16 +94,19 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
 
 supabase.auth.getUser().then((user) => {
-  if (user) {
+  if (user && user.user) {
     const userId = user.user.id;
 
     supabase
       .from('mytable')
-      .select('name, surname') // Select name and surname
+      .select('name, surname')
       .eq('user id', userId)
-      .then((data) => {
-        if (data && data.length > 0) {
-          const fullName = `${data[0].name} ${data[0].surname}`; // Combine name and surname
+      .then(({ data, error }) => { // Destructure data and error
+        if (error) {
+          console.error("Supabase Error:", error);
+          document.getElementById('name').innerHTML = 'Error loading name';
+        } else if (data && data.length > 0) {
+          const fullName = `${data[0].name} ${data[0].surname}`;
           document.getElementById('name').innerHTML = fullName;
         } else {
           document.getElementById('name').innerHTML = 'Guest';
@@ -132,4 +135,4 @@ $('#create-post-form').submit((e) => {
 });
   </script>
 </body>
-</html>
+    </html>
