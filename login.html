@@ -63,7 +63,7 @@
     <div class="container">
       <div class="form">
         <center>
-          <h2>PNTIT</h2>
+          <h2>ExploreSA</h2>
         </center>
         <h3>Login</h3>
         <div class="info">
@@ -112,7 +112,7 @@
         alert('Login error: ' + response.error.message);
       } else {
         alert('Logged in successfully!');
-        window.location.href = `profile.html?user_id=${response.data.user.id}`;
+        window.location.href = `dashboardv1.html?user_id=${response.data.user.id}`;
       }
     } catch (error) {
       alert('An unexpected error occurred: ' + error.message);
