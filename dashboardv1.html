@@ -108,62 +108,68 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get('user_id');
 
-if (userId) {
-  // User ID retrieved successfully
-  alert(`User ID from URL: ${userId}`); // Debugging alert
-  fetchUserProfile(userId); // Fetch user data using the ID
+if (userId && supabase) {
+  alert(`User ID from URL: ${userId}`);
+  fetchUserProfile(userId);
+} else if (userId && !supabase) {
+  console.error("Supabase not initialized");
 } else {
   alert('User ID not found in URL.');
 }
 
 async function fetchUserProfile(userId) {
-  try {
-    const { data, error } = await supabase
-      .from('mytable')
-      .select('name, surname')
-      .eq('user id', userId); // Use the retrieved userId
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('mytable')
+        .select('name, surname')
+        .eq('user id', userId);
 
-    if (error) {
-      alert('Error: ' + error.message);
-      return;
-    }
-
-    if (data && data.length > 0) {
-      const userData = data[0];
-      const nameSurnameElement = document.getElementById('name-surname');
-      if (nameSurnameElement) {
-        nameSurnameElement.innerHTML = `${userData.name} ${userData.surname}`;
-      } else {
-        console.error('Element with id "name-surname" not found.');
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
       }
-    } else {
-      alert('No user data found.');
+
+      if (data && data.length > 0) {
+        document.getElementById('name-surname').innerHTML = `${data[0].name} ${data[0].surname}`;
+      } else {
+        document.getElementById('name-surname').innerHTML = 'No user data found.';
+      }
+    } catch (error) {
+      alert('An unexpected error occurred: ' + error.message);
     }
-  } catch (error) {
-    alert('An unexpected error occurred: ' + error.message);
+  } else {
+    console.error("Supabase not initialized");
   }
 }
 
-// Logout mechanism
-const logoutButton = document.getElementById('logout');
-if (logoutButton) {
-  logoutButton.addEventListener('click', async () => {
+document.getElementById('logout').addEventListener('click', async () => {
+  if (supabase) {
     try {
       await supabase.auth.signOut();
-      window.location.href = 'login.html';
+      window.location.replace('login.html');
+      window.history.pushState(null, null, 'login.html');
     } catch (error) {
       console.error('Logout error:', error);
       alert('Failed to logout.');
     }
-  });
-} else {
-  console.error('Logout button not found.');
-}
+  } else {
+    console.error("Supabase not initialized");
+  }
+});
 
-// Prevent caching on back button
-window.onload = function() {
-  if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+window.addEventListener('pageshow', function (event) {
+  if (event.persisted) {
     window.location.reload();
+  }
+});
+
+// Optional: Unique URL parameter (less ideal)
+window.onload = function() {
+  if (window.location.href.indexOf('?') === -1) {
+    window.location.href = window.location.href + '?' + Date.now();
+  } else {
+    window.location.href = window.location.href + '&' + Date.now();
   }
 };
 </script>
