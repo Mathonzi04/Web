@@ -67,7 +67,7 @@
     <h3>Admin Dashboard</h3>
   </div>
   <div class="datainfo">
-    <p id="name"></p>
+    <p id="names"></p>
     <p >Posts : <b id="numPost" ></b>0</p>
   </div>
   <div class="post" >
@@ -85,54 +85,66 @@
   <center>
     <p id="posts">Posts</p>
   </center>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7/dist/umd/supabase.min.js"></script>
-  <script type="text/javascript">
-     const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+    import $ from 'https://cdn.skypack.dev/jquery';
 
-const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 
-supabase.auth.getUser().then((user) => {
-  if (user && user.user) {
-    const userId = user.user.id;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    supabase
-      .from('mytable')
-      .select('name, surname')
-      .eq('user id', userId)
-      .then(({ data, error }) => { // Destructure data and error
+    // Call fetchUserProfile immediately after user login
+    supabase.auth.getUser().then((user) => {
+      if (user && user.user) {
+        const userId = user.user.id;
+        fetchUserProfile(userId); // Fetch profile immediately
+      } else {
+        document.getElementById('names').innerHTML = 'Guest';
+      }
+    });
+
+    async function fetchUserProfile(userId) {
+      try {
+        const { data, error } = await supabase
+          .from('mytable')
+          .select('name, surname')
+          .eq('user id', userId);
+
         if (error) {
-          console.error("Supabase Error:", error);
-          document.getElementById('name').innerHTML = 'Error loading name';
-        } else if (data && data.length > 0) {
-          const fullName = `${data[0].name} ${data[0].surname}`;
-          document.getElementById('name').innerHTML = fullName;
-        } else {
-          document.getElementById('name').innerHTML = 'Guest';
+          alert('Error: ' + error.message);
+          return;
         }
-      });
-  } else {
-    document.getElementById('name').innerHTML = 'Guest';
-  }
-});
 
-$('#create-post-form').submit((e) => {
-  e.preventDefault();
-  var title = $('#post-title').val();
-  var content = $('#post-content').val();
-  var images = [];
-  $('#image1,#image2,#image3').each(function() {
-    images.push($(this).val());
-  });
-  var data = {
-    title: title,
-    content: content,
-    images: images
-  };
-  alert(JSON.stringify(data));
-  console.log(data);
-});
+        if (data && data.length > 0) {
+          const userData = data[0];
+          const fullName = `${userData.name} ${userData.surname}`;
+          document.getElementById('names').innerHTML = fullName;
+        } else {
+          document.getElementById('names').innerHTML = 'No user data found.';
+        }
+      } catch (error) {
+        alert('An unexpected error occurred: ' + error.message);
+      }
+    }
+
+    // Form submission handler (remains the same)
+    $('#create-post-form').submit((e) => {
+      e.preventDefault();
+      var title = $('#post-title').val();
+      var content = $('#post-content').val();
+      var images = [];
+      $('#image1,#image2,#image3').each(function() {
+        images.push($(this).val());
+      });
+      var data = {
+        title: title,
+        content: content,
+        images: images
+      };
+      alert(JSON.stringify(data));
+      console.log(data);
+    });
   </script>
 </body>
-    </html>
+  </html>
