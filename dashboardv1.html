@@ -86,20 +86,19 @@
     <p id="posts">Posts</p>
   </center>
 
+  
   <script type="module">
     import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
     import $ from 'https://cdn.skypack.dev/jquery';
 
     const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get user id from authentication
     supabase.auth.getUser().then((user) => {
-      console.log("Supabase User:", user); // Debugging
       if (user && user.user) {
         const userId = user.user.id;
-        console.log("User ID:", userId); // Debugging
         fetchUserProfile(userId);
       } else {
         document.getElementById('names').innerHTML = 'Guest';
@@ -110,11 +109,8 @@
       try {
         const { data, error } = await supabase
           .from('mytable')
-          .select('name, surname')
+          .select('name, surname') // Select the columns you need
           .eq('user id', userId);
-
-        console.log("Supabase Data:", data); // Debugging
-        console.log("Supabase Error:", error); // Debugging
 
         if (error) {
           alert('Error: ' + error.message);
@@ -123,13 +119,11 @@
 
         if (data && data.length > 0) {
           const userData = data[0];
-          const fullName = `${userData.name} ${userData.surname}`;
-          document.getElementById('names').innerHTML = fullName;
+          document.getElementById('names').innerHTML = `${userData.name} ${userData.surname}`;
         } else {
           document.getElementById('names').innerHTML = 'No user data found.';
         }
       } catch (error) {
-        console.error("Unexpected Error:", error);
         alert('An unexpected error occurred: ' + error.message);
       }
     }
