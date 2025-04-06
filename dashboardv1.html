@@ -68,7 +68,7 @@
     <h3>Admin Dashboard</h3>
   </div>
   <div class="datainfo">
-    <p id="names"></p>
+    <p id="name"></p>
     <p >Posts : <b id="numPost" ></b>0</p>
   </div>
   <div class="post" >
@@ -89,35 +89,47 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7/dist/umd/supabase.min.js"></script>
   <script type="text/javascript">
-    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-  
-    const supabase = Supabase.createClient(supabaseUrl, supabaseKey,);
+     const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 
-    supabase.auth.user().then((user) => {
-      if (user) {
-        document.getElementById('names').innerHTML = user.email;
-      } else {
-        document.getElementById('names').innerHTML = 'Guest';
-      }
-    });
+const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
 
-    $('#create-post-form').submit((e) => {
-      e.preventDefault();
-      var title = $('#post-title').val();
-      var content = $('#post-content').val();
-      var images = [];
-      $('#image1,#image2,#image3').each(function() {
-        images.push($(this).val());
+supabase.auth.getUser().then((user) => {
+  if (user) {
+    const userId = user.user.id;
+
+    supabase
+      .from('mytable')
+      .select('*')
+      .eq('user id', userId)
+      .then((data) => {
+        if (data) {
+          document.getElementById('name').innerHTML = data[0].name;
+        } else {
+          document.getElementById('name').innerHTML = 'Guest';
+        }
       });
-      var data = {
-        title: title,
-        content: content,
-        images: images
-      };
-      alert(JSON.stringify(data));
-      console.log(data);
-    });
+  } else {
+    document.getElementById('name').innerHTML = 'Guest';
+  }
+});
+
+$('#create-post-form').submit((e) => {
+  e.preventDefault();
+  var title = $('#post-title').val();
+  var content = $('#post-content').val();
+  var images = [];
+  $('#image1,#image2,#image3').each(function() {
+    images.push($(this).val());
+  });
+  var data = {
+    title: title,
+    content: content,
+    images: images
+  };
+  alert(JSON.stringify(data));
+  console.log(data);
+});
   </script>
 </body>
 </html>
