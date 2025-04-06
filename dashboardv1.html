@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
   <title>Dashboard</title>
   <style type="text/css">
     body {
@@ -95,55 +99,65 @@
   <script type="module">
           import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const userId = urlParams.get('user_id');
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('user_id');
 
-  if (userId) {
-    // User ID retrieved successfully
-    alert(`User ID from URL: ${userId}`); // Debugging alert
-    fetchUserProfile(userId); // Fetch user data using the ID
-  } else {
-    alert('User ID not found in URL.');
-  }
+if (userId) {
+  // User ID retrieved successfully
+  alert(`User ID from URL: ${userId}`); // Debugging alert
+  fetchUserProfile(userId); // Fetch user data using the ID
+} else {
+  alert('User ID not found in URL.');
+}
 
-  async function fetchUserProfile(userId) {
-    try {
-      const { data, error } = await supabase
-        .from('mytable')
-        .select('name, surname')
-        .eq('user id', userId); // Use the retrieved userId
+async function fetchUserProfile(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('mytable')
+      .select('name, surname')
+      .eq('user id', userId); // Use the retrieved userId
 
-      if (error) {
-        alert('Error: ' + error.message);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        const userData = data[0];
-        document.getElementById('name-surname').innerHTML = `${userData.name} ${userData.surname}`;
-      } else {
-        alert('No user data found.');
-      }
-    } catch (error) {
-      alert('An unexpected error occurred: ' + error.message);
+    if (error) {
+      alert('Error: ' + error.message);
+      return;
     }
-  }
 
-    //logout mechanism 
-        document.getElementById('logout').addEventListener('click', async () => {
-      try {
-        await supabase.auth.signOut();
-        window.location.href = 'login.html';
-      } catch (error) {
-        console.error('Logout error:', error);
-        alert('Failed to logout.');
+    if (data && data.length > 0) {
+      const userData = data[0];
+      const nameSurnameElement = document.getElementById('name-surname');
+      if (nameSurnameElement) {
+        nameSurnameElement.innerHTML = `${userData.name} ${userData.surname}`;
+      } else {
+        console.error('Element with id "name-surname" not found.');
       }
-    });
+    } else {
+      alert('No user data found.');
+    }
+  } catch (error) {
+    alert('An unexpected error occurred: ' + error.message);
+  }
+}
+
+// Logout mechanism
+const logoutButton = document.getElementById('logout');
+if (logoutButton) {
+  logoutButton.addEventListener('click', async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Failed to logout.');
+    }
+  });
+} else {
+  console.error('Logout button not found.');
+}
 
   </script>
   </html>
