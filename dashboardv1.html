@@ -28,8 +28,11 @@
       border-radius:50%;
     }
     h3 {
-      margin-left:60px;
+      margin-left:30px;
     }
+        p[id='logout']{
+    margin-left:60px;
+        }
     .datainfo {
       width:90%;
       margin-top:40px;
@@ -65,6 +68,8 @@
   <div class="header">
     <div class="image"></div>
     <h3>Admin Dashboard</h3>
+        <p id="logout" >Logout</p>
+
   </div>
   <div class="datainfo">
     <p id="name-surname"></p>
@@ -128,5 +133,17 @@
       alert('An unexpected error occurred: ' + error.message);
     }
   }
+
+    //logout mechanism 
+        document.getElementById('logout').addEventListener('click', async () => {
+      try {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Failed to logout.');
+      }
+    });
+
   </script>
   </html>
