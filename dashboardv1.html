@@ -85,6 +85,7 @@
   <center>
     <p id="posts">Posts</p>
   </center>
+
   <script type="module">
     import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
     import $ from 'https://cdn.skypack.dev/jquery';
@@ -94,11 +95,12 @@
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Call fetchUserProfile immediately after user login
     supabase.auth.getUser().then((user) => {
+      console.log("Supabase User:", user); // Debugging
       if (user && user.user) {
         const userId = user.user.id;
-        fetchUserProfile(userId); // Fetch profile immediately
+        console.log("User ID:", userId); // Debugging
+        fetchUserProfile(userId);
       } else {
         document.getElementById('names').innerHTML = 'Guest';
       }
@@ -110,6 +112,9 @@
           .from('mytable')
           .select('name, surname')
           .eq('user id', userId);
+
+        console.log("Supabase Data:", data); // Debugging
+        console.log("Supabase Error:", error); // Debugging
 
         if (error) {
           alert('Error: ' + error.message);
@@ -124,11 +129,11 @@
           document.getElementById('names').innerHTML = 'No user data found.';
         }
       } catch (error) {
+        console.error("Unexpected Error:", error);
         alert('An unexpected error occurred: ' + error.message);
       }
     }
 
-    // Form submission handler (remains the same)
     $('#create-post-form').submit((e) => {
       e.preventDefault();
       var title = $('#post-title').val();
