@@ -148,7 +148,8 @@ document.getElementById('logout').addEventListener('click', async () => {
   if (supabase) {
     try {
       await supabase.auth.signOut();
-      window.location.href ="login.html";
+      window.location.href = 'login.html?v=' + new Date().getTime();
+
     } catch (error) {
       console.error('Logout error:', error);
       alert('Failed to logout.');
