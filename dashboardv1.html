@@ -96,67 +96,45 @@
 </body>
   
   <script type="module">
-          
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+          import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI鹖ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY8ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-const urlParams = new URLSearchParams(window.location.search);
-const userId = urlParams.get('user_id');
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get('user_id');
 
-if (userId && supabase) {
-  alert(`User ID from URL: ${userId}`);
-  fetchUserProfile(userId);
-} else if (userId && !supabase) {
-  console.error("Supabase not initialized");
-} else {
-  alert('User ID not found in URL.');
-}
+  if (userId) {
+    // User ID retrieved successfully
+    alert(`User ID from URL: ${userId}`); // Debugging alert
+    fetchUserProfile(userId); // Fetch user data using the ID
+  } else {
+    alert('User ID not found in URL.');
+  }
 
-async function fetchUserProfile(userId) {
-  if (supabase) {
+  async function fetchUserProfile(userId) {
     try {
-      const { data, error, status } = await supabase
+      const { data, error } = await supabase
         .from('mytable')
         .select('name, surname')
-        .eq('user id', userId);
+        .eq('user id', userId); // Use the retrieved userId
 
       if (error) {
-        console.error("Supabase Error:", error, "Status:", status);
         alert('Error: ' + error.message);
         return;
       }
 
       if (data && data.length > 0) {
-        document.getElementById('name-surname').innerHTML = `${data[0].name} ${data[0].surname}`;
+        const userData = data[0];
+        document.getElementById('name-surname').innerHTML = `${userData.name} ${userData.surname}`;
       } else {
-        document.getElementById('name-surname').innerHTML = 'No user data found.';
+        alert('No user data found.');
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
       alert('An unexpected error occurred: ' + error.message);
     }
-  } else {
-    console.error("Supabase not initialized");
   }
-}
-
-document.getElementById('logout').addEventListener('click', async () => {
-  if (supabase) {
-    try {
-      await supabase.auth.signOut();
-      window.open('login.html', '_self');
-
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Failed to logout.');
-    }
-  } else {
-    console.error("Supabase not initialized");
-  }
-});
-</script>
+  </script> 
   </html>
