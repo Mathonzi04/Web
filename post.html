@@ -143,22 +143,28 @@ document.getElementById('add-post-form').addEventListener('submit', async (event
   const imageFile3 = document.getElementById('post-image-3').files[0];
   const imageFile4 = document.getElementById('post-image-4').files[0];
 
+  console.log('Image File 1:', imageFile1); // Check if file is selected
+
   const imageUrls = [];
   const files = [imageFile1, imageFile2, imageFile3, imageFile4];
 
   for (const file of files) {
     if (file) {
+      console.log('Uploading file:', file.name);
       const imageUrl = await uploadImage(file);
+      console.log('Upload Result:', imageUrl);
       if (imageUrl) {
         imageUrls.push(imageUrl);
       } else {
-        // Handle the case where one of the uploads fails
-        return;
+        console.log('Upload failed, stopping.');
+        return; // Stop if any upload fails for debugging
       }
     } else {
-      imageUrls.push(null); // Store null if no image was selected for a slot
+      imageUrls.push(null);
     }
   }
+
+  console.log('Image URLs:', imageUrls); // Check the array of URLs
 
   if (uid) {
     const { data, error } = await supabase
@@ -168,7 +174,7 @@ document.getElementById('add-post-form').addEventListener('submit', async (event
           user_id: uid,
           title: postTitle,
           content: postContent,
-          image_url_1: imageUrls[0] || null, // Add separate columns for each image URL
+          image_url_1: imageUrls[0] || null,
           image_url_2: imageUrls[1] || null,
           image_url_3: imageUrls[2] || null,
           image_url_4: imageUrls[3] || null,
@@ -188,73 +194,6 @@ document.getElementById('add-post-form').addEventListener('submit', async (event
     alert('User ID is missing.');
   }
 });
-
-async function displayPosts() {
-  if (supabase) {
-    try {
-      const { data, error, count } = await supabase
-        .from('posts')
-        .select('title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' });
-
-      const postsListDiv = document.getElementById('post-list');
-      postsListDiv.innerHTML = '';
-
-      if (error) {
-        console.error('Error fetching posts:', error);
-        postsListDiv.textContent = 'Failed to load posts.';
-        document.getElementById('numposts').textContent = '';
-      } else if (data && data.length > 0) {
-        data.forEach(post => {
-          const postItem = document.createElement('div');
-          postItem.classList.add('post-item');
-
-          const titleElement = document.createElement('div');
-          titleElement.classList.add('post-title');
-          titleElement.textContent = post.title;
-
-          const contentElement = document.createElement('div');
-          contentElement.classList.add('post-content');
-          contentElement.textContent = post.content;
-
-          postItem.appendChild(titleElement);
-          postItem.appendChild(contentElement);
-
-          const imagesContainer = document.createElement('div');
-          imagesContainer.classList.add('post-images-container');
-
-          const imageUrls = [post.image_url_1, post.image_url_2, post.image_url_3, post.image_url_4];
-
-          imageUrls.forEach(url => {
-            if (url) {
-              const imageWrapper = document.createElement('div');
-              imageWrapper.classList.add('post-image-wrapper');
-              const imgElement = document.createElement('img');
-              imgElement.src = url;
-              imageWrapper.appendChild(imgElement);
-              imagesContainer.appendChild(imageWrapper);
-            }
-          });
-
-          postItem.appendChild(imagesContainer);
-          postsListDiv.appendChild(postItem);
-        });
-        document.getElementById('numposts').textContent = `Total Posts: ${count}`;
-      } else {
-        postsListDiv.textContent = 'No posts found.';
-        document.getElementById('numposts').textContent = 'Total Posts: 0';
-      }
-    } catch (error) {
-      console.error('Unexpected error fetching posts:', error);
-      document.getElementById('posts-display').textContent = 'Failed to load posts.';
-      document.getElementById('numposts').textContent = '';
-    }
-  } else {
-    console.error('Supabase not initialized.');
-    document.getElementById('posts-display').textContent = 'Failed to connect to database.';
-    document.getElementById('numposts').textContent = '';
-  }
-}
-
 displayPosts();
 </script>
 </html>
