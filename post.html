@@ -1,267 +1,247 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add New Post</title>
-
-<form id="add-post-form" class="post">
-  <div>
-    <label for="post-title">Post Title:</label>
-    <input type="text" id="post-title" name="post-title">
+  <title>Create, View, and Delete Posts</title>
+  <style type="text/css">
+    .post-form {
+      width: 90%;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .post-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .post-form input[type="text"],
+    .post-form textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .post-form button#submit {
+      font-size: 15px;
+      width: 120px;
+      padding: 10px;
+      border: none;
+      color: white;
+      border-radius: 7px;
+      background-color: #34C759;
+      cursor: pointer;
+    }
+    .posts-display {
+      width: 90%;
+      margin-top: 20px;
+    }
+    .post-item {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .post-title {
+      font-weight: bold;
+    }
+    .post-images {
+      display: flex;
+      gap: 10px;
+    }
+    .post-image-space {
+      width: 80px;
+      height: 80px;
+      background-color: #f0f0f0;
+      border: 1px dashed #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8em;
+      color: #777;
+    }
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create and Manage Posts</h1>
+  <div id="user-info">
+    <p>Your User ID: <span id="uid-display"></span></p>
   </div>
-  <div>
-    <label for="post-content">Content:</label>
-    <textarea id="post-content" name="post-content"></textarea>
+
+  <form id="add-post-form" class="post-form">
+    <h2>Create New Post</h2>
+    <div>
+      <label for="post-title">Post Title:</label>
+      <input type="text" id="post-title" name="post-title">
+    </div>
+    <div>
+      <label for="post-content">Content:</label>
+      <textarea id="post-content" name="post-content"></textarea>
+    </div>
+    <button type="submit" id="submit">Submit Post</button>
+  </form>
+
+  <div class="posts-display">
+    <h3>Your Posts</h3>
+    <h4 id="numposts"></h4>
+    <div id="post-list"></div>
   </div>
-  <div>
-    <label for="post-image-1">Upload Image 1:</label>
-    <input type="file" id="post-image-1" name="post-image-1" accept="image/*">
-  </div>
-  <div>
-    <label for="post-image-2">Upload Image 2:</label>
-    <input type="file" id="post-image-2" name="post-image-2" accept="image/*">
-  </div>
-  <div>
-    <label for="post-image-3">Upload Image 3:</label>
-    <input type="file" id="post-image-3" name="post-image-3" accept="image/*">
-  </div>
-  <div>
-    <label for="post-image-4">Upload Image 4:</label>
-    <input type="file" id="post-image-4" name="post-image-4" accept="image/*">
-  </div>
-  <button type="submit" id="submit">Submit Post</button>
-</form>
-<div class="posts" id="posts-display">
-<h3>Posts</h3>
-<h4 id="numposts"></h4>
-</div>
 
-<style type="text/css">
-  .posts {
-     width: 90%;
-     margin-top: 20px;
-     border: 1px solid #ccc;
-     padding: 15px;
-     border-radius: 8px;
-   }
-   .post-item {
-     border-bottom: 1px dashed #eee;
-     padding-bottom: 10px;
-     margin-bottom: 10px;
-   }
-   .post-item:last-child {
-     border-bottom: none;
-   }
-   .post-title {
-     font-weight: bold;
-     margin-bottom: 5px;
-   }
-   .post-content {
-     margin-bottom: 10px;
-   }
-   h3 {
-     margin-top: 0;
-   }
-   h4#numposts {
-     margin-top: 5px;
-     color: #777;
-   }
-   .post input[type="text"], .post textarea {
-     width: 100%;
-     padding: 10px;
-     font-size: 16px;
-     border: 1px solid #ddd;
-     border-radius: 10px;
-     margin-bottom: 10px;
-   }
-   .post button#submit {
-     font-size: 15px;
-     width: 100px;
-     padding: 9px;
-     border: none;
-     color: white;
-     border-radius: 7px;
-     background-color: #34C759;
-     cursor: pointer;
-   }
-  .post-images-container {
-    display: flex;
-    flex-wrap: wrap; /* Allow images to wrap to the next line if needed */
-    gap: 10px; /* Spacing between images */
-    margin-top: 10px;
-  }
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-  .post-image-wrapper {
-    width: 100px; /* Adjust as needed for your desired size */
-    height: 100px; /* Adjust as needed for your desired size */
-    overflow: hidden; /* Ensure images stay within the wrapper */
-    border-radius: 5px; /* Optional: Rounded corners */
-  }
+    // Replace with your actual Supabase URL and Key
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // SECURE YOUR KEY
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-  .post-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Maintain aspect ratio and cover the container */
-  }
-</style>
+    const uid = '470e23b6-ce31-49b3-8547-de5827a70857';
+    document.getElementById('uid-display').textContent = uid;
 
-<script type="text/javascript">
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+    document.getElementById('add-post-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-// Replace with your actual Supabase URL and Key
-  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-const supabase = createClient(supabaseUrl, supabaseKey);
+      const postTitle = document.getElementById('post-title').value;
+      const postContent = document.getElementById('post-content').value;
 
-const uid = '470e23b6-ce31-49b3-8547-de5827a70857';
-document.getElementById('uid-display').textContent = uid;
+      if (supabase && uid) {
+        const { data, error } = await supabase
+          .from('posts')
+          .insert([
+            { user_id: uid, title: postTitle, content: postContent },
+          ]);
 
-async function uploadImage(file) {
-  const { data, error } = await supabase.storage
-    .from('post-images')
-    .upload(`${uid}/${Date.now()}-${file.name}`, file, {
-      cacheControl: '3600',
-      upsert: false,
+        if (error) {
+          console.error('Error creating post:', error);
+          alert('Failed to create post.');
+        } else {
+          console.log('Post created successfully:', data);
+          alert('Post created successfully!');
+          document.getElementById('add-post-form').reset();
+          displayPosts(); // Refresh the post list
+        }
+      } else {
+        alert('Authentication or Supabase client issue.');
+      }
     });
 
-  if (error) {
-    console.error('Error uploading image:', error);
-    alert('Failed to upload image.');
-    return null;
-  } else {
-    console.log('Image uploaded:', data);
-    return `https://${supabaseUrl.split('//')[1]}/storage/v1/object/public/${data.bucket}/${data.path}`;
-  }
-}
+    async function deletePost(postId) {
+      if (supabase && uid) {
+        const { error } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', postId)
+          .eq('user_id', uid); // Ensure only the user's posts can be deleted
 
-document.getElementById('add-post-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  const postTitle = document.getElementById('post-title').value;
-  const postContent = document.getElementById('post-content').value;
-  const imageFile1 = document.getElementById('post-image-1').files[0];
-  const imageFile2 = document.getElementById('post-image-2').files[0];
-  const imageFile3 = document.getElementById('post-image-3').files[0];
-  const imageFile4 = document.getElementById('post-image-4').files[0];
-
-  const imageUrls = [];
-  const files = [imageFile1, imageFile2, imageFile3, imageFile4];
-
-  for (const file of files) {
-    if (file) {
-      console.log('File to upload:', file.name, file.type, file.size);
-      const imageUrl = await uploadImage(file);
-      console.log('Upload Result:', imageUrl);
-      if (imageUrl) {
-        imageUrls.push(imageUrl);
+        if (error) {
+          console.error('Error deleting post:', error);
+          alert('Failed to delete post.');
+        } else {
+          console.log('Post deleted:', postId);
+          alert('Post deleted successfully!');
+          displayPosts(); // Refresh the list after deletion
+        }
       } else {
-        console.log('Upload failed, stopping.');
-        return;
+        alert('Authentication or Supabase client issue.');
       }
-    } else {
-      imageUrls.push(null);
     }
-  }
 
-  console.log('Image URLs:', imageUrls);
+    async function displayPosts() {
+      if (supabase && uid) {
+        try {
+          const { data, error, count } = await supabase
+            .from('posts')
+            .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' })
+            .eq('user_id', uid); // Only fetch the current user's posts
 
-  if (uid) {
-    const { data, error } = await supabase
-      .from('posts')
-      .insert([
-        {
-          user_id: uid,
-          title: postTitle,
-          content: postContent,
-          image_url_1: imageUrls[0] || null,
-          image_url_2: imageUrls[1] || null,
-          image_url_3: imageUrls[2] || null,
-          image_url_4: imageUrls[3] || null,
-        },
-      ]);
+          const postsListDiv = document.getElementById('post-list');
+          postsListDiv.innerHTML = ''; // Clear previous posts
 
-    if (error) {
-      console.error('Error creating post:', error);
-      alert('Failed to create post.');
-    } else {
-      console.log('Post created successfully:', data);
-      alert('Post created successfully!');
-      document.getElementById('add-post-form').reset();
-      displayPosts();
-    }
-  } else {
-    alert('User ID is missing.');
-  }
-});
+          if (error) {
+            console.error('Error fetching posts:', error);
+            postsListDiv.textContent = 'Failed to load posts.';
+            document.getElementById('numposts').textContent = '';
+          } else if (data && data.length > 0) {
+            data.forEach(post => {
+              const postItem = document.createElement('div');
+              postItem.classList.add('post-item');
 
-async function displayPosts() {
-  if (supabase) {
-    try {
-      const { data, error, count } = await supabase
-        .from('posts')
-        .select('title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' });
+              const titleElement = document.createElement('div');
+              titleElement.classList.add('post-title');
+              titleElement.textContent = post.title;
 
-      const postsListDiv = document.getElementById('post-list');
-      postsListDiv.innerHTML = '';
+              const contentElement = document.createElement('div');
+              contentElement.classList.add('post-content');
+              contentElement.textContent = post.content;
 
-      if (error) {
-        console.error('Error fetching posts:', error);
-        postsListDiv.textContent = 'Failed to load posts.';
-        document.getElementById('numposts').textContent = '';
-      } else if (data && data.length > 0) {
-        data.forEach(post => {
-          const postItem = document.createElement('div');
-          postItem.classList.add('post-item');
+              const imagesContainer = document.createElement('div');
+              imagesContainer.classList.add('post-images');
 
-          const titleElement = document.createElement('div');
-          titleElement.classList.add('post-title');
-          titleElement.textContent = post.title;
+              for (let i = 1; i <= 4; i++) {
+                const imageUrl = post[`image_url_${i}`];
+                const imageSpace = document.createElement('div');
+                imageSpace.classList.add('post-image-space');
+                if (imageUrl) {
+                  const imgElement = document.createElement('img');
+                  imgElement.src = imageUrl;
+                  imgElement.style.width = '100%';
+                  imgElement.style.height = '100%';
+                  imgElement.style.objectFit = 'cover';
+                  imageSpace.appendChild(imgElement);
+                } else {
+                  imageSpace.textContent = `Image ${i}`;
+                }
+                imagesContainer.appendChild(imageSpace);
+              }
 
-          const contentElement = document.createElement('div');
-          contentElement.classList.add('post-content');
-          contentElement.textContent = post.content;
+              const deleteButton = document.createElement('button');
+              deleteButton.classList.add('delete-button');
+              deleteButton.textContent = 'Delete Post';
+              deleteButton.addEventListener('click', () => deletePost(post.id));
 
-          postItem.appendChild(titleElement);
-          postItem.appendChild(contentElement);
-
-          const imagesContainer = document.createElement('div');
-          imagesContainer.classList.add('post-images-container');
-
-          const imageUrls = [post.image_url_1, post.image_url_2, post.image_url_3, post.image_url_4];
-
-          imageUrls.forEach(url => {
-            if (url) {
-              const imageWrapper = document.createElement('div');
-              imageWrapper.classList.add('post-image-wrapper');
-              const imgElement = document.createElement('img');
-              imgElement.src = url;
-              imageWrapper.appendChild(imgElement);
-              imagesContainer.appendChild(imageWrapper);
-            }
-          });
-
-          postItem.appendChild(imagesContainer);
-          postsListDiv.appendChild(postItem);
-        });
-        document.getElementById('numposts').textContent = `Total Posts: ${count}`;
+              postItem.appendChild(titleElement);
+              postItem.appendChild(contentElement);
+              postItem.appendChild(imagesContainer);
+              postItem.appendChild(deleteButton);
+              postsListDiv.appendChild(postItem);
+            });
+            document.getElementById('numposts').textContent = `Total Posts: ${count}`;
+          } else {
+            postsListDiv.textContent = 'No posts found.';
+            document.getElementById('numposts').textContent = 'Total Posts: 0';
+          }
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+          postsListDiv.textContent = 'Failed to load posts.';
+          document.getElementById('numposts').textContent = '';
+        }
       } else {
-        postsListDiv.textContent = 'No posts found.';
-        document.getElementById('numposts').textContent = 'Total Posts: 0';
+        alert('Authentication or Supabase client issue.');
       }
-    } catch (error) {
-      console.error('Unexpected error fetching posts:', error);
-      document.getElementById('posts-display').textContent = 'Failed to load posts.';
-      document.getElementById('numposts').textContent = '';
     }
-  } else {
-    console.error('Supabase not initialized.');
-    document.getElementById('posts-display').textContent = 'Failed to connect to database.';
-    document.getElementById('numposts').textContent = '';
-  }
-}
 
-displayPosts();
-</script>
+    // Call displayPosts when the page loads
+    displayPosts();
+  </script>
+</body>
 </html>
