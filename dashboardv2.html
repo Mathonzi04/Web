@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create, View, and Delete Posts</title>
+  <style type="text/css">
+    .post-form {
+      width: 90%;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .post-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .post-form input[type="text"],
+    .post-form textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .post-form button#submit {
+      font-size: 15px;
+      width: 120px;
+      padding: 10px;
+      border: none;
+      color: white;
+      border-radius: 7px;
+      background-color: #34C759;
+      cursor: pointer;
+    }
+    .posts-display {
+      width: 90%;
+      margin-top: 20px;
+    }
+    .post-item {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .post-title {
+      font-weight: bold;
+    }
+    .post-images {
+      display: flex;
+      gap: 10px;
+    }
+    .post-image-space {
+      width: 80px;
+      height: 80px;
+      background-color: #f0f0f0;
+      border: 1px dashed #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8em;
+      color: #777;
+    }
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <div id="user-info">
+    <p>User ID: <span id="uid-display"></span></p>
+  </div>
+
+  <form id="add-post-form" class="post-form">
+    <h2>Create New Post</h2>
+    <div>
+      <label for="post-title">Post Title:</label>
+      <input type="text" id="post-title" name="post-title">
+    </div>
+    <div>
+      <label for="post-content">Content:</label>
+      <textarea id="post-content" name="post-content"></textarea>
+    </div>
+    <button type="submit" id="submit">Submit Post</button>
+  </form>
+
+  <div class="posts-display">
+    <h3>Posts</h3>
+    <h4 id="numposts"></h4>
+    <div id="post-list"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+    // Replace with your actual Supabase URL and Key
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Function to get user ID from URL parameter
+    function getUserIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('user_id');
+    }
+
+    const uid = getUserIdFromUrl();
+
+    // Redirect to login if no user ID is found
+    if (!uid) {
+      window.location.replace('login.html'); // Replace 'login.html' with your actual login page URL
+    } else {
+      document.getElementById('uid-display').textContent = uid;
+      displayPosts(); // Fetch and display posts for the logged-in user
+    }
+
+    document.getElementById('add-post-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const postTitle = document.getElementById('post-title').value;
+      const postContent = document.getElementById('post-content').value;
+
+      if (supabase && uid) {
+        const { data, error } = await supabase
+          .from('posts')
+          .insert([
+            { user_id: uid, title: postTitle, content: postContent },
+          ]);
+
+        if (error) {
+          console.error('Error creating post:', error);
+          alert('Failed to create post.');
+        } else {
+          console.log('Post created successfully:', data);
+          alert('Post created successfully!');
+          document.getElementById('add-post-form').reset();
+          displayPosts(); // Refresh the post list
+        }
+      } else {
+        alert('Authentication or Supabase client issue.');
+      }
+    });
+
+    async function deletePost(postId) {
+      if (supabase && uid) {
+        const { error } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', postId)
+          .eq('user_id', uid); // Ensure only the user's posts can be deleted
+
+        if (error) {
+          console.error('Error deleting post:', error);
+          alert('Failed to delete post.');
+        } else {
+          console.log('Post deleted:', postId);
+          alert('Post deleted successfully!');
+          displayPosts(); // Refresh the list after deletion
+        }
+      } else {
+        alert('Authentication or Supabase client issue.');
+      }
+    }
+
+    async function displayPosts() {
+      if (supabase && uid) {
+        try {
+          const { data, error, count } = await supabase
+            .from('posts')
+            .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' })
+            .eq('user_id', uid); // Only fetch the current user's posts
+
+          const postsListDiv = document.getElementById('post-list');
+          postsListDiv.innerHTML = ''; // Clear previous posts
+
+          if (error) {
+            console.error('Error fetching posts:', error);
+            postsListDiv.textContent = 'Failed to load posts.';
+            document.getElementById('numposts').textContent = '';
+          } else if (data && data.length > 0) {
+            data.forEach(post => {
+              const postItem = document.createElement('div');
+              postItem.classList.add('post-item');
+
+              const titleElement = document.createElement('div');
+              titleElement.classList.add('post-title');
+              titleElement.textContent = post.title;
+
+              const contentElement = document.createElement('div');
+              contentElement.classList.add('post-content');
+              contentElement.textContent = post.content;
+
+              const imagesContainer = document.createElement('div');
+              imagesContainer.classList.add('post-images');
+
+              for (let i = 1; i <= 4; i++) {
+                const imageUrl = post[`image_url_${i}`];
+                const imageSpace = document.createElement('div');
+                imageSpace.classList.add('post-image-space');
+                if (imageUrl) {
+                  const imgElement = document.createElement('img');
+                  imgElement.src = imageUrl;
+                  imgElement.style.width = '100%';
+                  imgElement.style.height = '100%';
+                  imgElement.style.objectFit = 'cover';
+                  imageSpace.appendChild(imgElement);
+                } else {
+                  imageSpace.textContent = `Image ${i}`;
+                }
+                imagesContainer.appendChild(imageSpace);
+              }
+
+              const deleteButton = document.createElement('button');
+              deleteButton.classList.add('delete-button');
+              deleteButton.textContent = 'Delete Post';
+              deleteButton.addEventListener('click', () => deletePost(post.id));
+
+              postItem.appendChild(titleElement);
+              postItem.appendChild(contentElement);
+              postItem.appendChild(imagesContainer);
+              postItem.appendChild(deleteButton);
+              postsListDiv.appendChild(postItem);
+            });
+            document.getElementById('numposts').textContent = `Total Posts: ${count}`;
+          } else {
+            postsListDiv.textContent = 'No posts found.';
+            document.getElementById('numposts').textContent = 'Total Posts: 0';
+          }
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+          postsListDiv.textContent = 'Failed to load posts.';
+          document.getElementById('numposts').textContent = '';
+        }
+      } else {
+        // User ID not available, should have been redirected
+        console.error('User ID not found.');
+      }
+    }
+  </script>
+</body>
+</html>
