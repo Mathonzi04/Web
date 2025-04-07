@@ -5,39 +5,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add New Post</title>
+  <style type="text/css">
+    .posts {
+      width: 90%;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .post-item {
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    .post-item:last-child {
+      border-bottom: none;
+    }
+    .post-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .post-content {
+      margin-bottom: 10px;
+    }
+    h3 {
+      margin-top: 0;
+    }
+    h4#numposts {
+      margin-top: 5px;
+      color: #777;
+    }
+    .post input[type="text"], .post textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .post button#submit {
+      font-size: 15px;
+      width: 100px;
+      padding: 9px;
+      border: none;
+      color: white;
+      border-radius: 7px;
+      background-color: #34C759;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
-<style type="text/css">
-.post{
-  width:90%;
-}
-input[type="text"],textarea{
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-button[id=submit]{
-  font-size:15px;
-  width:100px;
-  padding:9px;
-  border:none;
-  color:white;
-  border-radius:7px;
-  background-color:#34C759;
-}
-
-</style>
-
 <body>
   <h1>Create a New Post</h1>
   <div id="user-info">
     <p>Your User ID: <span id="uid-display"></span></p>
   </div>
 
-  <form id="add-post-form">
+  <form id="add-post-form" class="post">
     <div>
       <label for="post-title">Post Title:</label>
       <input type="text" id="post-title" name="post-title">
@@ -46,16 +70,23 @@ button[id=submit]{
       <label for="post-content">Content:</label>
       <textarea id="post-content" name="post-content"></textarea>
     </div>
-    <button type="submit" id="submit" >Submit Post</button>
+    <button type="submit" id="submit">Submit Post</button>
   </form>
+
+  <div class="posts" id="posts-display">
+    <h3>Posts</h3>
+    <h4 id="numposts"></h4>
+    <div id="post-list">
+      </div>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
     // Replace with your actual Supabase URL and Key
-  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-  const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Your provided User ID
     const uid = '470e23b6-ce31-49b3-8547-de5827a70857';
@@ -84,11 +115,64 @@ button[id=submit]{
           alert('Post created successfully!');
           // Optionally clear the form
           document.getElementById('add-post-form').reset();
+          // Refresh the post list after adding a new post
+          displayPosts();
         }
       } else {
         alert('User ID is missing.');
       }
     });
+
+    async function displayPosts() {
+      if (supabase) {
+        try {
+          const { data, error, count } = await supabase
+            .from('posts') // Use your 'posts' table name
+            .select('title, content', { count: 'exact' }); // Select title and content and get the total count
+
+          const postsListDiv = document.getElementById('post-list');
+          postsListDiv.innerHTML = ''; // Clear previous posts
+
+          if (error) {
+            console.error('Error fetching posts:', error);
+            postsListDiv.textContent = 'Failed to load posts.';
+            document.getElementById('numposts').textContent = '';
+          } else if (data && data.length > 0) {
+            data.forEach(post => {
+              const postItem = document.createElement('div');
+              postItem.classList.add('post-item');
+
+              const titleElement = document.createElement('div');
+              titleElement.classList.add('post-title');
+              titleElement.textContent = post.title;
+
+              const contentElement = document.createElement('div');
+              contentElement.classList.add('post-content');
+              contentElement.textContent = post.content;
+
+              postItem.appendChild(titleElement);
+              postItem.appendChild(contentElement);
+              postsListDiv.appendChild(postItem);
+            });
+            document.getElementById('numposts').textContent = `Total Posts: ${count}`;
+          } else {
+            postsListDiv.textContent = 'No posts found.';
+            document.getElementById('numposts').textContent = 'Total Posts: 0';
+          }
+        } catch (error) {
+          console.error('Unexpected error fetching posts:', error);
+          document.getElementById('posts-display').textContent = 'Failed to load posts.';
+          document.getElementById('numposts').textContent = '';
+        }
+      } else {
+        console.error('Supabase not initialized.');
+        document.getElementById('posts-display').textContent = 'Failed to connect to database.';
+        document.getElementById('numposts').textContent = '';
+      }
+    }
+
+    // Call displayPosts when the page loads
+    displayPosts();
   </script>
 </body>
 </html>
