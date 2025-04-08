@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<style type="text/css">
+*{
+padding: 0;
+margin: 0;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:3px;
+  border-bottom: 1px solid #eee;
+  height:70px;
+}
+
+body{
+width:100%;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-toggle {
+  display: none;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  margin-bottom: 5px;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.nav-list li {
+  margin-right: 20px;
+  font-size:17px;
+  padding:10px;
+}
+
+.nav-list a {
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-list a:hover {
+  color: #007bff;
+}
+
+#nav-check {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+  
+  .nav-list {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  #nav-check:checked ~ .nav-list {
+    display: block;
+  }
+}
+h3{
+margin-left:0px;
+}
+h4[class="book"]{
+padding:1px;
+color:grey;
+}
+
+.book{
+padding:7px;
+background-color:black;
+border-radius:5px;
+}
+.book a{
+text-decoration:none;
+color:grey;
+}
+.tab { overflow-x: auto; white-space: nowrap; padding: 10px; background: #f9f9f9; border-bottom: 1px solid #eee; }
+ .tab a { display: inline-block; padding: 8px 15px; margin: 5px; background: #fff; border-radius: 20px; text-decoration: none; color: #001b4a; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+ .post-item { margin: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); }
+ .slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 10px 0; }
+ .slider img { width: 80vw; height: auto; scroll-snap-align: start; margin-right: 10px; border-radius: 5px; }
+ .slider img:last-child { margin-right: 0; }
+ .rating { display: flex; justify-content: space-between; margin-top: 10px; align-items: center; }
+ .rating button { background: #f0f0f0; padding: 8px 12px; border-radius: 5px; color: #555; border: none; cursor: pointer; }
+ .rating span { color: #555; }
+ .rating a { text-decoration: none; color: #007bff; }
+ .download-link { text-align: center; margin-top: 15px; }
+ .download-link a { color: #28a745; font-weight: bold; }
+ footer { background: #3396FF; color: #fff; text-align: center; padding: 20px; margin-top: 30px; height:auto; }
+ footer img { width: 30px; height: 30px; border-radius: 50%; margin: 10px; }
+ .post-content {
+     margin-bottom: 15px;
+     line-height: 1.6;
+     color: #333;
+ }
+ #top-background-image {
+     width: 100%;
+     height: auto;
+     margin-top: 60px;
+     display: block;
+ }
+ p{text-align:center;
+ }
+ .download-all {
+     text-align: center;
+     margin-top: 15px;
+ }
+ .download-all h3 {
+     color: #007bff;
+     cursor: pointer;
+
+</style>
+
+
+
+
+<body>
+  <div class="header">
+    <div class="nav-links">
+      <input type="checkbox" id="nav-check">
+      <label for="nav-check" class="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+      <ul class="nav-list">
+        <li><a href="#" onclick="myf()">Donate</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Email us</a></li>
+        <li><a href="#">Follow us on</a></li>
+        <center>
+        <div class="social">
+        
+        <img src="./img/fb.jpg" height="30px" width="30px" style="border-radius:10px;" onclick="myf()">
+        
+        &nbsp;&nbsp;
+        <img src="./img/insta.jpg" height="30px" width="30px"  style="border-radius:10px;" onclick="myf()">
+        
+        &nbsp;&nbsp;
+        <img src="./img/ttt.jpg" height="30px" width="30px"  style="border-radius:10px;" onclick="myf()">
+        
+        </div>
+        </center>
+      </ul>
+    </div>
+    <h3>ExploreSA</h3>
+   <h4 class="book" ><a href="booking_request.html" class="book">Book Now</a></h4>
+  
+  </div>
+  
+  <img id="top-background-image" src="img/background_img.jpg" alt="Background">
+  <div class="tab">
+      <a href="#" style="color: #01E82F;">All</a>
+      <a href="#" onclick="myf()">Cultural Experience</a>
+      <a href="#" onclick="myf()">Adventure Activity</a>
+      <a href="#" onclick="myf()">National Park Rides</a>
+  </div>
+  <div id="public-posts">
+      </div>
+  <footer>
+  &nbsp;&nbsp;
+      <p style="font-weight:200;" >Explore the Wild Experience South Africa</p>
+      &nbsp;
+      <h4>Follow Us On</h4>
+      <div>
+          <img src="./img/fb.jpg" alt="Facebook">
+          <img src="./img/instergram.jpg" alt="Instagram">
+          <img src="./img/wa.jpg" alt="WhatsApp">
+      </div>
+      <p>Copyright 2024</p>
+      &nbsp;&nbsp;&nbsp;
+  </footer>
+  
+  <script type="module">
+  
+  
+      import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+  
+      const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+      const supabase = createClient(supabaseUrl, supabaseKey);
+  
+      async function fetchBackgroundImage() {
+          if (supabase) {
+              try {
+                  const { data, error } = await supabase
+                      .from('site_settings')
+                      .select('background_image_url')
+                      .limit(1)
+                      .single();
+  
+                  if (error) {
+                      console.error('Error fetching background image URL:', error);
+                      document.getElementById('top-background-image').src = 'img/background_img.jpg';
+                  } else if (data && data.background_image_url) {
+                      document.getElementById('top-background-image').src = data.background_image_url;
+                  }
+              } catch (error) {
+                  console.error('Unexpected error fetching background image:', error);
+                  document.getElementById('top-background-image').src = 'img/background_img.jpg';
+              }
+          } else {
+              console.error('Supabase not initialized.');
+          }
+      }
+  
+      function downloadAllImages(imageUrls) {
+          imageUrls.forEach(url => {
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = url.substring(url.lastIndexOf('/') + 1);
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+          });
+          if (imageUrls.length === 0) {
+              alert('No images to download in this post.');
+          }
+      }
+  
+      async function displayPublicPosts() {
+          if (supabase) {
+              try {
+                  const { data, error } = await supabase
+                      .from('posts')
+                      .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4');
+  
+                  const publicPostsDiv = document.getElementById('public-posts');
+                  publicPostsDiv.innerHTML = '';
+  
+                  if (error) {
+                      console.error('Error fetching public posts:', error);
+                      publicPostsDiv.textContent = 'Failed to load posts.';
+                  } else if (data && data.length > 0) {
+                      data.forEach(post => {
+                          const postItem = document.createElement('div');
+                          postItem.classList.add('item', 'post-item');
+  
+                          const titleElement = document.createElement('h2');
+                          titleElement.classList.add('post-title');
+                          titleElement.textContent = post.title;
+  
+                          const contentElement = document.createElement('p');
+                          contentElement.classList.add('post-content');
+                          contentElement.textContent = post.content;
+  
+                          const sliderContainer = document.createElement('div');
+                          sliderContainer.classList.add('slider');
+                          const imageUrls = [];
+  
+                          for (let i = 1; i <= 4; i++) {
+                              const imageUrl = post[`image_url_${i}`];
+                              if (imageUrl) {
+                                  const imgElement = document.createElement('img');
+                                  imgElement.src = imageUrl;
+                                  sliderContainer.appendChild(imgElement);
+                                  imageUrls.push(imageUrl);
+                              } else {
+                                  const placeholder = document.createElement('div');
+                                  placeholder.classList.add('post-image-space');
+                                  placeholder.textContent = `Image ${i}`;
+                                  sliderContainer.appendChild(placeholder);
+                              }
+                          }
+  
+                          const downloadAllDiv = document.createElement('div');
+                          downloadAllDiv.classList.add('download-all');
+                          const downloadAllH3 = document.createElement('h3');
+                          downloadAllH3.textContent = 'Download All Images';
+                          downloadAllH3.style.cursor = 'pointer';
+                          downloadAllH3.addEventListener('click', () => downloadAllImages(imageUrls));
+                          downloadAllDiv.appendChild(downloadAllH3);
+  
+                          postItem.appendChild(titleElement);
+                          postItem.appendChild(contentElement);
+                          postItem.appendChild(sliderContainer);
+                          postItem.appendChild(downloadAllDiv);
+                          publicPostsDiv.appendChild(postItem);
+                      });
+                  } else {
+                      publicPostsDiv.textContent = 'No posts found.';
+                  }
+              } catch (error) {
+                  console.error('Unexpected error fetching posts:', error);
+                  publicPostsDiv.textContent = 'Failed to load posts.';
+              }
+          } else {
+              console.error('Supabase not initialized.');
+              publicPostsDiv.textContent = 'Failed to connect to database.';
+          }
+      }
+  
+      fetchBackgroundImage();
+      displayPublicPosts();
+      
+      window.myf = function() {
+      
+      alert("Sorry!this page isn't available right now😵‍💫");
+      
+      }
+      
+  </script>
+  </body>
+  </html>
+  
+</body>
+</html>
