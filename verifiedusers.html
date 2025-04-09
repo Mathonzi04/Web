@@ -7,7 +7,7 @@
     <title>Manage Verified Companies</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .container { max-width: 950px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
@@ -21,12 +21,15 @@
         .company-info { flex-grow: 1; }
         .company-info p { margin: 5px 0; }
         .document-link { color: red; font-weight: bold; }
+        .document-actions { display: flex; gap: 5px; align-items: center; }
         .document-actions button { padding: 8px 12px; font-size: 14px; }
         .status-indicator { display: inline-block; padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-left: 5px; }
         .status-pending { background-color: yellow; color: #333; }
         .status-verified { background-color: green; color: white; }
         .status-rejected { background-color: red; color: white; }
         #company-count { text-align: center; margin-top: 20px; font-weight: bold; font-size: 18px; color: #333; }
+        .delete-button { background-color: #dc3545; color: white; }
+        .delete-button:hover { background-color: #c82333; }
     </style>
 </head>
 <body>
@@ -42,8 +45,20 @@
                 <input type="text" id="owner_name" name="owner_name" required>
             </div>
             <div class="form-group">
-                <label for="owner_identity">Owner Identity:</label>
+                <label for="owner_identity">Owner Identity (Text ID):</label>
                 <input type="text" id="owner_identity" name="owner_identity" required>
+            </div>
+            <div class="form-group">
+                <label for="owner_identity_url">Owner Identity Image URL:</label>
+                <input type="text" id="owner_identity_url" name="owner_identity_url">
+            </div>
+            <div class="form-group">
+                <label for="company_telephone">Company Telephone:</label>
+                <input type="text" id="company_telephone" name="company_telephone">
+            </div>
+            <div class="form-group">
+                <label for="company_email">Company Email:</label>
+                <input type="text" id="company_email" name="company_email">
             </div>
             <div class="form-group">
                 <label for="bank_statement_url">Bank Statement URL (PDF):</label>
@@ -87,7 +102,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         async function checkAuth() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                window.location.href = 'login.html'; // Replace '/login.html' with your actual login page URL
+                window.location.href = '/login.html';
             } else {
                 fetchVerifiedCompanies();
             }
@@ -99,6 +114,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             const companyName = document.getElementById('company_name').value;
             const ownerName = document.getElementById('owner_name').value;
             const ownerIdentity = document.getElementById('owner_identity').value;
+            const ownerIdentityUrl = document.getElementById('owner_identity_url').value;
+            const companyTelephone = document.getElementById('company_telephone').value;
+            const companyEmail = document.getElementById('company_email').value;
             const bankStatementUrl = document.getElementById('bank_statement_url').value;
             const businessRegistrationUrl = document.getElementById('business_registration_url').value;
             const signedContractUrl = document.getElementById('signed_contract_url').value;
@@ -113,6 +131,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                         company_name: companyName,
                         owner_name: ownerName,
                         owner_identity: ownerIdentity,
+                        owner_identity_url: ownerIdentityUrl,
+                        company_telephone: companyTelephone,
+                        company_email: companyEmail,
                         bank_statement_url: bankStatementUrl,
                         business_registration_url: businessRegistrationUrl,
                         signed_contract_url: signedContractUrl,
@@ -157,7 +178,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 companyInfo.innerHTML = `
                     <p><strong>Company:</strong> ${company.company_name}</p>
                     <p><strong>Owner:</strong> ${company.owner_name}</p>
-                    <p><strong>Identity:</strong> ${company.owner_identity}</p>
+                    <p><strong>Identity ID:</strong> ${company.owner_identity}</p>
+                    ${company.owner_identity_url ? `<p><strong>Identity Image:</strong> <a href="${company.owner_identity_url}" target="_blank" class="document-link">View</a></p>` : '<p><strong>Identity Image:</strong> Not Uploaded</p>'}
+                    <p><strong>Telephone:</strong> ${company.company_telephone || 'N/A'}</p>
+                    <p><strong>Email:</strong> ${company.company_email || 'N/A'}</p>
                     <p><strong>Bank Statement:</strong> <a href="${company.bank_statement_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.bank_statement_status}">${company.bank_statement_status}</span></p>
                     <p><strong>Registration:</strong> <a href="${company.business_registration_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.business_registration_status}">${company.business_registration_status}</span></p>
                     ${company.signed_contract_url ? `<p><strong>Signed Contract:</strong> <a href="${company.signed_contract_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.signed_contract_status}">${company.signed_contract_status}</span></p>` : '<p><strong>Signed Contract:</strong> Not Uploaded</p>'}
@@ -196,6 +220,13 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 documentActions.appendChild(verifyContractBtn);
                 documentActions.appendChild(rejectContractBtn);
 
+                // Delete Button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete Company';
+                deleteButton.classList.add('delete-button');
+                deleteButton.addEventListener('click', () => deleteCompany(company.id));
+                documentActions.appendChild(deleteButton);
+
                 companyItem.appendChild(companyInfo);
                 companyItem.appendChild(documentActions);
                 verifiedCompaniesListDiv.appendChild(companyItem);
@@ -215,6 +246,23 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                     alert(`Failed to update ${documentType} status.`);
                 } else {
                     console.log(`Updated ${documentType} status to ${newStatus} for company ID: ${companyId}`);
+                    fetchVerifiedCompanies(); // Refresh the list
+                }
+            }
+        }
+
+        async function deleteCompany(companyId) {
+            if (supabase && confirm('Are you sure you want to delete this company?')) {
+                const { error } = await supabase
+                    .from('verified_companies')
+                    .delete()
+                    .eq('id', companyId);
+
+                if (error) {
+                    console.error('Error deleting company:', error);
+                    alert('Failed to delete company.');
+                } else {
+                    console.log('Company deleted:', companyId);
                     fetchVerifiedCompanies(); // Refresh the list
                 }
             }
