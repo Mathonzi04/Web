@@ -109,7 +109,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 errorMessageDiv.textContent = `Failed to submit booking: ${error.message}`;
             } else {
                 console.log('Booking submitted:', data);
-                successMessageDiv.textContent = 'Booking request submitted successfully!';
+                successMessageDiv.textContent = 'Booking request submitted successfully!,You will receive email regarding this trip request in 24HRS';
                 bookingForm.reset();
             }
         });
