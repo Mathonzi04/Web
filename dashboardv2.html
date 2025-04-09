@@ -6,6 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create, View, and Delete Posts</title>
   <style type="text/css">
+  .header{
+  background-color: white;
+  top: 0px;
+  display:flex;
+  justify-content:space-between;
+  width: 100%;
+  position: fixed;
+  border-bottom:1.5px solid #ccc;
+  }
+  p{
+  padding:5px;
+  }
+  
+  a{
+  text-decoration:none;
+  color:grey;
+  }
     .post-form {
       width: 90%;
       margin-bottom: 20px;
@@ -84,7 +101,12 @@
   </style>
 </head>
 <body>
-  <h1>Admin Dashboard</h1>
+<div class="header"> 
+  <h4>Admin Dashboard</h4>
+   <p><a href="verifiedusers.html">Team </a></p>
+  <p><a href="currenttrips.html">On Tour</a></p>
+  <p><a href="triprequest.html">Requested Trips</a></p>
+  </div>
   <div id="user-info">
     <p>User ID: <span id="uid-display"></span></p>
   </div>
@@ -256,4 +278,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
