@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Request</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .booking-form { max-width: 500px; margin: 20px auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .toptext { display: flex; align-items: center; margin-bottom: 15px; }
+        .toptext a { text-decoration: none; color: grey; font-size: 17px; margin-right: 20px; }
+        .toptext h2 { text-align: center; color: #333; flex-grow: 1; margin: 0; }
+        .booking-form label { display: block; margin-bottom: 5px; color: #555; }
+        .booking-form input, .booking-form textarea, .booking-form button { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .booking-form textarea { height: 100px; }
+        .booking-form button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .booking-form button:hover { background-color: #0056b3; }
+        .booking-form .error { color: red; margin-top: 10px; }
+        .booking-form .success { color: green; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="booking-form">
+        <div class="toptext">
+            <a href="home.html">Back</a>
+            <h2>Booking Request</h2>
+        </div>
+        <form id="bookingForm">
+            <label for="names">Names:</label>
+            <input type="text" id="names" name="names" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required pattern="^0[0-9]{9}$" title="Please enter a valid South African phone number starting with 0 and 10 digits.">
+
+            <label for="numPeople">Number of People:</label>
+            <input type="number" id="numPeople" name="numPeople" min="1" max="10" required>
+
+            <label for="tripname">Place to visit:</label>
+            <input type="text" id="tripname" name="tripname">
+
+            <label for="booking_date">Preferred Booking Date:</label>
+            <input type="date" id="booking_date" name="booking_date" required>
+
+            <label for="booking_time">Preferred Booking Time:</label>
+            <input type="time" id="booking_time" name="booking_time" required>
+
+            <label for="message">Message/Special Requests:</label>
+            <textarea id="message" name="message"></textarea>
+
+            <button type="submit">Submit Request</button>
+            <div id="error-message" class="error"></div>
+            <div id="success-message" class="success"></div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const bookingForm = document.getElementById('bookingForm');
+        const errorMessageDiv = document.getElementById('error-message');
+        const successMessageDiv = document.getElementById('success-message');
+
+        bookingForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const names = document.getElementById('names').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const numPeople = parseInt(document.getElementById('numPeople').value);
+            const tripname = document.getElementById('tripname').value;
+            const bookingDate = document.getElementById('booking_date').value;
+            const bookingTime = document.getElementById('booking_time').value;
+            const message = document.getElementById('message').value;
+
+            errorMessageDiv.textContent = '';
+            successMessageDiv.textContent = '';
+
+            if (isNaN(numPeople) || numPeople < 1 || numPeople > 10) {
+                errorMessageDiv.textContent = 'Number of people must be between 1 and 10.';
+                return;
+            }
+
+            const { data, error } = await supabase
+                .from('requested_trips') // Ensure you have a 'bookings' table in Supabase
+                .insert([
+                    {
+                        names: names,
+                        email: email,
+                        phone: phone,
+                        num_people: numPeople,
+                        trip_name: tripname,
+                        booking_date: bookingDate,
+                        booking_time: bookingTime,
+                        message: message,
+                        created_at: new Date().toISOString(), // Optional: Add timestamp
+                    },
+                ]);
+
+            if (error) {
+                console.error('Error submitting booking:', error);
+                errorMessageDiv.textContent = `Failed to submit booking: ${error.message}`;
+            } else {
+                console.log('Booking submitted:', data);
+                successMessageDiv.textContent = 'Booking request submitted successfully!';
+                bookingForm.reset();
+            }
+        });
+    </script>
+</body>
+</html>
