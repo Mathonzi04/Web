@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Verified Companies</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; }
+        button:hover { background-color: #0056b3; }
+        .error-message { color: red; margin-top: 10px; }
+        .success-message { color: green; margin-top: 10px; }
+        .company-list { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        .company-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; align-items: center; justify-content: space-between; }
+        .company-info { flex-grow: 1; }
+        .company-info p { margin: 5px 0; }
+        .document-link { color: red; font-weight: bold; }
+        .document-actions button { padding: 8px 12px; font-size: 14px; }
+        .status-indicator { display: inline-block; padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-left: 5px; }
+        .status-pending { background-color: yellow; color: #333; }
+        .status-verified { background-color: green; color: white; }
+        .status-rejected { background-color: red; color: white; }
+        #company-count { text-align: center; margin-top: 20px; font-weight: bold; font-size: 18px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Verified Tourism Company</h2>
+        <form id="add-company-form">
+            <div class="form-group">
+                <label for="company_name">Company Name:</label>
+                <input type="text" id="company_name" name="company_name" required>
+            </div>
+            <div class="form-group">
+                <label for="owner_name">Owner Name:</label>
+                <input type="text" id="owner_name" name="owner_name" required>
+            </div>
+            <div class="form-group">
+                <label for="owner_identity">Owner Identity:</label>
+                <input type="text" id="owner_identity" name="owner_identity" required>
+            </div>
+            <div class="form-group">
+                <label for="bank_statement_url">Bank Statement URL (PDF):</label>
+                <input type="text" id="bank_statement_url" name="bank_statement_url" required>
+            </div>
+            <div class="form-group">
+                <label for="business_registration_url">Proof of Business Registration URL (PDF):</label>
+                <input type="text" id="business_registration_url" name="business_registration_url" required>
+            </div>
+            <div class="form-group">
+                <label for="signed_contract_url">Signed Contract URL (PDF):</label>
+                <input type="text" id="signed_contract_url" name="signed_contract_url">
+            </div>
+            <button type="submit">Add Company</button>
+            <div id="error-message" class="error-message"></div>
+            <div id="success-message" class="success-message"></div>
+        </form>
+
+        <div id="company-count"></div>
+
+        <div class="company-list">
+            <h2>Verified Companies</h2>
+            <div id="verified-companies-list">
+                </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const addCompanyForm = document.getElementById('add-company-form');
+        const errorMessageDiv = document.getElementById('error-message');
+        const successMessageDiv = document.getElementById('success-message');
+        const verifiedCompaniesListDiv = document.getElementById('verified-companies-list');
+        const companyCountDiv = document.getElementById('company-count');
+
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html'; // Replace '/login.html' with your actual login page URL
+            } else {
+                fetchVerifiedCompanies();
+            }
+        }
+
+        addCompanyForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const companyName = document.getElementById('company_name').value;
+            const ownerName = document.getElementById('owner_name').value;
+            const ownerIdentity = document.getElementById('owner_identity').value;
+            const bankStatementUrl = document.getElementById('bank_statement_url').value;
+            const businessRegistrationUrl = document.getElementById('business_registration_url').value;
+            const signedContractUrl = document.getElementById('signed_contract_url').value;
+
+            errorMessageDiv.textContent = '';
+            successMessageDiv.textContent = '';
+
+            const { data, error } = await supabase
+                .from('verified_companies')
+                .insert([
+                    {
+                        company_name: companyName,
+                        owner_name: ownerName,
+                        owner_identity: ownerIdentity,
+                        bank_statement_url: bankStatementUrl,
+                        business_registration_url: businessRegistrationUrl,
+                        signed_contract_url: signedContractUrl,
+                    },
+                ]);
+
+            if (error) {
+                console.error('Error adding verified company:', error);
+                errorMessageDiv.textContent = `Failed to add company: ${error.message}`;
+            } else {
+                console.log('Verified company added:', data);
+                successMessageDiv.textContent = 'Verified company added successfully!';
+                addCompanyForm.reset();
+                fetchVerifiedCompanies(); // Refresh the list
+            }
+        });
+
+        async function fetchVerifiedCompanies() {
+            if (supabase) {
+                const { data, error, count } = await supabase
+                    .from('verified_companies')
+                    .select('*', { count: 'exact' });
+
+                if (error) {
+                    console.error('Error fetching verified companies:', error);
+                    verifiedCompaniesListDiv.textContent = 'Failed to load verified companies.';
+                } else if (data) {
+                    companyCountDiv.textContent = `Total Verified Companies: ${count}`;
+                    renderVerifiedCompanies(data);
+                }
+            }
+        }
+
+        function renderVerifiedCompanies(companies) {
+            verifiedCompaniesListDiv.innerHTML = '';
+            companies.forEach(company => {
+                const companyItem = document.createElement('div');
+                companyItem.classList.add('company-item');
+
+                const companyInfo = document.createElement('div');
+                companyInfo.classList.add('company-info');
+                companyInfo.innerHTML = `
+                    <p><strong>Company:</strong> ${company.company_name}</p>
+                    <p><strong>Owner:</strong> ${company.owner_name}</p>
+                    <p><strong>Identity:</strong> ${company.owner_identity}</p>
+                    <p><strong>Bank Statement:</strong> <a href="${company.bank_statement_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.bank_statement_status}">${company.bank_statement_status}</span></p>
+                    <p><strong>Registration:</strong> <a href="${company.business_registration_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.business_registration_status}">${company.business_registration_status}</span></p>
+                    ${company.signed_contract_url ? `<p><strong>Signed Contract:</strong> <a href="${company.signed_contract_url}" target="_blank" class="document-link">View</a> <span class="status-indicator status-${company.signed_contract_status}">${company.signed_contract_status}</span></p>` : '<p><strong>Signed Contract:</strong> Not Uploaded</p>'}
+                `;
+
+                const documentActions = document.createElement('div');
+                documentActions.classList.add('document-actions');
+
+                // Bank Statement Actions
+                const verifyBankStmtBtn = document.createElement('button');
+                verifyBankStmtBtn.textContent = 'Verify Bank Stmt';
+                verifyBankStmtBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'bank_statement', 'verified'));
+                const rejectBankStmtBtn = document.createElement('button');
+                rejectBankStmtBtn.textContent = 'Reject Bank Stmt';
+                rejectBankStmtBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'bank_statement', 'rejected'));
+                documentActions.appendChild(verifyBankStmtBtn);
+                documentActions.appendChild(rejectBankStmtBtn);
+
+                // Business Registration Actions
+                const verifyRegBtn = document.createElement('button');
+                verifyRegBtn.textContent = 'Verify Reg';
+                verifyRegBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'business_registration', 'verified'));
+                const rejectRegBtn = document.createElement('button');
+                rejectRegBtn.textContent = 'Reject Reg';
+                rejectRegBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'business_registration', 'rejected'));
+                documentActions.appendChild(verifyRegBtn);
+                documentActions.appendChild(rejectRegBtn);
+
+                // Signed Contract Actions
+                const verifyContractBtn = document.createElement('button');
+                verifyContractBtn.textContent = 'Verify Contract';
+                verifyContractBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'signed_contract', 'verified'));
+                const rejectContractBtn = document.createElement('button');
+                rejectContractBtn.textContent = 'Reject Contract';
+                rejectContractBtn.addEventListener('click', () => updateDocumentStatus(company.id, 'signed_contract', 'rejected'));
+                documentActions.appendChild(verifyContractBtn);
+                documentActions.appendChild(rejectContractBtn);
+
+                companyItem.appendChild(companyInfo);
+                companyItem.appendChild(documentActions);
+                verifiedCompaniesListDiv.appendChild(companyItem);
+            });
+        }
+
+        async function updateDocumentStatus(companyId, documentType, newStatus) {
+            if (supabase) {
+                const columnName = `${documentType}_status`;
+                const { error } = await supabase
+                    .from('verified_companies')
+                    .update({ [columnName]: newStatus })
+                    .eq('id', companyId);
+
+                if (error) {
+                    console.error(`Error updating ${documentType} status:`, error);
+                    alert(`Failed to update ${documentType} status.`);
+                } else {
+                    console.log(`Updated ${documentType} status to ${newStatus} for company ID: ${companyId}`);
+                    fetchVerifiedCompanies(); // Refresh the list
+                }
+            }
+        }
+
+        // Check if the user is logged in when the page loads
+        checkAuth();
+    </script>
+</body>
+</html>
