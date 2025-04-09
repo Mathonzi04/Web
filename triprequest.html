@@ -1,36 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Ongoing Trips</title>
+    <title>Requested Trips</title>
     <style>
-        /* Basic Styling - Adapt as needed */
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
-        .trip-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .trip-info { flex-grow: 1; }
-        .status-button { padding: 8px 12px; border-radius: 5px; cursor: pointer; border: none; }
-        .green { background-color: green; color: white; }
-        .red { background-color: red; color: white; }
-        .edit-input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
-        .action-group { display: flex; gap: 5px; align-items: center; margin-top: 10px; width: 100%; }
-        .payment-proof { display: flex; gap: 5px; align-items: center; }
-        #ongoing-count, #completed-count { text-align: center; margin-top: 20px; font-weight: bold; }
+        .request-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .request-info { flex-grow: 1; }
+        .request-info p { margin: 5px 0; }
+        .confirm-button { background-color: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .confirm-button:hover { background-color: #0056b3; }
+        .confirmed { background-color: green; color: white; }
+        #requests-count { text-align: center; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Ongoing Trips Management</h2>
-        <div id="ongoing-trips-list">
+        <h2>Requested Trips</h2>
+        <div id="requests-list">
             </div>
-        <h3 id="ongoing-count"></h3>
-        <h2>Completed Trips History</h2>
-        <div id="completed-trips-list">
-            </div>
-        <h3 id="completed-count"></h3>
+        <h3 id="requests-count"></h3>
     </div>
 
     <script type="module">
@@ -45,186 +37,62 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             if (!user) {
                 window.location.href = '/login.html';
             } else {
-                loadOngoingTrips();
-                loadCompletedTrips();
+                loadRequestedTrips();
             }
         }
 
-        async function loadOngoingTrips() {
+        async function loadRequestedTrips() {
             const { data, error, count } = await supabase
-                .from('ongoing_trips')
-                .select('*, requested_trips(names, email, num_people, trip_name)', { count: 'exact' })
-                .eq('trip_completed', false); // Only load ongoing trips
+                .from('requested_trips')
+                .select('*', { count: 'exact' });
 
             if (error) {
-                console.error('Error loading ongoing trips:', error);
+                console.error('Error loading requested trips:', error);
             } else if (data) {
-                displayOngoingTrips(data);
-                document.getElementById('ongoing-count').textContent = `Ongoing Trips: ${count}`;
+                displayRequestedTrips(data);
+                document.getElementById('requests-count').textContent = `Total Requests: ${count}`;
             }
         }
 
-        function displayOngoingTrips(trips) {
-            const ongoingList = document.getElementById('ongoing-trips-list');
-            ongoingList.innerHTML = '';
-            trips.forEach(trip => {
-                const tripDiv = document.createElement('div');
-                tripDiv.classList.add('trip-item');
-                tripDiv.innerHTML = `
-                    <div class="trip-info">
-                        <h3>${trip.requested_trips.names}</h3>
-                        <p>Email: ${trip.requested_trips.email}</p>
-                        <p>People: ${trip.requested_trips.num_people}</p>
-                        <p>Place: ${trip.requested_trips.trip_name || 'N/A'}</p>
-                        <div class="action-group">
-                            <label>Tour Company:</label>
-                            <input type="text" class="edit-input" value="${trip.tour_company_name || ''}" data-trip-id="${trip.id}" id="tour-company-${trip.id}">
-                            <button onclick="updateTourCompany(${trip.id})">Save Company</button>
-                        </div>
-                        <div class="action-group">
-                            <label>Trip Time:</label>
-                            <input type="datetime-local" class="edit-input" value="${formatDateTimeLocal(trip.trip_time)}" data-trip-id="${trip.id}" id="trip-time-${trip.id}">
-                            <button onclick="updateTripTime(${trip.id})">Set Time</button>
-                        </div>
-                        <div class="action-group">
-                            Guide Accepted: <button class="status-button ${trip.guide_accepted ? 'green' : 'red'}" onclick="updateStatus(${trip.id}, 'guide_accepted', ${!trip.guide_accepted})">${trip.guide_accepted ? 'Yes' : 'No'}</button>
-                        </div>
-                        <div class="action-group">
-                            Trip Started: <button class="status-button ${trip.trip_started ? 'green' : 'red'}" onclick="updateStatus(${trip.id}, 'trip_started', ${!trip.trip_started})">${trip.trip_started ? 'Yes' : 'No'}</button>
-                        </div>
-                        <div class="action-group">
-                            Trip Completed: <button class="status-button ${trip.trip_completed ? 'green' : 'red'}" onclick="updateStatus(${trip.id}, 'trip_completed', ${!trip.trip_completed})">${trip.trip_completed ? 'Yes' : 'No'}</button>
-                        </div>
-                        <div class="action-group payment-proof">
-                            <label>Share Received (30%):</label>
-                            <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.share_received_proof_url || ''}" data-trip-id="${trip.id}" id="share-proof-${trip.id}">
-                            <button onclick="uploadProof(${trip.id}, 'share_received_proof_url')">Upload Proof</button>
-                            <button class="status-button ${trip.share_received ? 'green' : 'red'}" onclick="updateStatus(${trip.id}, 'share_received', ${!trip.share_received})">${trip.share_received ? 'Received' : 'Pending'}</button>
-                        </div>
-                        <div class="action-group">
-                            Trip Went Well: <button class="status-button ${trip.trip_went_well === true ? 'green' : (trip.trip_went_well === false ? 'red' : '')}" onclick="updateTripWentWell(${trip.id}, ${trip.trip_went_well === null ? true : !trip.trip_went_well})">${trip.trip_went_well === true ? 'Yes' : (trip.trip_went_well === false ? 'No' : 'Pending')}</button>
-                        </div>
-                        <div class="action-group payment-proof">
-                            <label>Guide Paid (15%):</label>
-                            <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.guide_payment_proof_url || ''}" data-trip-id="${trip.id}" id="guide-payment-${trip.id}">
-                            <button onclick="uploadProof(${trip.id}, 'guide_payment_proof_url')">Upload Proof</button>
-                            <button class="status-button ${trip.guide_paid ? 'green' : 'red'}" onclick="updateStatus(${trip.id}, 'guide_paid', ${!trip.guide_paid})">${trip.guide_paid ? 'Paid' : 'Pending'}</button>
-                        </div>
+        function displayRequestedTrips(requests) {
+            const requestsList = document.getElementById('requests-list');
+            requestsList.innerHTML = '';
+            requests.forEach(request => {
+                const requestDiv = document.createElement('div');
+                requestDiv.classList.add('request-item');
+                requestDiv.innerHTML = `
+                    <div class="request-info">
+                        <p><strong>Name:</strong> ${request.names}</p>
+                        <p><strong>Email:</strong> ${request.email}</p>
+                        <p><strong>People:</strong> ${request.num_people}</p>
+                        <p><strong>Place:</strong> ${request.trip_name || 'N/A'}</p>
+                        <p><strong>Date:</strong> ${request.booking_date}</p>
+                        <p><strong>Time:</strong> ${request.booking_time}</p>
+                        <p><strong>Message:</strong> ${request.message || 'N/A'}</p>
                     </div>
+                    <button class="confirm-button ${request.email_sent ? 'confirmed' : ''}" data-request-id="${request.id}" onclick="toggleEmailSent(${request.id}, ${request.email_sent || false})">${request.email_sent ? 'Email Sent' : 'Send Email'}</button>
                 `;
-                ongoingList.appendChild(tripDiv);
+                requestsList.appendChild(requestDiv);
             });
         }
 
-        async function loadCompletedTrips() {
-            const { data, error, count } = await supabase
-                .from('ongoing_trips')
-                .select('requested_trips(names, email, num_people, trip_name), tour_company_name, trip_time', { count: 'exact' })
-                .eq('trip_completed', true)
-                .order('trip_time', { ascending: false });
+        async function toggleEmailSent(requestId, isEmailSent) {
+            const newStatus = !isEmailSent;
+            const { error } = await supabase
+                .from('requested_trips')
+                .update({ email_sent: newStatus })
+                .eq('id', requestId);
 
             if (error) {
-                console.error('Error loading completed trips:', error);
-            } else if (data) {
-                displayCompletedTrips(data);
-                document.getElementById('completed-count').textContent = `Completed Trips: ${count}`;
+                console.error('Error updating email sent status:', error);
+                alert('Failed to update email status.');
+            } else {
+                loadRequestedTrips(); // Refresh the list
             }
-        }
-
-        function displayCompletedTrips(trips) {
-            const completedList = document.getElementById('completed-trips-list');
-            completedList.innerHTML = '';
-            trips.forEach(trip => {
-                const tripDiv = document.createElement('div');
-                tripDiv.classList.add('trip-item');
-                tripDiv.innerHTML = `
-                    <div class="trip-info">
-                        <h3>${trip.requested_trips.names}</h3>
-                        <p>Email: ${trip.requested_trips.email}</p>
-                        <p>People: ${trip.requested_trips.num_people}</p>
-                        <p>Place: ${trip.requested_trips.trip_name || 'N/A'}</p>
-                        <p>Tour Company: ${trip.tour_company_name || 'N/A'}</p>
-                        <p>Trip Time: ${formatDateTime(trip.trip_time)}</p>
-                    </div>
-                `;
-                completedList.appendChild(tripDiv);
-            });
-        }
-
-        async function updateTourCompany(tripId) {
-            const companyName = document.getElementById(`tour-company-${tripId}`).value;
-            const { error } = await supabase
-                .from('ongoing_trips')
-                .update({ tour_company_name: companyName })
-                .eq('id', tripId);
-            if (error) console.error('Error updating tour company:', error);
-            loadOngoingTrips(); // Refresh
-        }
-
-        async function updateTripTime(tripId) {
-            const tripTime = document.getElementById(`trip-time-${tripId}`).value;
-            const { error } = await supabase
-                .from('ongoing_trips')
-                .update({ trip_time: tripTime })
-                .eq('id', tripId);
-            if (error) console.error('Error updating trip time:', error);
-            loadOngoingTrips(); // Refresh
-        }
-
-        async function updateStatus(tripId, columnName, newValue) {
-            const { error } = await supabase
-                .from('ongoing_trips')
-                .update({ [columnName]: newValue })
-                .eq('id', tripId);
-            if (error) console.error(`Error updating ${columnName}:`, error);
-            loadOngoingTrips(); // Refresh
-        }
-
-        async function updateTripWentWell(tripId, newValue) {
-            const { error } = await supabase
-                .from('ongoing_trips')
-                .update({ trip_went_well: newValue })
-                .eq('id', tripId);
-            if (error) console.error('Error updating trip went well:', error);
-            loadOngoingTrips(); // Refresh
-        }
-
-        async function uploadProof(tripId, columnName) {
-            const fileUrl = document.getElementById(columnName.replace('_url', `-${tripId}`)).value;
-            const { error } = await supabase
-                .from('ongoing_trips')
-                .update({ [columnName]: fileUrl })
-                .eq('id', tripId);
-            if (error) console.error(`Error updating ${columnName}:`, error);
-            loadOngoingTrips(); // Refresh
-        }
-
-        function formatDateTimeLocal(isoString) {
-            if (!isoString) return '';
-            const date = new Date(isoString);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-        }
-
-        function formatDateTime(isoString) {
-            if (!isoString) return '';
-            const date = new Date(isoString);
-            return date.toLocaleString();
         }
 
         checkAuth();
-
-        // Make functions globally accessible for onclick events
-        window.updateTourCompany = updateTourCompany;
-        window.updateStatus = updateStatus;
-        window.uploadProof = uploadProof;
-        window.updateTripWentWell = updateTripWentWell;
-        window.updateTripTime = updateTripTime;
+        window.toggleEmailSent = toggleEmailSent; // Make it globally accessible for onclick
     </script>
 </body>
 </html>
