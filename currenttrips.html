@@ -3,160 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ongoing Trips</title>
+    <title>Manage Ongoing Trips</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 1000px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
-        .trip-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: center; }
-        .trip-item > div { padding: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="date"], input[type="number"] { width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; }
+        button:hover { background-color: #0056b3; }
+        .ongoing-trip-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+        .trip-info { flex-grow: 1; }
         .status-button { padding: 8px 12px; border-radius: 5px; cursor: pointer; border: none; font-size: 14px; }
         .green { background-color: green; color: white; }
         .red { background-color: red; color: white; }
-        .edit-input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 100%; box-sizing: border-box; }
-        .action-group { display: flex; gap: 5px; align-items: center; }
-        .payment-proof { display: flex; gap: 5px; align-items: center; }
-        .header { font-weight: bold; }
-        #ongoing-count, #completed-count { text-align: center; margin-top: 20px; font-weight: bold; }
-        .document-link { color: blue; text-decoration: underline; }
+        .action-buttons button { margin-left: 5px; background-color: #dc3545; color: white; }
+        .action-buttons button:hover { background-color: #c82333; }
+        .payment-proof { margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+        .payment-proof input[type="text"] { width: 300px; }
+        .payment-proof button { background-color: #28a745; }
+        .payment-proof button:hover { background-color: #1e7e34; }
+        #ongoing-trips-list { margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
+        <h2>Create Ongoing Trip</h2>
+        <form id="create-trip-form">
+            <div class="form-group">
+                <label for="tour_company_name">Name of Tour Company:</label>
+                <input type="text" id="tour_company_name" name="tour_company_name" required>
+            </div>
+            <div class="form-group">
+                <label for="tour_company_person">Contact Person (Tour Company):</label>
+                <input type="text" id="tour_company_person" name="tour_company_person">
+            </div>
+            <div class="form-group">
+                <label for="tourist_name">Name of Tourists:</label>
+                <input type="text" id="tourist_name" name="tourist_name" required>
+            </div>
+            <div class="form-group">
+                <label for="num_tourists">Number of Tourists:</label>
+                <input type="number" id="num_tourists" name="num_tourists" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="trip_start_date">Date Trip Starts:</label>
+                <input type="date" id="trip_start_date" name="trip_start_date" required>
+            </div>
+            <div class="form-group">
+                <label for="trip_end_date">Date Trip Ends:</label>
+                <input type="date" id="trip_end_date" name="trip_end_date">
+            </div>
+            <button type="submit">Create Trip</button>
+        </form>
+
         <h2>Ongoing Trips</h2>
         <div id="ongoing-trips-list">
-            <div class="trip-item header">
-                <div>Client Name</div>
-                <div>Tour Company</div>
-                <div>Trip Going On</div>
-                <div>Trip Start Date</div>
-                <div>30% Payment Proof</div>
-                <div>15% Payment Proof</div>
-                <div>Trip Ended</div>
-                <div>Actions</div>
             </div>
-        </div>
-        <h3 id="ongoing-count"></h3>
-        <h2>Completed Trips</h2>
-        <div id="completed-trips-list">
-            <div class="trip-item header">
-                <div>Client Name</div>
-                <div>Tour Company</div>
-                <div>Trip Start Date</div>
-                <div>Trip End Date</div>
-            </div>
-        </div>
-        <h3 id="completed-count"></h3>
     </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-const supabase = createClient(supabaseUrl, supabaseKey);
+       const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+       const supabase = createClient(supabaseUrl, supabaseKey);
+       
+        const createTripForm = document.getElementById('create-trip-form');
+        const ongoingTripsList = document.getElementById('ongoing-trips-list');
+        let ongoingTripsData = []; // Store ongoing trips locally
 
-        
         async function checkAuth() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 window.location.href = '/login.html';
             } else {
                 loadOngoingTrips();
-                loadCompletedTrips();
             }
         }
 
         async function loadOngoingTrips() {
-            const { data, error, count } = await supabase
-                .from('ongoing_trips')
-                .select('*, requested_trips(names)', { count: 'exact' })
-                .eq('trip_completed', false);
+            const { data, error } = await supabase
+                .from('ongoing_trips_v2') // Use a new table for this form-based approach
+                .select('*');
 
             if (error) {
                 console.error('Error loading ongoing trips:', error);
             } else if (data) {
-                displayOngoingTrips(data);
-                document.getElementById('ongoing-count').textContent = `Ongoing Trips: ${count}`;
+                ongoingTripsData = data;
+                displayOngoingTrips();
             }
         }
 
-        function displayOngoingTrips(trips) {
-            const ongoingList = document.getElementById('ongoing-trips-list');
-            trips.forEach(trip => {
-                const tripDiv = document.createElement('div');
-                tripDiv.classList.add('trip-item');
-                tripDiv.innerHTML = `
-                    <div>${trip.requested_trips?.names || 'N/A'}</div>
-                    <div><input type="text" class="edit-input" value="${trip.tour_company_name || ''}" onblur="updateField(${trip.id}, 'tour_company_name', this.value)"></div>
-                    <div><button class="status-button ${trip.trip_going_on ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_going_on', ${!trip.trip_going_on})">${trip.trip_going_on ? 'Yes' : 'No'}</button></div>
-                    <div><input type="date" class="edit-input" value="${trip.trip_start_date || ''}" onblur="updateField(${trip.id}, 'trip_start_date', this.value)"></div>
-                    <div>
-                        <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.share_received_proof_url || ''}" id="share-proof-${trip.id}" onblur="updateField(${trip.id}, 'share_received_proof_url', this.value)">
-                        ${trip.share_received_proof_url ? `<a href="${trip.share_received_proof_url}" target="_blank" class="document-link">View</a>` : ''}
-                    </div>
-                    <div>
-                        <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.guide_payment_proof_url || ''}" id="guide-payment-${trip.id}" onblur="updateField(${trip.id}, 'guide_payment_proof_url', this.value)">
-                        ${trip.guide_payment_proof_url ? `<a href="${trip.guide_payment_proof_url}" target="_blank" class="document-link">View</a>` : ''}
-                    </div>
-                    <div><button class="status-button ${trip.trip_completed ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_completed', ${!trip.trip_completed})">${trip.trip_completed ? 'Yes' : 'No'}</button></div>
-                    <div><button onclick="viewDetails(${trip.id})">Details</button></div>
-                `;
-                ongoingList.appendChild(tripDiv);
-            });
-        }
-
-        async function loadCompletedTrips() {
-            const { data, error, count } = await supabase
-                .from('ongoing_trips')
-                .select('requested_trips(names), tour_company_name, trip_start_date, trip_end_date')
-                .eq('trip_completed', true);
+        async function saveOngoingTrip(tripData) {
+            const { data, error } = await supabase
+                .from('ongoing_trips_v2')
+                .upsert([tripData], { onConflict: ['id'] }); // Update if ID exists
 
             if (error) {
-                console.error('Error loading completed trips:', error);
-            } else if (data) {
-                displayCompletedTrips(data);
-                document.getElementById('completed-count').textContent = `Completed Trips: ${count}`;
+                console.error('Error saving ongoing trip:', error);
+            } else {
+                loadOngoingTrips(); // Refresh list
             }
         }
 
-        function displayCompletedTrips(trips) {
-            const completedList = document.getElementById('completed-trips-list');
-            completedList.innerHTML = '';
-            trips.forEach(trip => {
+        async function deleteOngoingTrip(tripId) {
+            if (confirm('Are you sure you want to delete this trip?')) {
+                const { error } = await supabase
+                    .from('ongoing_trips_v2')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error deleting trip:', error);
+                } else {
+                    loadOngoingTrips(); // Refresh list
+                }
+            }
+        }
+
+        async function cancelOngoingTrip(tripId) {
+            // Implement your cancel logic here (e.g., update status)
+            alert(`Cancel trip functionality for ID: ${tripId} needs implementation.`);
+        }
+
+        function displayOngoingTrips() {
+            ongoingTripsList.innerHTML = '';
+            ongoingTripsData.forEach(trip => {
                 const tripDiv = document.createElement('div');
-                tripDiv.classList.add('trip-item');
+                tripDiv.classList.add('ongoing-trip-item');
                 tripDiv.innerHTML = `
-                    <div>${trip.requested_trips?.names || 'N/A'}</div>
-                    <div>${trip.tour_company_name || 'N/A'}</div>
-                    <div>${trip.trip_start_date || 'N/A'}</div>
-                    <div>${trip.trip_end_date || 'N/A'}</div>
+                    <div class="trip-info">
+                        <p><strong>Tour Company:</strong> ${trip.tour_company_name}</p>
+                        <p><strong>Contact Person:</strong> ${trip.tour_company_person || 'N/A'}</p>
+                        <p><strong>Tourists:</strong> ${trip.tourist_name}</p>
+                        <p><strong>Number of Tourists:</strong> ${trip.num_tourists}</p>
+                        <p><strong>Start Date:</strong> ${trip.trip_start_date}</p>
+                        <p><strong>End Date:</strong> ${trip.trip_end_date || 'N/A'}</p>
+                        <button class="status-button green">In Progress</button>
+                    </div>
+                    <div class="payment-proof">
+                        <label for="proof-30-${trip.id}">30% Payment Proof:</label>
+                        <input type="text" id="proof-30-${trip.id}" value="${trip.payment_proof_30_url || ''}">
+                        <button onclick="updatePaymentProof(${trip.id}, 'payment_proof_30_url', document.getElementById('proof-30-${trip.id}').value)">Save 30% Proof</button>
+                    </div>
+                    <div class="payment-proof">
+                        <label for="proof-15-${trip.id}">15% Payment Proof:</label>
+                        <input type="text" id="proof-15-${trip.id}" value="${trip.payment_proof_15_url || ''}">
+                        <button onclick="updatePaymentProof(${trip.id}, 'payment_proof_15_url', document.getElementById('proof-15-${trip.id}').value)">Save 15% Proof</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button onclick="deleteOngoingTrip(${trip.id})">Delete Trip</button>
+                        <button onclick="cancelOngoingTrip(${trip.id})">Cancel Trip</button>
+                    </div>
                 `;
-                completedList.appendChild(tripDiv);
+                ongoingTripsList.appendChild(tripDiv);
             });
         }
 
-        async function updateField(tripId, columnName, value) {
+        async function updatePaymentProof(tripId, columnName, url) {
             const updateData = {};
-            updateData[columnName] = value;
+            updateData[columnName] = url;
             const { error } = await supabase
-                .from('ongoing_trips')
+                .from('ongoing_trips_v2')
                 .update(updateData)
                 .eq('id', tripId);
-            if (error) console.error(`Error updating ${columnName}:`, error);
-            loadOngoingTrips(); // Refresh
-            loadCompletedTrips(); // Refresh completed list if trip status changes
+
+            if (error) {
+                console.error(`Error updating ${columnName}:`, error);
+                alert('Failed to update payment proof link.');
+            } else {
+                loadOngoingTrips(); // Refresh list
+            }
         }
 
-        function viewDetails(tripId) {
-            // Implement logic to show more details
-            console.log('View details for trip ID:', tripId);
-        }
+        createTripForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(createTripForm);
+            const newTrip = {
+                tour_company_name: formData.get('tour_company_name'),
+                tour_company_person: formData.get('tour_company_person'),
+                tourist_name: formData.get('tourist_name'),
+                num_tourists: parseInt(formData.get('num_tourists')),
+                trip_start_date: formData.get('trip_start_date'),
+                trip_end_date: formData.get('trip_end_date'),
+                trip_in_progress: true // Set to true on creation
+            };
+
+            const { data, error } = await supabase
+                .from('ongoing_trips_v2')
+                .insert([newTrip]);
+
+            if (error) {
+                console.error('Error creating ongoing trip:', error);
+                alert('Failed to create ongoing trip.');
+            } else {
+                createTripForm.reset();
+                loadOngoingTrips(); // Refresh the list
+            }
+        });
 
         checkAuth();
-
-        window.updateField = updateField;
-        window.viewDetails = viewDetails;
     </script>
 </body>
 </html>
