@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +6,9 @@
     <title>Ongoing Trips</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .container { max-width: 1000px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
-        .trip-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px; align-items: center; }
+        .trip-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 4px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: center; }
         .trip-item > div { padding: 8px; }
         .status-button { padding: 8px 12px; border-radius: 5px; cursor: pointer; border: none; font-size: 14px; }
         .green { background-color: green; color: white; }
@@ -18,7 +17,8 @@
         .action-group { display: flex; gap: 5px; align-items: center; }
         .payment-proof { display: flex; gap: 5px; align-items: center; }
         .header { font-weight: bold; }
-        #ongoing-count { text-align: center; margin-top: 20px; font-weight: bold; }
+        #ongoing-count, #completed-count { text-align: center; margin-top: 20px; font-weight: bold; }
+        .document-link { color: blue; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -26,20 +26,27 @@
         <h2>Ongoing Trips</h2>
         <div id="ongoing-trips-list">
             <div class="trip-item header">
-                <div>Name</div>
-                <div>Email</div>
-                <div>People</div>
-                <div>Place</div>
+                <div>Client Name</div>
                 <div>Tour Company</div>
-                <div>Started</div>
-                <div>Completed</div>
-                <div>Share Received</div>
-                <div>Guide Accepted</div>
-                <div>Trip Time</div>
+                <div>Trip Going On</div>
+                <div>Trip Start Date</div>
+                <div>30% Payment Proof</div>
+                <div>15% Payment Proof</div>
+                <div>Trip Ended</div>
                 <div>Actions</div>
             </div>
         </div>
         <h3 id="ongoing-count"></h3>
+        <h2>Completed Trips</h2>
+        <div id="completed-trips-list">
+            <div class="trip-item header">
+                <div>Client Name</div>
+                <div>Tour Company</div>
+                <div>Trip Start Date</div>
+                <div>Trip End Date</div>
+            </div>
+        </div>
+        <h3 id="completed-count"></h3>
     </div>
 
     <script type="module">
@@ -49,19 +56,22 @@ const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+        
         async function checkAuth() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 window.location.href = '/login.html';
             } else {
                 loadOngoingTrips();
+                loadCompletedTrips();
             }
         }
 
         async function loadOngoingTrips() {
             const { data, error, count } = await supabase
                 .from('ongoing_trips')
-                .select('*, requested_trips(names, email, num_people, trip_name)', { count: 'exact' });
+                .select('*, requested_trips(names)', { count: 'exact' })
+                .eq('trip_completed', false);
 
             if (error) {
                 console.error('Error loading ongoing trips:', error);
@@ -78,20 +88,51 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 tripDiv.classList.add('trip-item');
                 tripDiv.innerHTML = `
                     <div>${trip.requested_trips?.names || 'N/A'}</div>
-                    <div>${trip.requested_trips?.email || 'N/A'}</div>
-                    <div>${trip.requested_trips?.num_people || 'N/A'}</div>
-                    <div>${trip.requested_trips?.trip_name || 'N/A'}</div>
-                    <div><input type="text" class="edit-input" value="${trip.tour_company_name || ''}" data-trip-id="${trip.id}" id="tour-company-${trip.id}" onblur="updateField(${trip.id}, 'tour_company_name', this.value)"></div>
-                    <div><button class="status-button ${trip.trip_started ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_started', ${!trip.trip_started})">${trip.trip_started ? 'Yes' : 'No'}</button></div>
-                    <div><button class="status-button ${trip.trip_completed ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_completed', ${!trip.trip_completed})">${trip.trip_completed ? 'Yes' : 'No'}</button></div>
-                    <div><button class="status-button ${trip.share_received ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'share_received', ${!trip.share_received})">${trip.share_received ? 'Yes' : 'No'}</button></div>
-                    <div><button class="status-button ${trip.guide_accepted ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'guide_accepted', ${!trip.guide_accepted})">${trip.guide_accepted ? 'Yes' : 'No'}</button></div>
-                    <div><input type="datetime-local" class="edit-input" value="${formatDateTimeLocal(trip.trip_time)}" data-trip-id="${trip.id}" id="trip-time-${trip.id}" onblur="updateField(${trip.id}, 'trip_time', this.value)"></div>
-                    <div class="action-group">
-                        <button onclick="viewDetails(${trip.id})">Details</button>
+                    <div><input type="text" class="edit-input" value="${trip.tour_company_name || ''}" onblur="updateField(${trip.id}, 'tour_company_name', this.value)"></div>
+                    <div><button class="status-button ${trip.trip_going_on ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_going_on', ${!trip.trip_going_on})">${trip.trip_going_on ? 'Yes' : 'No'}</button></div>
+                    <div><input type="date" class="edit-input" value="${trip.trip_start_date || ''}" onblur="updateField(${trip.id}, 'trip_start_date', this.value)"></div>
+                    <div>
+                        <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.share_received_proof_url || ''}" id="share-proof-${trip.id}" onblur="updateField(${trip.id}, 'share_received_proof_url', this.value)">
+                        ${trip.share_received_proof_url ? `<a href="${trip.share_received_proof_url}" target="_blank" class="document-link">View</a>` : ''}
                     </div>
+                    <div>
+                        <input type="text" class="edit-input" placeholder="PDF Link" value="${trip.guide_payment_proof_url || ''}" id="guide-payment-${trip.id}" onblur="updateField(${trip.id}, 'guide_payment_proof_url', this.value)">
+                        ${trip.guide_payment_proof_url ? `<a href="${trip.guide_payment_proof_url}" target="_blank" class="document-link">View</a>` : ''}
+                    </div>
+                    <div><button class="status-button ${trip.trip_completed ? 'green' : 'red'}" onclick="updateField(${trip.id}, 'trip_completed', ${!trip.trip_completed})">${trip.trip_completed ? 'Yes' : 'No'}</button></div>
+                    <div><button onclick="viewDetails(${trip.id})">Details</button></div>
                 `;
                 ongoingList.appendChild(tripDiv);
+            });
+        }
+
+        async function loadCompletedTrips() {
+            const { data, error, count } = await supabase
+                .from('ongoing_trips')
+                .select('requested_trips(names), tour_company_name, trip_start_date, trip_end_date')
+                .eq('trip_completed', true);
+
+            if (error) {
+                console.error('Error loading completed trips:', error);
+            } else if (data) {
+                displayCompletedTrips(data);
+                document.getElementById('completed-count').textContent = `Completed Trips: ${count}`;
+            }
+        }
+
+        function displayCompletedTrips(trips) {
+            const completedList = document.getElementById('completed-trips-list');
+            completedList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <div>${trip.requested_trips?.names || 'N/A'}</div>
+                    <div>${trip.tour_company_name || 'N/A'}</div>
+                    <div>${trip.trip_start_date || 'N/A'}</div>
+                    <div>${trip.trip_end_date || 'N/A'}</div>
+                `;
+                completedList.appendChild(tripDiv);
             });
         }
 
@@ -104,23 +145,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 .eq('id', tripId);
             if (error) console.error(`Error updating ${columnName}:`, error);
             loadOngoingTrips(); // Refresh
+            loadCompletedTrips(); // Refresh completed list if trip status changes
         }
 
         function viewDetails(tripId) {
-            // Implement logic to show more details (e.g., modal or separate page)
+            // Implement logic to show more details
             console.log('View details for trip ID:', tripId);
-        }
-
-        function formatDateTimeLocal(isoString) {
-            if (!isoString) return '';
-            const date = new Date(isoString);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
         }
 
         checkAuth();
