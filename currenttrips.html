@@ -94,6 +94,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
             if (error) {
                 console.error('Error loading ongoing trips:', error);
+                alert(`Error loading trips: ${error.message}`);
             } else if (data) {
                 ongoingTripsData = data;
                 displayOngoingTrips();
@@ -107,6 +108,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
             if (error) {
                 console.error('Error saving ongoing trip:', error);
+                alert(`Error saving trip: ${error.message}`);
             } else {
                 loadOngoingTrips();
             }
@@ -121,6 +123,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
                 if (error) {
                     console.error('Error deleting trip:', error);
+                    alert(`Error deleting trip: ${error.message}`);
                 } else {
                     loadOngoingTrips();
                 }
@@ -130,12 +133,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         async function cancelOngoingTrip(tripId) {
             const { error } = await supabase
                 .from('ongoing_trips_v2')
-                .update({ trip_in_progress: false, trip_canceled: true }) // Set in_progress to false and canceled to true
+                .update({ trip_in_progress: false, trip_canceled: true })
                 .eq('id', tripId);
 
             if (error) {
                 console.error('Error canceling trip:', error);
-                alert('Failed to cancel trip.');
+                alert(`Error canceling trip: ${error.message}`);
             } else {
                 loadOngoingTrips();
             }
@@ -151,7 +154,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
             if (error) {
                 console.error(`Error updating ${columnName}:`, error);
-                alert('Failed to update payment proof link.');
+                alert(`Error updating ${columnName}: ${error.message}`);
             } else {
                 loadOngoingTrips();
             }
@@ -204,7 +207,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 trip_start_date: formData.get('trip_start_date'),
                 trip_end_date: formData.get('trip_end_date'),
                 trip_in_progress: true,
-                trip_canceled: false // Initialize as not canceled
+                trip_canceled: false
             };
 
             const { data, error } = await supabase
@@ -213,14 +216,19 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
             if (error) {
                 console.error('Error creating ongoing trip:', error);
-                alert('Failed to create ongoing trip.');
+                alert(`Error creating trip: ${error.message}`);
             } else {
                 createTripForm.reset();
                 loadOngoingTrips();
             }
         });
 
+        // Make the functions globally accessible
+        window.deleteOngoingTrip = deleteOngoingTrip;
+        window.cancelOngoingTrip = cancelOngoingTrip;
+        window.updatePaymentProof = updatePaymentProof;
+
         checkAuth();
     </script>
 </body>
-</html>
+    </html>
