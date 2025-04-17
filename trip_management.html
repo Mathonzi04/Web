@@ -119,8 +119,9 @@
                             ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
                         </div>
                         <div class="payment-proof">
-                            <span class="info-label">15% Proof:</span>
-                            <span class="not-uploaded">Not available</span>
+                            <span class="info-label">15%  Proof:</span>
+                     ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
+
                         </div>
                         <p><span class="info-label">Place:</span> N/A</p>
                         <p><span class="info-label">Started Time:</span> N/A</p>
