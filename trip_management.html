@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Trips</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .trip-section { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
+        .trip-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .trip-item:last-child { border-bottom: none; }
+        .trip-details { flex-grow: 1; }
+        .trip-actions button { background-color: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 5px; }
+        .trip-actions button:hover { background-color: #0056b3; }
+        #completed-trips { border-color: green; }
+        #completed-trips h2 { color: green; }
+        #completed-trips-list .trip-item { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ongoing Trips</h2>
+        <div id="ongoing-trips-list" class="trip-section">
+            </div>
+
+        <h2>Canceled Trips</h2>
+        <div id="canceled-trips-list" class="trip-section">
+            </div>
+
+        <h2>Completed Trips</h2>
+        <div id="completed-trips-list" class="trip-section">
+            </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const ongoingTripsList = document.getElementById('ongoing-trips-list');
+        const canceledTripsList = document.getElementById('canceled-trips-list');
+        const completedTripsList = document.getElementById('completed-trips-list');
+
+        let allTripsData = [];
+
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = '/login.html';
+            } else {
+                loadAllTrips();
+            }
+        }
+
+        async function loadAllTrips() {
+            const { data, error } = await supabase
+                .from('ongoing_trips_v2')
+                .select('*');
+
+            if (error) {
+                console.error('Error loading trips:', error);
+                alert(`Error loading trips: ${error.message}`);
+            } else if (data) {
+                allTripsData = data;
+                displayTrips(data);
+            }
+        }
+
+        function displayTrips(trips) {
+            const ongoingTrips = trips.filter(trip => trip.trip_in_progress && !trip.trip_canceled && !trip.trip_completed);
+            const canceledTrips = trips.filter(trip => trip.trip_canceled);
+            const completedTrips = trips.filter(trip => trip.trip_completed);
+
+            displayOngoingTrips(ongoingTrips);
+            displayCanceledTrips(canceledTrips);
+            displayCompletedTrips(completedTrips);
+        }
+
+        function displayOngoingTrips(trips) {
+            ongoingTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <div class="trip-details">
+                        ${trip.tour_company_name} - ${trip.tourist_name} (Starts: ${trip.trip_start_date})
+                    </div>
+                    <div class="trip-actions">
+                        <button onclick="markAsCompleted(${trip.id}, this.parentNode.parentNode)">Trip done</button>
+                        <button onclick="cancelOngoingTrip(${trip.id})">Cancel</button>
+                        <button onclick="deleteOngoingTrip(${trip.id})">Delete</button>
+                    </div>
+                `;
+                ongoingTripsList.appendChild(tripDiv);
+            });
+        }
+
+        function displayCanceledTrips(trips) {
+            canceledTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <div class="trip-details canceled">
+                        ${trip.tour_company_name} - ${trip.tourist_name} (Starts: ${trip.trip_start_date}) - Canceled
+                    </div>
+                    <div class="trip-actions">
+                        <button onclick="deleteOngoingTrip(${trip.id})">Delete</button>
+                    </div>
+                `;
+                canceledTripsList.appendChild(tripDiv);
+            });
+        }
+
+        function displayCompletedTrips(trips) {
+            completedTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <div class="trip-details">
+                        ${trip.tour_company_name} - ${trip.tourist_name} (Started: ${trip.trip_start_date}) - Completed
+                    </div>
+                `;
+                completedTripsList.appendChild(tripDiv);
+            });
+        }
+
+        async function markAsCompleted(tripId, tripItem) {
+            const { error } = await supabase
+                .from('ongoing_trips_v2')
+                .update({ trip_in_progress: false, trip_completed: true })
+                .eq('id', tripId);
+
+            if (error) {
+                console.error('Error marking trip as completed:', error);
+                alert(`Error marking trip as completed: ${error.message}`);
+            } else {
+                // Optimistically remove from ongoing and add to completed in the UI
+                ongoingTripsList.removeChild(tripItem);
+                const completedTripDiv = document.createElement('div');
+                completedTripDiv.classList.add('trip-item');
+                completedTripDiv.innerHTML = `
+                    <div class="trip-details">
+                        ${tripItem.querySelector('.trip-details').textContent} - Completed
+                    </div>
+                `;
+                completedTripsList.appendChild(completedTripDiv);
+            }
+        }
+
+        async function cancelOngoingTrip(tripId) {
+            const { error } = await supabase
+                .from('ongoing_trips_v2')
+                .update({ trip_in_progress: false, trip_canceled: true })
+                .eq('id', tripId);
+
+            if (error) {
+                console.error('Error canceling trip:', error);
+                alert(`Error canceling trip: ${error.message}`);
+            } else {
+                loadAllTrips(); // Reload to update UI
+            }
+        }
+
+        async function deleteOngoingTrip(tripId) {
+            if (confirm('Are you sure you want to delete this trip?')) {
+                const { error } = await supabase
+                    .from('ongoing_trips_v2')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error deleting trip:', error);
+                    alert(`Error deleting trip: ${error.message}`);
+                } else {
+                    loadAllTrips(); // Reload to update UI
+                }
+            }
+        }
+
+        checkAuth();
+        window.markAsCompleted = markAsCompleted;
+        window.cancelOngoingTrip = cancelOngoingTrip;
+        window.deleteOngoingTrip = deleteOngoingTrip;
+    </script>
+</body>
+</html>
