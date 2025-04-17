@@ -9,19 +9,31 @@
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
         .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .search-container { margin-bottom: 15px; display: flex; }
+        .search-container input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
         .trip-section { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
-        .trip-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .trip-item { border-bottom: 1px solid #eee; padding: 10px 0; }
         .trip-item:last-child { border-bottom: none; }
-        .trip-details { flex-grow: 1; }
+        .trip-details { margin-bottom: 10px; }
+        .info-label { font-weight: bold; margin-right: 5px; }
         .trip-actions button { background-color: #007bff; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: 5px; }
         .trip-actions button:hover { background-color: #0056b3; }
-        #completed-trips { border-color: green; }
-        #completed-trips h2 { color: green; }
-        #completed-trips-list .trip-item { background-color: #f9f9f9; }
+        #completed-trips-list { border-color: green; }
+        #completed-trips-list h2 { color: green; }
+        .canceled { background-color: orange; color: white; }
+        #trip-counts { text-align: center; margin-bottom: 15px; font-weight: bold; }
+        .payment-proof { margin-top: 5px; }
+        .not-uploaded { font-style: italic; color: gray; }
     </style>
 </head>
 <body>
     <div class="container">
+        <h2>Manage Trips</h2>
+        <div class="search-container">
+            <input type="text" id="search-trip-name" placeholder="Search names or company">
+        </div>
+        <div id="trip-counts"></div>
+
         <h2>Ongoing Trips</h2>
         <div id="ongoing-trips-list" class="trip-section">
             </div>
@@ -38,13 +50,15 @@
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
+ const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+ const supabase = createClient(supabaseUrl, supabaseKey);
+ 
         const ongoingTripsList = document.getElementById('ongoing-trips-list');
         const canceledTripsList = document.getElementById('canceled-trips-list');
         const completedTripsList = document.getElementById('completed-trips-list');
+        const searchInput = document.getElementById('search-trip-name');
+        const tripCountsDiv = document.getElementById('trip-counts');
 
         let allTripsData = [];
 
@@ -79,6 +93,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             displayOngoingTrips(ongoingTrips);
             displayCanceledTrips(canceledTrips);
             displayCompletedTrips(completedTrips);
+
+            tripCountsDiv.innerHTML = `
+                <strong>Ongoing Trips:</strong> ${ongoingTrips.length} |
+                <strong>Canceled Trips:</strong> ${canceledTrips.length} |
+                <strong>Completed Trips:</strong> ${completedTrips.length}
+            `;
         }
 
         function displayOngoingTrips(trips) {
@@ -88,7 +108,23 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 tripDiv.classList.add('trip-item');
                 tripDiv.innerHTML = `
                     <div class="trip-details">
-                        ${trip.tour_company_name} - ${trip.tourist_name} (Starts: ${trip.trip_start_date})
+                        <p><span class="info-label">Company:</span> ${trip.tour_company_name || 'N/A'}</p>
+                        <p><span class="info-label">Contact:</span> ${trip.tour_company_person || 'N/A'}</p>
+                        <p><span class="info-label">Tourists:</span> ${trip.tourist_name}</p>
+                        <p><span class="info-label">People:</span> ${trip.num_tourists || 'N/A'}</p>
+                        <p><span class="info-label">Start Date:</span> ${trip.trip_start_date || 'N/A'}</p>
+                        <p><span class="info-label">End Date:</span> ${trip.trip_end_date || 'N/A'}</p>
+                        <div class="payment-proof">
+                            <span class="info-label">30% Proof:</span>
+                            ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
+                        </div>
+                        <div class="payment-proof">
+                            <span class="info-label">15% Proof:</span>
+                            <span class="not-uploaded">Not available</span>
+                        </div>
+                        <p><span class="info-label">Place:</span> N/A</p>
+                        <p><span class="info-label">Started Time:</span> N/A</p>
+                        <p><span class="info-label">Completed Time:</span> N/A</p>
                     </div>
                     <div class="trip-actions">
                         <button onclick="markAsCompleted(${trip.id}, this.parentNode.parentNode)">Trip done</button>
@@ -107,7 +143,24 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 tripDiv.classList.add('trip-item');
                 tripDiv.innerHTML = `
                     <div class="trip-details canceled">
-                        ${trip.tour_company_name} - ${trip.tourist_name} (Starts: ${trip.trip_start_date}) - Canceled
+                        <p><span class="info-label">Company:</span> ${trip.tour_company_name || 'N/A'}</p>
+                        <p><span class="info-label">Contact:</span> ${trip.tour_company_person || 'N/A'}</p>
+                        <p><span class="info-label">Tourists:</span> ${trip.tourist_name}</p>
+                        <p><span class="info-label">People:</span> ${trip.num_tourists || 'N/A'}</p>
+                        <p><span class="info-label">Start Date:</span> ${trip.trip_start_date || 'N/A'}</p>
+                        <p><span class="info-label">End Date:</span> ${trip.trip_end_date || 'N/A'}</p>
+                        <div class="payment-proof">
+                            <span class="info-label">30% Proof:</span>
+                            ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
+                        </div>
+                        <div class="payment-proof">
+                            <span class="info-label">15% Proof:</span>
+                            <span class="not-uploaded">Not available</span>
+                        </div>
+                        <p><span class="info-label">Place:</span> N/A</p>
+                        <p><span class="info-label">Started Time:</span> N/A</p>
+                        <p><span class="info-label">Completed Time:</span> N/A</p>
+                        <p><strong>Status:</strong> Canceled</p>
                     </div>
                     <div class="trip-actions">
                         <button onclick="deleteOngoingTrip(${trip.id})">Delete</button>
@@ -124,7 +177,24 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 tripDiv.classList.add('trip-item');
                 tripDiv.innerHTML = `
                     <div class="trip-details">
-                        ${trip.tour_company_name} - ${trip.tourist_name} (Started: ${trip.trip_start_date}) - Completed
+                        <p><span class="info-label">Company:</span> ${trip.tour_company_name || 'N/A'}</p>
+                        <p><span class="info-label">Contact:</span> ${trip.tour_company_person || 'N/A'}</p>
+                        <p><span class="info-label">Tourists:</span> ${trip.tourist_name}</p>
+                        <p><span class="info-label">People:</span> ${trip.num_tourists || 'N/A'}</p>
+                        <p><span class="info-label">Start Date:</span> ${trip.trip_start_date || 'N/A'}</p>
+                        <p><span class="info-label">End Date:</span> ${trip.trip_end_date || 'N/A'}</p>
+                        <div class="payment-proof">
+                            <span class="info-label">30% Proof:</span>
+                            ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
+                        </div>
+                        <div class="payment-proof">
+                            <span class="info-label">15% Proof:</span>
+                            <span class="not-uploaded">Not available</span>
+                        </div>
+                        <p><span class="info-label">Place:</span> N/A</p>
+                        <p><span class="info-label">Started Time:</span> N/A</p>
+                        <p><span class="info-label">Completed Time:</span> N/A</p>
+                        <p><strong>Status:</strong> Completed</p>
                     </div>
                 `;
                 completedTripsList.appendChild(tripDiv);
@@ -134,23 +204,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         async function markAsCompleted(tripId, tripItem) {
             const { error } = await supabase
                 .from('ongoing_trips_v2')
-                .update({ trip_in_progress: false, trip_completed: true })
+                .update({ trip_in_progress: false, trip_completed: true, time_completed: new Date().toISOString() })
                 .eq('id', tripId);
 
             if (error) {
                 console.error('Error marking trip as completed:', error);
                 alert(`Error marking trip as completed: ${error.message}`);
             } else {
-                // Optimistically remove from ongoing and add to completed in the UI
-                ongoingTripsList.removeChild(tripItem);
-                const completedTripDiv = document.createElement('div');
-                completedTripDiv.classList.add('trip-item');
-                completedTripDiv.innerHTML = `
-                    <div class="trip-details">
-                        ${tripItem.querySelector('.trip-details').textContent} - Completed
-                    </div>
-                `;
-                completedTripsList.appendChild(completedTripDiv);
+                loadAllTrips(); // Reload to update UI
             }
         }
 
@@ -183,6 +244,15 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                 }
             }
         }
+
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.toLowerCase();
+            const filteredTrips = allTripsData.filter(trip =>
+                trip.tourist_name.toLowerCase().includes(searchTerm) ||
+                (trip.tour_company_name && trip.tour_company_name.toLowerCase().includes(searchTerm))
+            );
+            displayTrips(filteredTrips);
+        });
 
         checkAuth();
         window.markAsCompleted = markAsCompleted;
