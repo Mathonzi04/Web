@@ -30,7 +30,7 @@
     <div class="container">
         <h2>Manage Trips</h2>
         <div class="search-container">
-            <input type="text" id="search-trip-name" placeholder="Search names or company">
+            <input type="text" id="search-trip-name" placeholder="Search names, company or place">
         </div>
         <div id="trip-counts"></div>
 
@@ -45,20 +45,62 @@
         <h2>Completed Trips</h2>
         <div id="completed-trips-list" class="trip-section">
             </div>
+
+        <h2>Create Ongoing Trip</h2>
+        <form id="create-trip-form">
+            <div class="form-group">
+                <label for="tour_company_name">Name of Tour Company:</label>
+                <input type="text" id="tour_company_name" name="tour_company_name" required>
+            </div>
+            <div class="form-group">
+                <label for="tour_company_person">Contact Person (Tour Company):</label>
+                <input type="text" id="tour_company_person" name="tour_company_person">
+            </div>
+            <div class="form-group">
+                <label for="tourist_name">Name of Tourists:</label>
+                <input type="text" id="tourist_name" name="tourist_name" required>
+            </div>
+            <div class="form-group">
+                <label for="num_tourists">Number of Tourists:</label>
+                <input type="number" id="num_tourists" name="num_tourists" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="trip_start_date">Date Trip Starts:</label>
+                <input type="date" id="trip_start_date" name="trip_start_date" required>
+            </div>
+            <div class="form-group">
+                <label for="trip_end_date">Date Trip Ends:</label>
+                <input type="date" id="trip_end_date" name="trip_end_date">
+            </div>
+            <div class="form-group">
+                <label for="place">Place (Trip Place):</label>
+                <input type="text" id="place" name="place">
+            </div>
+            <div class="form-group">
+                <label for="time_started">Time Trip Started:</label>
+                <input type="text" id="time_started" name="time_started" placeholder="e.g., 09:00 AM">
+            </div>
+            <div class="form-group">
+                <label for="time_completed">Time Trip Ended:</label>
+                <input type="text" id="time_completed" name="time_completed" placeholder="e.g., 05:00 PM">
+            </div>
+            <button type="submit">Create Trip</button>
+        </form>
     </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
- const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
- const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
- const supabase = createClient(supabaseUrl, supabaseKey);
- 
+  const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+  
         const ongoingTripsList = document.getElementById('ongoing-trips-list');
         const canceledTripsList = document.getElementById('canceled-trips-list');
         const completedTripsList = document.getElementById('completed-trips-list');
         const searchInput = document.getElementById('search-trip-name');
         const tripCountsDiv = document.getElementById('trip-counts');
+        const createTripForm = document.getElementById('create-trip-form');
 
         let allTripsData = [];
 
@@ -119,13 +161,12 @@
                             ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
                         </div>
                         <div class="payment-proof">
-                            <span class="info-label">15%  Proof:</span>
-                     ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
-
+                            <span class="info-label">15% Proof:</span>
+                            ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
                         </div>
-                        <p><span class="info-label">Place:</span> N/A</p>
-                        <p><span class="info-label">Started Time:</span> N/A</p>
-                        <p><span class="info-label">Completed Time:</span> N/A</p>
+                        <p><span class="info-label">Place:</span> ${trip.place || 'N/A'}</p>
+                        <p><span class="info-label">Started Time:</span> ${trip.time_started || 'N/A'}</p>
+                        <p><span class="info-label">Completed Time:</span> ${trip.time_completed || 'N/A'}</p>
                     </div>
                     <div class="trip-actions">
                         <button onclick="markAsCompleted(${trip.id}, this.parentNode.parentNode)">Trip done</button>
@@ -156,11 +197,11 @@
                         </div>
                         <div class="payment-proof">
                             <span class="info-label">15% Proof:</span>
-                            <span class="not-uploaded">Not available</span>
+                            ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
                         </div>
-                        <p><span class="info-label">Place:</span> N/A</p>
-                        <p><span class="info-label">Started Time:</span> N/A</p>
-                        <p><span class="info-label">Completed Time:</span> N/A</p>
+                        <p><span class="info-label">Place:</span> ${trip.place || 'N/A'}</p>
+                        <p><span class="info-label">Started Time:</span> ${trip.time_started || 'N/A'}</p>
+                        <p><span class="info-label">Completed Time:</span> ${trip.time_completed || 'N/A'}</p>
                         <p><strong>Status:</strong> Canceled</p>
                     </div>
                     <div class="trip-actions">
@@ -190,11 +231,11 @@
                         </div>
                         <div class="payment-proof">
                             <span class="info-label">15% Proof:</span>
-                          ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
+                            ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : '<span class="not-uploaded">Not uploaded</span>'}
                         </div>
-                        <p><span class="info-label">Place:</span> N/A</p>
-                        <p><span class="info-label">Started Time:</span> N/A</p>
-                        <p><span class="info-label">Completed Time:</span> N/A</p>
+                        <p><span class="info-label">Place:</span> ${trip.place || 'N/A'}</p>
+                        <p><span class="info-label">Started Time:</span> ${trip.time_started || 'N/A'}</p>
+                        <p><span class="info-label">Completed Time:</span> ${trip.time_completed || 'N/A'}</p>
                         <p><strong>Status:</strong> Completed</p>
                     </div>
                 `;
@@ -203,9 +244,10 @@
         }
 
         async function markAsCompleted(tripId, tripItem) {
+            const now = new Date().toLocaleTimeString(); // Or any format you prefer
             const { error } = await supabase
                 .from('ongoing_trips_v2')
-                .update({ trip_in_progress: false, trip_completed: true, time_completed: new Date().toISOString() })
+                .update({ trip_in_progress: false, trip_completed: true, time_completed: now })
                 .eq('id', tripId);
 
             if (error) {
@@ -250,15 +292,12 @@
             const searchTerm = event.target.value.toLowerCase();
             const filteredTrips = allTripsData.filter(trip =>
                 trip.tourist_name.toLowerCase().includes(searchTerm) ||
-                (trip.tour_company_name && trip.tour_company_name.toLowerCase().includes(searchTerm))
+                (trip.tour_company_name && trip.tour_company_name.toLowerCase().includes(searchTerm)) ||
+                (trip.place && trip.place.toLowerCase().includes(searchTerm))
             );
             displayTrips(filteredTrips);
         });
 
-        checkAuth();
-        window.markAsCompleted = markAsCompleted;
-        window.cancelOngoingTrip = cancelOngoingTrip;
-        window.deleteOngoingTrip = deleteOngoingTrip;
-    </script>
+        </script>
 </body>
-</html>
+    </html> 
