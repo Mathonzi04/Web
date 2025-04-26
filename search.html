@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Posts</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .search-container { margin-bottom: 15px; display: flex; }
+        .search-container input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        .search-container button { background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 10px 15px; cursor: pointer; font-size: 16px; margin-left: 10px; }
+        .search-results { margin-top: 20px; }
+        .post-result { border: 1px solid #ddd; padding: 15px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; }
+        .post-result h3 { margin-top: 0; margin-bottom: 5px; color: #333; }
+        .post-result p { margin-bottom: 5px; color: #555; }
+        .no-results { text-align: center; color: #777; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Search Posts</h2>
+        <div class="search-container">
+            <input type="text" id="search-title" placeholder="Enter a title to search">
+            <button onclick="searchPosts()">Search</button>
+        </div>
+        <div id="search-results" class="search-results">
+            </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const searchInput = document.getElementById('search-title');
+        const searchResultsDiv = document.getElementById('search-results');
+
+        async function searchPosts() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            searchResultsDiv.innerHTML = '<p>Searching...</p>';
+
+            if (searchTerm) {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .ilike('title', `%${searchTerm}%`);
+
+                if (error) {
+                    console.error('Error searching posts:', error);
+                    searchResultsDiv.innerHTML = `<p class="error">Error searching posts: ${error.message}</p>`;
+                } else if (data && data.length > 0) {
+                    displaySearchResults(data);
+                } else {
+                    searchResultsDiv.innerHTML = '<p class="no-results">No posts found matching your search.</p>';
+                }
+            } else {
+                searchResultsDiv.innerHTML = '<p class="no-results">Please enter a title to search.</p>';
+            }
+        }
+
+        function displaySearchResults(results) {
+            searchResultsDiv.innerHTML = '';
+            results.forEach(post => {
+                const postResultDiv = document.createElement('div');
+                postResultDiv.classList.add('post-result');
+                postResultDiv.innerHTML = `
+                    <h3>${post.title || 'N/A'}</h3>
+                    <p><strong>ID:</strong> ${post.id || 'N/A'}</p>
+                    ${post.content ? `<p><strong>Content:</strong> ${post.content.substring(0, 50)}...</p>` : ''}
+                    ${post.created_at ? `<p><strong>Created At:</strong> ${new Date(post.created_at).toLocaleDateString()}</p>` : ''}
+                    `;
+                postResultDiv.addEventListener('click', () => {
+                    window.location.href = `https://mathonzi04.github.io/Web/home_post_data.html?id=${post.id}`;
+                });
+                searchResultsDiv.appendChild(postResultDiv);
+            });
+        }
+
+        window.searchPosts = searchPosts;
+    </script>
+</body>
+</html>
