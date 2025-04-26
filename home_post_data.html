@@ -27,6 +27,7 @@
         </div>
 
     <script type="module">
+        
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
         const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
@@ -77,13 +78,14 @@
         // Get the post ID from the URL query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
+        console.log('Post ID from URL:', postId); // Debugging line
 
         // Fetch and display the post if an ID is present
         if (postId) {
             fetchPost(postId);
         } else {
             document.getElementById('post-data').textContent = 'No post ID specified.';
-        }
-    </script>
+        } 
+	</script>
 </body>
 </html>
