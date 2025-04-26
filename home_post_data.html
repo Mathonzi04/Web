@@ -1,5 +1,4 @@
-
-	<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,7 +9,7 @@
         .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
         h3 { margin: 0; color: black; }
         a { text-decoration:none; color:black;}
-	.back-link a { text-decoration: none; color: green; }
+	    .back-link a { text-decoration: none; color: green; }
         .post-details { background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin: 20px; padding: 15px; }
         .post-title { color: #007bff; margin-top: 0; }
         .post-content { margin-bottom: 10px; }
@@ -75,8 +74,9 @@
             `;
         }
 
-        // Get the post ID from the URL hash
-        const postId = window.location.hash.substring(6); // Extracts the ID after '#post-'
+        // Get the post ID from the URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
 
         // Fetch and display the post if an ID is present
         if (postId) {
@@ -87,4 +87,3 @@
     </script>
 </body>
 </html>
-	
