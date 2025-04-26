@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Details</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; color: #333; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #fff; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        h3 { margin: 0; color: black; }
+        a { text-decoration:none; color:black;}
+	    .back-link a { text-decoration: none; color: green; }
+        .post-details { background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); margin: 20px; padding: 15px; }
+        .post-title { color: #007bff; margin-top: 0; }
+        .post-content { margin-bottom: 10px; }
+        .slider { display: flex; overflow-x: auto; gap: 5px; margin-bottom: 10px; }
+        .slider img { max-width: 100%; height: auto; border-radius: 4px; }
+        .post-image-space { min-width: 100px; height: 100px; background-color: #eee; display: flex; justify-content: center; align-items: center; color: #666; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h3><a href="booking_request.html">Book Now</a></h3>
+        <p class="back-link"><a href="https://mathonzi04.github.io/Web/home.html">Back to Home</a></p>
+    </div>
+    <div id="post-data" class="post-details">
+        </div>
+
+    <script type="module">
+        
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+        const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        async function fetchPost(postId) {
+            if (supabase && postId) {
+                try {
+                    const { data, error } = await supabase
+                        .from('posts')
+                        .select('title, content, image_url_1, image_url_2, image_url_3, image_url_4')
+                        .eq('id', postId)
+                        .single();
+
+                    if (error) {
+                        console.error('Error fetching post:', error);
+                        document.getElementById('post-data').textContent = 'Failed to load post.';
+                    } else if (data) {
+                        displayPost(data);
+                    } else {
+                        document.getElementById('post-data').textContent = 'Post not found.';
+                    }
+                } catch (error) {
+                    console.error('Unexpected error fetching post:', error);
+                    document.getElementById('post-data').textContent = 'Failed to load post.';
+                }
+            } else {
+                document.getElementById('post-data').textContent = 'Invalid request.';
+            }
+        }
+
+        function displayPost(post) {
+            const postDataDiv = document.getElementById('post-data');
+            postDataDiv.innerHTML = `
+                <h2 class="post-title">${post.title}</h2>
+                <p class="post-content">${post.content}</p>
+                <div class="slider">
+                    ${[post.image_url_1, post.image_url_2, post.image_url_3, post.image_url_4]
+                        .filter(url => url)
+                        .map(url => `<img src="${url}" alt="Post Image">`)
+                        .join('')}
+                    ${[post.image_url_1, post.image_url_2, post.image_url_3, post.image_url_4].filter(url => !url).map( (_, index) => `<div class="post-image-space">Image ${index + 1}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        // Get the post ID from the URL query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        console.log('Post ID from URL:', postId); // Debugging line
+
+        // Fetch and display the post if an ID is present
+        if (postId) {
+            fetchPost(postId);
+        } else {
+            document.getElementById('post-data').textContent = 'No post ID specified.';
+        } 
+	</script>
+</body>
+</html>
