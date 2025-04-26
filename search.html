@@ -74,7 +74,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
                     ${post.created_at ? `<p><strong>Created At:</strong> ${new Date(post.created_at).toLocaleDateString()}</p>` : ''}
                     `;
                 postResultDiv.addEventListener('click', () => {
-                    window.location.href = `https://mathonzi04.github.io/Web/home_post_data.html?id=${post.id}`;
+                    window.location.href = `https://mathonzi04.github.io/Web/home_post_searched_data.html?id=${post.id}`;
                 });
                 searchResultsDiv.appendChild(postResultDiv);
             });
