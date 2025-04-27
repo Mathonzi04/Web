@@ -1,207 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
-    <style type="text/css">
-        * {  padding: 0;  margin: 0;     box-sizing: border-box;  }
-        body { font-family: Arial, sans-serif;  background-color: #f7f7f7; padding-top: 50px; /* Adjust to account for fixed header */  }
-        .header { position: fixed;    top: 0; left: 0; width: 100%;  height: 40px; background-color: white; padding: 10px; display: flex;  border-bottom: 0.5px solid #ccc;  justify-content: space-between; align-items: center;  z-index: 10; /* Ensure header stays on top */ }
-        .header h3 { margin: 0; }
-        .header h4 a { text-decoration: none; color: grey;  }
-        .main-content {display: flex; flex-wrap: wrap;padding: 20px; gap: 20px; /* Space between the two main sections */}
-        .user-info-post-form { width: 100%; /* Full width on smaller screens */margin-bottom: 20px;flex: 1 0 auto; /* Prevent shrinking and initial size */  }
-        .posts-search {width: 100%; /* Full width on smaller screens */flex: 1 0 auto; /* Prevent shrinking and initial size */}
-        #user-info {padding: 10px;background-color: #fff;border: 1px solid #ddd;border-radius: 10px;  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 20px;  }
-.post-form {padding: 20px;background-color: #fff;border: 1px solid #ddd;border-radius: 10px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
-.post-form h2 {margin-top: 0;margin-bottom: 15px;color: #333;}
-.form-group {margin-bottom: 20px;}
-.form-group label {display: block;margin-bottom: 10px;font-weight: bold;color: #555;}
-.form-group input, .form-group textarea {width: calc(100% - 22px); /* Adjust for padding and border */padding: 10px;border: 1px solid #ccc;border-radius: 5px;font-size: 16px;}
-#submit {background-color: #337ab7;color: #fff;padding: 10px 20px;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;}
-#submit:hover {background-color: #235a81;}
-.posts-search {padding: 20px;background-color: #fff;border: 1px solid #ddd;border-radius: 10px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
-.posts-search h3 {margin-top: 0;color: #333;margin-bottom: 10px;}
-.search-bar {margin-bottom: 20px;display: flex;gap: 10px;}
-#search-input {flex-grow: 1;padding: 10px;border: 1px solid #ccc;border-radius: 5px;font-size: 16px;}
-#search-button {background-color: #5cb85c;color: #fff;padding: 10px 15px;border: none;border-radius: 5px;cursor: pointer;font-size: 16px;}
-#search-button:hover {background-color: #4cae4c;}
-.posts-display h4#numposts {color: #777;margin-bottom: 10px;}
-#post-list {margin-top: 20px;display: grid;grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */gap: 15px;}
-.post-item {border: 1px solid #eee;padding: 15px;border-radius: 8px;background-color: #fff;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);}
-.post-title {font-size: 1.2em;font-weight: bold;color: #333;margin-bottom: 10px;}
-.post-content {color: #555;margin-bottom: 10px;}
-.post-images {display: grid;grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));gap: 5px;margin-bottom: 10px;}
-.post-image-space {background-color: #f9f9f9;border: 1px solid #eee;border-radius: 4px;display: flex;justify-content: center;align-items: center;color: #777;font-size: 0.8em;height: 80px;overflow: hidden;}
-.post-images img {width: 100%;height: 100%;object-fit: cover;border-radius: 4px;}
-.delete-button {background-color: #d9534f;color: #fff;border: none;padding: 8px 12px;border-radius: 5px;cursor: pointer;font-size: 0.9em;}
-.delete-button:hover {background-color: #c9302c;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Posts</title>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    #user-info {
+      background-color: #e9ecef;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .post-form {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .post-form h2 {
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .post-form div {
+      margin-bottom: 15px;
+    }
+    .post-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+    .post-form input[type="text"],
+    .post-form textarea {
+      width: calc(100% - 12px);
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .post-form button#submit {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .posts-display {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .posts-display h3 {
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .search-bar {
+      display: flex;
+      margin-bottom: 15px;
+    }
+    .search-bar input[type="text"] {
+      flex-grow: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px 0 0 5px;
+    }
+    .search-bar button#search-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+    .post-list {
+      margin-top: 15px;
+    }
+    .post-item {
+      border: 1px solid #eee;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #f9f9f9;
+    }
+    .post-title {
+      font-weight: bold;
+      color: #333;
+    }
+    .post-content {
+      color: #555;
+    }
+    .post-images {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .post-image-space {
+      width: 60px;
+      height: 60px;
+      background-color: #ddd;
+      border: 1px dashed #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7em;
+      color: #777;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .post-image-space img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .delete-button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+    .delete-button:hover {
+      background-color: #c82333;
+    }
+    #numposts {
+      color: #777;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Manage Posts</h1>
+  <div id="user-info">
+    <p>User ID: <span id="uid-display"></span></p>
+  </div>
 
-/* Responsive adjustments */
-@media (min-width: 768px) {.main-content {flex-direction: row;justify-content: space-between;}
-.user-info-post-form {width: 45%;margin-bottom: 0;}
-.posts-search {width: 50%;}}
-    </style>
+  <form id="add-post-form" class="post-form">
+    <h2>Create New Post</h2>
+    <div>
+      <label for="post-title">Post Title:</label>
+      <input type="text" id="post-title" name="post-title" placeholder="Enter title">
+    </div>
+    <div>
+      <label for="post-content">Content:</label>
+      <textarea id="post-content" name="post-content" placeholder="Enter content"></textarea>
+    </div>
+    <button type="submit" id="submit">Add Post</button>
+  </form>
 
-    <script type="module">
-      import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+  <div class="posts-display">
+    <h3>View and Delete Posts</h3>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search posts by title or content...">
+      <button id="search-button">Search</button>
+    </div>
+    <h4 id="numposts"></h4>
+    <div id="post-list"></div>
+  </div>
 
-      // Replace with your actual Supabase URL and Key
-      const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-      const supabase = createClient(supabaseUrl, supabaseKey);
+  <script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-      // Function to get user ID from URL parameter
-      function getUserIdFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('user_id');
-      }
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-      const uid = getUserIdFromUrl();
+    function getUserIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('user_id');
+    }
 
-      // Redirect to login if no user ID is found
-      if (!uid) {
-        window.location.replace('login.html'); // Replace 'login.html' with your actual login page URL
+    const uid = getUserIdFromUrl();
+
+    if (!uid) {
+      window.location.replace('login.html');
+    } else {
+      document.getElementById('uid-display').textContent = uid;
+      displayPosts();
+    }
+
+    document.getElementById('add-post-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const postTitle = document.getElementById('post-title').value;
+      const postContent = document.getElementById('post-content').value;
+
+      if (supabase && uid) {
+        const { data, error } = await supabase
+          .from('posts')
+          .insert([{ user_id: uid, title: postTitle, content: postContent }]);
+
+        if (error) {
+          console.error('Error creating post:', error);
+          alert('Failed to create post.');
+        } else {
+          alert('Post created successfully!');
+          document.getElementById('add-post-form').reset();
+          displayPosts();
+        }
       } else {
-        document.getElementById('uid-display').textContent = uid;
-        displayPosts(); // Fetch and display posts for the logged-in user
+        alert('Authentication or Supabase client issue.');
       }
+    });
 
-      document.getElementById('add-post-form').addEventListener('submit', async (event) => {
-        event.preventDefault();
+    async function deletePost(postId) {
+      if (supabase && uid) {
+        const { error } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', postId)
+          .eq('user_id', uid);
 
-        const postTitle = document.getElementById('post-title').value;
-        const postContent = document.getElementById('post-content').value;
+        if (error) {
+          console.error('Error deleting post:', error);
+          alert('Failed to delete post.');
+        } else {
+          alert('Post deleted successfully!');
+          displayPosts();
+        }
+      } else {
+        alert('Authentication or Supabase client issue.');
+      }
+    }
 
-        if (supabase && uid) {
-          const { data, error } = await supabase
+    async function displayPosts(searchTerm = '') {
+      if (supabase && uid) {
+        try {
+          let query = supabase
             .from('posts')
-            .insert([
-              { user_id: uid, title: postTitle, content: postContent },
-            ]);
+            .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' })
+            .eq('user_id', uid);
+
+          if (searchTerm) {
+            query = query.ilike('title', `%${searchTerm}%`).or('ilike', 'content', `%${searchTerm}%`);
+          }
+
+          const { data, error, count } = await query;
+          const postsListDiv = document.getElementById('post-list');
+          postsListDiv.innerHTML = '';
+          document.getElementById('numposts').textContent = count ? `Total Posts: ${count}` : 'No posts yet.';
 
           if (error) {
-            console.error('Error creating post:', error);
-            alert('Failed to create post.');
-          } else {
-            console.log('Post created successfully:', data);
-            alert('Post created successfully!');
-            document.getElementById('add-post-form').reset();
-            displayPosts(); // Refresh the post list
-          }
-        } else {
-          alert('Authentication or Supabase client issue.');
-        }
-      });
+            console.error('Error fetching posts:', error);
+            postsListDiv.textContent = 'Failed to load posts.';
+          } else if (data && data.length > 0) {
+            data.forEach(post => {
+              const postItem = document.createElement('div');
+              postItem.classList.add('post-item');
 
-      async function deletePost(postId) {
-        if (supabase && uid) {
-          const { error } = await supabase
-            .from('posts')
-            .delete()
-            .eq('id', postId)
-            .eq('user_id', uid); // Ensure only the user's posts can be deleted
+              const titleElement = document.createElement('div');
+              titleElement.classList.add('post-title');
+              titleElement.textContent = post.title;
 
-          if (error) {
-            console.error('Error deleting post:', error);
-            alert('Failed to delete post.');
-          } else {
-            console.log('Post deleted:', postId);
-            alert('Post deleted successfully!');
-            displayPosts(); // Refresh the list after deletion
-          }
-        } else {
-          alert('Authentication or Supabase client issue.');
-        }
-      }
+              const contentElement = document.createElement('div');
+              contentElement.classList.add('post-content');
+              contentElement.textContent = post.content;
 
-      async function displayPosts(searchTerm = '') {
-        if (supabase && uid) {
-          try {
-            let query = supabase
-              .from('posts')
-              .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' })
-              .eq('user_id', uid); // Only fetch the current user's posts
-
-            if (searchTerm) {
-              query = query.ilike('title', `%${searchTerm}%`).or('ilike', 'content', `%${searchTerm}%`);
-            }
-
-            const { data, error, count } = await query;
-
-            const postsListDiv = document.getElementById('post-list');
-            postsListDiv.innerHTML = ''; // Clear previous posts
-            document.getElementById('numposts').textContent = count ? `(${count} posts)` : '(0 posts)';
-
-            if (error) {
-              console.error('Error fetching posts:', error);
-              postsListDiv.textContent = 'Failed to load posts.';
-            } else if (data && data.length > 0) {
-              data.forEach(post => {
-                const postItem = document.createElement('div');
-                postItem.classList.add('post-item');
-
-                const titleElement = document.createElement('div');
-                titleElement.classList.add('post-title');
-                titleElement.textContent = post.title;
-
-                const contentElement = document.createElement('div');
-                contentElement.classList.add('post-content');
-                contentElement.textContent = post.content;
-
-                const imagesContainer = document.createElement('div');
-                imagesContainer.classList.add('post-images');
-
-                for (let i = 1; i <= 4; i++) {
-                  const imageUrl = post[`image_url_${i}`];
-                  const imageSpace = document.createElement('div');
-                  imageSpace.classList.add('post-image-space');
-                  if (imageUrl) {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imageUrl;
-                    imgElement.style.width = '100%';
-                    imgElement.style.height = '100%';
-                    imgElement.style.objectFit = 'cover';
-                    imageSpace.appendChild(imgElement);
-                  } else {
-                    imageSpace.textContent = `Image ${i}`;
-                  }
-                  imagesContainer.appendChild(imageSpace);
+              const imagesContainer = document.createElement('div');
+              imagesContainer.classList.add('post-images');
+              for (let i = 1; i <= 4; i++) {
+                const imageUrl = post[`image_url_${i}`];
+                const imageSpace = document.createElement('div');
+                imageSpace.classList.add('post-image-space');
+                if (imageUrl) {
+                  const imgElement = document.createElement('img');
+                  imgElement.src = imageUrl;
+                  imgElement.alt = `Image ${i}`;
+                  imageSpace.appendChild(imgElement);
+                } else {
+                  imageSpace.textContent = `Img ${i}`;
                 }
+                imagesContainer.appendChild(imageSpace);
+              }
 
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('delete-button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.addEventListener('click', () => deletePost(post.id));
+              const deleteButton = document.createElement('button');
+              deleteButton.classList.add('delete-button');
+              deleteButton.textContent = 'Delete Post';
+              deleteButton.addEventListener('click', () => deletePost(post.id));
 
-                postItem.appendChild(titleElement);
-                postItem.appendChild(contentElement);
-                postItem.appendChild(imagesContainer);
-                postItem.appendChild(deleteButton);
-                postsListDiv.appendChild(postItem);
-              });
-            } else {
-              postsListDiv.textContent = 'No posts found.';
-            }
-          } catch (error) {
-            console.error('Unexpected error fetching posts:', error);
-            document.getElementById('post-list').textContent = 'Failed to load posts.';
-            document.getElementById('numposts').textContent = '';
+              postItem.appendChild(titleElement);
+              postItem.appendChild(contentElement);
+              postItem.appendChild(imagesContainer);
+              postItem.appendChild(deleteButton);
+              postsListDiv.appendChild(postItem);
+            });
+          } else {
+            postsListDiv.textContent = 'No posts found.';
           }
+        } catch (error) {
+          console.error('Unexpected error fetching posts:', error);
+          document.getElementById('post-list').textContent = 'Failed to load posts.';
+          document.getElementById('numposts').textContent = '';
         }
       }
+    }
 
-      document.getElementById('search-button').addEventListener('click', () => {
-        const searchTerm = document.getElementById('search-input').value.trim();
-        displayPosts(searchTerm);
-      });
+    document.getElementById('search-button').addEventListener('click', () => {
+      const searchTerm = document.getElementById('search-input').value.trim();
+      displayPosts(searchTerm);
+    });
 
-      document.getElementById('search-input').addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-          document.getElementById('search-button').click();
-        }
-      });
-    </script>
+    document.getElementById('search-input').addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        document.getElementById('search-button').click();
+      }
+    });
+  </script>
 </body>
 </html>
