@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
+    <title>Post Management</title>
     <style>
         body {
             font-family: sans-serif;
@@ -16,37 +16,44 @@
             color: #333;
             margin-bottom: 20px;
         }
-        #post-creation-form {
+        #user-info {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #add-post-form {
             background-color: #fff;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
             margin-bottom: 20px;
         }
-        #post-creation-form h2 {
+        #add-post-form h2 {
             color: #333;
             margin-top: 0;
             margin-bottom: 15px;
             text-align: center;
         }
-        #post-creation-form div {
+        #add-post-form div {
             margin-bottom: 15px;
         }
-        #post-creation-form label {
+        #add-post-form label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             color: #555;
         }
-        #post-creation-form input[type="text"],
-        #post-creation-form textarea {
+        #add-post-form input[type="text"],
+        #add-post-form textarea {
             width: calc(100% - 12px);
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        #post-creation-form button#create-post-button {
+        #add-post-form button#submit {
             background-color: #28a745;
             color: white;
             border: none;
@@ -55,6 +62,18 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
+        }
+        .posts-display {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .posts-display h3 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
         }
         .search-bar {
             display: flex;
@@ -76,293 +95,202 @@
             border-radius: 0 5px 5px 0;
             cursor: pointer;
         }
+        #numposts {
+            color: #777;
+            text-align: center;
+            margin-bottom: 10px;
+        }
         #post-list {
             margin-top: 15px;
         }
         .post-item {
-            background-color: #fff;
+            border: 1px solid #eee;
             padding: 15px;
             margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .post-title {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .post-content {
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .post-author {
-            font-style: italic;
-            color: #777;
-            margin-bottom: 5px;
-        }
-        .post-images {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            overflow-x: auto;
-        }
-        .post-image-space {
-            width: 100px;
-            height: 100px;
-            border: 1px solid #eee;
             border-radius: 5px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             background-color: #f9f9f9;
-            color: #777;
-            font-size: 0.8em;
         }
-        .post-image-space img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .post-item h4 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 5px;
         }
-        .delete-button {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            align-self: flex-start;
-        }
-        .delete-button:hover {
-            background-color: #c82333;
-        }
-        #logout-button {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
+        .post-item p {
+            color: #555;
             margin-bottom: 10px;
         }
-        #logout-button:hover {
+        .post-item button.delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .post-item button.delete-button:hover {
             background-color: #c82333;
-        }
-        .back-to-dashboard {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .back-to-dashboard a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        .back-to-dashboard a:hover {
-            text-decoration: underline;
-        }
-        #total-posts {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #555;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>Posts Management</h1>
-    <button id="logout-button">Logout</button>
-
-    <div id="post-creation-form">
+    <h1><a href="currenttrips.html ">Manage Posts</a></h1>
+    <div id="user-info">
+        <p>User ID: <span id="uid-display"></span></p>
+        <button id="logout-button">Logout</button>
+    </div>
+    <form id="add-post-form">
         <h2>Create New Post</h2>
         <div>
-            <label for="new-post-title">Post Title:</label>
-            <input type="text" id="new-post-title" name="new-post-title" placeholder="Enter title">
+            <label for="post-title">Post Title:</label>
+            <input type="text" id="post-title" name="post-title" placeholder="Enter title">
         </div>
         <div>
-            <label for="new-post-content">Content:</label>
-            <textarea id="new-post-content" name="new-post-content" placeholder="Enter content"></textarea>
+            <label for="post-content">Content:</label>
+            <textarea id="post-content" name="post-content" placeholder="Enter content"></textarea>
         </div>
-        <button type="button" id="create-post-button">Create Post</button>
-    </div>
-
-    <div class="search-bar">
-        <input type="text" id="search-input" placeholder="Search posts by title or content...">
-        <button id="search-button">Search</button>
-    </div>
-
-    <div id="total-posts"></div>
-
-    <div id="post-list">
+        <button type="submit" id="submit">Add Post</button>
+    </form>
+    <div class="posts-display">
+        <h3>View and Delete Posts</h3>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search posts...">
+            <button id="search-button">Search</button>
         </div>
-    <div class="back-to-dashboard">
-        <a href="dashboardv2.html">Back to Dashboard</a>
+        <h4 id="numposts"></h4>
+        <div id="post-list"></div>
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-const supabase = createClient(supabaseUrl, supabaseKey);
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-        async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.replace('login.html');
-                return null;
-            }
-            return user;
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function checkAuth() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            window.location.replace('login.html'); // Redirect to login page
+            return null;
         }
+        document.getElementById('uid-display').textContent = user.id;
+        return user.id;
+    }
 
-        async function fetchAllPosts(searchTerm = '') {
-            const user = await checkAuth();
-            if (!user) return;
+    async function displayPosts(userId, searchTerm = '') {
+        try {
+            let query = supabase
+                .from('posts')
+                .select('id, title, content', { count: 'exact' })
+                .eq('user_id', userId);
 
-            try {
-                let query = supabase
-                    .from('posts')
-                    .select('id, title, content, created_at, user_id, image_url_1, image_url_2, image_url_3, image_url_4, users(email)', { count: 'exact' }); // Include count
+            if (searchTerm) {
+                query = query.ilike('title', `%${searchTerm}%`);
+            }
 
-                if (searchTerm) {
-                    query = query.ilike('title', `%${searchTerm}%`).or('ilike', 'content', `%${searchTerm}%`);
-                }
+            const { data, error, count } = await query;
 
-                const { data: posts, error: postsError, count } = await query;
-
-                if (postsError) {
-                    console.error('Error fetching posts:', postsError);
-                    document.getElementById('post-list').textContent = 'Failed to load posts.';
-                    document.getElementById('total-posts').textContent = '';
-                    return;
-                }
-
-                document.getElementById('total-posts').textContent = `Total Posts: ${count}`;
+            if (error) {
+                console.error('Error fetching posts:', error);
+                document.getElementById('post-list').textContent = 'Failed to load posts.';
+            } else {
+                document.getElementById('numposts').textContent = `Total Posts: ${count}`;
                 const postsListDiv = document.getElementById('post-list');
                 postsListDiv.innerHTML = '';
 
-                if (posts && posts.length > 0) {
-                    posts.forEach(post => {
-                        const postItem = document.createElement('div');
-                        postItem.classList.add('post-item');
-                        let imagesHtml = '<div class="post-images">';
-                        for (let i = 1; i <= 4; i++) {
-                            const imageUrl = post[`image_url_${i}`];
-                            if (imageUrl) {
-                                imagesHtml += `<div class="post-image-space"><img src="${imageUrl}" alt="Image ${i}"></div>`;
-                            }
-                        }
-                        imagesHtml += '</div>';
+                data.forEach(post => {
+                    const postItem = document.createElement('div');
+                    postItem.classList.add('post-item');
+                    postItem.innerHTML = `
+                        <h4>${post.title}</h4>
+                        <p>${post.content}</p>
+                        <button class="delete-button" data-post-id="${post.id}">Delete</button>
+                    `;
+                    postsListDiv.appendChild(postItem);
+                });
+            }
+        } catch (error) {
+            console.error('Unexpected error fetching posts:', error);
+            document.getElementById('post-list').textContent = 'Failed to load posts.';
+        }
+    }
 
-                        const authorEmail = post.users ? post.users.email : 'Unknown Author';
+    document.getElementById('add-post-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const userId = await checkAuth();
+        if (!userId) return;
 
-                        postItem.innerHTML = `
-                            <h4 class="post-title">${post.title}</h4>
-                            <p class="post-content">${post.content}</p>
-                            <p class="post-author">Posted by: ${authorEmail}</p>
-                            ${imagesHtml}
-                            <button class="delete-button" data-post-id="${post.id}">Delete</button>
-                        `;
-                        postsListDiv.appendChild(postItem);
-                    });
+        const postTitle = document.getElementById('post-title').value;
+        const postContent = document.getElementById('post-content').value;
+
+        try {
+            const { data, error } = await supabase
+                .from('posts')
+                .insert([{ user_id: userId, title: postTitle, content: postContent }]);
+
+            if (error) {
+                console.error('Error creating post:', error);
+            } else {
+                document.getElementById('add-post-form').reset();
+                displayPosts(userId);
+            }
+        } catch (error) {
+            console.error('Unexpected error creating post:', error);
+        }
+    });
+
+    document.getElementById('post-list').addEventListener('click', async (event) => {
+        const userId = await checkAuth();
+        if (!userId) return;
+
+        if (event.target.classList.contains('delete-button')) {
+            const postId = event.target.dataset.postId;
+
+            try {
+                const { error } = await supabase
+                    .from('posts')
+                    .delete()
+                    .eq('id', postId)
+                    .eq('user_id', userId);
+
+                if (error) {
+                    console.error('Error deleting post:', error);
                 } else {
-                    postsListDiv.textContent = 'No posts found.';
+                    displayPosts(userId);
                 }
-
             } catch (error) {
-                console.error('Unexpected error fetching posts:', error);
-                document.getElementById('post-list').textContent = 'Failed to load posts.';
-                document.getElementById('total-posts').textContent = '';
+                console.error('Unexpected error deleting post:', error);
             }
         }
+    });
 
-        document.getElementById('create-post-button').addEventListener('click', async () => {
-            const user = await checkAuth();
-            if (!user) return;
+    document.getElementById('search-button').addEventListener('click', async () => {
+        const userId = await checkAuth();
+        if (!userId) return;
 
-            const postTitle = document.getElementById('new-post-title').value.trim();
-            const postContent = document.getElementById('new-post-content').value.trim();
+        const searchTerm = document.getElementById('search-input').value.trim();
+        displayPosts(userId, searchTerm);
+    });
 
-            if (postTitle && postContent) {
-                try {
-                    const { error } = await supabase
-                        .from('posts')
-                        .insert([{ user_id: user.id, title: postTitle, content: postContent }]);
+    document.getElementById('logout-button').addEventListener('click', async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error('Error signing out:', error);
+            alert('Failed to log out.');
+        } else {
+            window.location.replace('login.html');
+        }
+    });
 
-                    if (error) {
-                        console.error('Error creating post:', error);
-                        alert('Failed to create post.');
-                    } else {
-                        document.getElementById('new-post-title').value = '';
-                        document.getElementById('new-post-content').value = '';
-                        fetchAllPosts(); // Refresh the post list
-                    }
-                } catch (error) {
-                    console.error('Unexpected error creating post:', error);
-                    alert('Failed to create post.');
-                }
-            } else {
-                alert('Please enter both a title and content for your post.');
-            }
-        });
+    // Initial authentication check and data loading
+    checkAuth().then(userId => {
+        if (userId) {
+            displayPosts(userId);
+        }
+    });
 
-        document.getElementById('post-list').addEventListener('click', async (event) => {
-            const user = await checkAuth();
-            if (!user) return;
-
-            if (event.target.classList.contains('delete-button')) {
-                const postId = event.target.dataset.postId;
-
-                try {
-                    const { error } = await supabase
-                        .from('posts')
-                        .delete()
-                        .eq('id', postId);
-
-                    if (error) {
-                        console.error('Error deleting post:', error);
-                        alert('Failed to delete post.');
-                    } else {
-                        fetchAllPosts(); // Refresh the post list
-                    }
-                } catch (error) {
-                    console.error('Unexpected error deleting post:', error);
-                    alert('Failed to delete post.');
-                }
-            }
-        });
-
-        document.getElementById('search-button').addEventListener('click', () => {
-            const searchTerm = document.getElementById('search-input').value.trim();
-            fetchAllPosts(searchTerm);
-        });
-
-        document.getElementById('search-input').addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                document.getElementById('search-button').click();
-            }
-        });
-
-        document.getElementById('logout-button').addEventListener('click', async () => {
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Error signing out:', error);
-                alert('Failed to log out.');
-            } else {
-                window.location.replace('login.html');
-            }
-        });
-
-        checkAuth().then(user => {
-            if (user) {
-                fetchAllPosts();
-            }
-        });
     </script>
 </body>
-</html>
+                </html>
