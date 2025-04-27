@@ -23,12 +23,12 @@
 <body>
     <div class="header">
         <h3>Dashboard</h3>
-        <h4><a href="login.html">Log out</a></h4>
+        <h4 id="logout-link"><a href="login.html">Log out</a></h4>
     </div>
     <div class="content">
         <div class="column">
             <p id="no_of_users" class="number">0</p>
-            <p class="label"> <a href="users.html" >Users</a></p>
+            <p class="label"> <a href="verifiedcompanies.html" >Verified Companies</a></p>
         </div>
         <div class="column">
             <p id="posts" class="number">0</p>
@@ -36,7 +36,7 @@
         </div>
         <div class="column">
             <p id="ongoing_trips" class="number">0</p>
-            <p class="label"><a href="currenttrips.html">Ongoing Trips</a></p>
+            <p class="label"><a href="currenttrips.html">Current Trips</a></p>
         </div>
         <div class="column">
             <p id="completed_trips" class="number">0</p>
@@ -44,73 +44,100 @@
         </div>
         <div class="column">
             <p id="canceled_trips" class="number">0</p>
-            <p class="label"><a href="canceled.html">Canceled Trips</a></p>
+            <p class="label"><a href="canceled_trips.html">Canceled Trips</a></p>
         </div>
         <div id="requested_trips_column" class="column">
             <p id="requested_trips" class="number">0</p>
-            <p class="label"><a href="requested.html" >New Requested Trips</a></p>
+            <p class="label"><a href="requestedtrips.html" >New Requested Trips</a></p>
             <button id="send_email_button" style="display:none;">Send Email</button>
         </div>
     </div>
 
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-<script type="module">
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-
-     const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-     const supabase = createClient(supabaseUrl, supabaseKey);
-     
-    async function fetchDashboardData() {
-        try {
-            const { data: users, error: usersError } = await supabase
-                .from('verified_companies')
-                .select('count', { head: true });
-            if (usersError) console.error('Error fetching users count:', usersError);
-            document.getElementById('no_of_users').textContent = users ? users : 0;
-
-            const { data: posts, error: postsError } = await supabase
-                .from('posts')
-                .select('count', { head: true });
-            if (postsError) console.error('Error fetching posts count:', postsError);
-            document.getElementById('posts').textContent = posts ? posts : 0;
-
-            const { data: ongoingTrips, error: ongoingTripsError } = await supabase
-                .from('ongoing_trips')
-                .select('count', { head: true });
-            if (ongoingTripsError) console.error('Error fetching ongoing trips count:', ongoingTripsError);
-            document.getElementById('ongoing_trips').textContent = ongoingTrips ? ongoingTrips : 0;
-
-            const { data: completedTrips, error: completedTripsError } = await supabase
-                .from('completed_trips')
-                .select('count', { head: true });
-            if (completedTripsError) console.error('Error fetching completed trips count:', completedTripsError);
-            document.getElementById('completed_trips').textContent = completedTrips ? completedTrips : 0;
-
-            const { data: canceledTrips, error: canceledTripsError } = await supabase
-                .from('canceled_trips')
-                .select('count', { head: true });
-            if (canceledTripsError) console.error('Error fetching canceled trips count:', canceledTripsError);
-            document.getElementById('canceled_trips').textContent = canceledTrips ? canceledTrips : 0;
-
-            const { data: requestedTrips, error: requestedTripsError } = await supabase
-                .from('requested_trips')
-                .select('count', { head: true });
-            if (requestedTripsError) console.error('Error fetching requested trips count:', requestedTripsError);
-            const requestedTripsCount = requestedTrips ? requestedTrips : 0;
-            document.getElementById('requested_trips').textContent = requestedTripsCount;
-            document.getElementById('send_email_button').style.display = requestedTripsCount > 0 ? 'block' : 'none';
-
-        } catch (error) {
-            console.error('Error fetching dashboard data:', error);
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.replace('login.html'); // Redirect to login page
+            } else {
+                console.log('Logged in user:', user);
+                // Optionally display user info or perform other actions
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', fetchDashboardData);
+        async function fetchDashboardData() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return; // Don't fetch data if not logged in
 
-    document.getElementById('send_email_button').addEventListener('click', () => {
-        alert('Send email functionality will be implemented here.');
-    });
-</script>
+            try {
+                const { data: users, error: usersError } = await supabase
+                    .from('verified_companies')
+                    .select('count', { head: true });
+                if (usersError) console.error('Error fetching users count:', usersError);
+                document.getElementById('no_of_users').textContent = users ? users : 0;
+
+                const { data: posts, error: postsError } = await supabase
+                    .from('posts')
+                    .select('count', { head: true });
+                if (postsError) console.error('Error fetching posts count:', postsError);
+                document.getElementById('posts').textContent = posts ? posts : 0;
+
+                const { data: ongoingTrips, error: ongoingTripsError } = await supabase
+                    .from('ongoing_trips')
+                    .select('count', { head: true });
+                if (ongoingTripsError) console.error('Error fetching ongoing trips count:', ongoingTripsError);
+                document.getElementById('ongoing_trips').textContent = ongoingTrips ? ongoingTrips : 0;
+
+                const { data: completedTrips, error: completedTripsError } = await supabase
+                    .from('completed_trips')
+                    .select('count', { head: true });
+                if (completedTripsError) console.error('Error fetching completed trips count:', completedTripsError);
+                document.getElementById('completed_trips').textContent = completedTrips ? completedTrips : 0;
+
+                const { data: canceledTrips, error: canceledTripsError } = await supabase
+                    .from('canceled_trips')
+                    .select('count', { head: true });
+                if (canceledTripsError) console.error('Error fetching canceled trips count:', canceledTripsError);
+                document.getElementById('canceled_trips').textContent = canceledTrips ? canceledTrips : 0;
+
+                const { data: requestedTrips, error: requestedTripsError } = await supabase
+                    .from('requested_trips')
+                    .select('count', { head: true });
+                if (requestedTripsError) console.error('Error fetching requested trips count:', requestedTripsError);
+                const requestedTripsCount = requestedTrips ? requestedTrips : 0;
+                document.getElementById('requested_trips').textContent = requestedTripsCount;
+                document.getElementById('send_email_button').style.display = requestedTripsCount > 0 ? 'block' : 'none';
+
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            fetchDashboardData();
+        });
+
+        document.getElementById('send_email_button').addEventListener('click', () => {
+            alert('Send email functionality will be implemented here.');
+        });
+
+        // Basic logout functionality
+        document.getElementById('logout-link').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                console.error('Error signing out:', error);
+                alert('Failed to log out.');
+            } else {
+                window.location.replace('login.html');
+            }
+        });
+    </script>
 </body>
+</html>
 </html>
