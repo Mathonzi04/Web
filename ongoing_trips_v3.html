@@ -1,4 +1,105 @@
-```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Management</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2, h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="datetime-local"],
+        input[type="url"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .current-trip-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #337ab7;
+        }
+        .action-buttons button {
+            margin-top: 10px;
+            background-color: #007bff;
+        }
+        .action-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .status-button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+        .green {
+            background-color: #5cb85c;
+        }
+        .canceled {
+            background-color: #d9534f;
+        }
+        .completed {
+            background-color: #5bc0de;
+        }
+        .document-link {
+            margin-left: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .document-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
         <h2>Create New Trip</h2>
         <p><a href="trip_management.html">Trips Statuses</a> </p>
@@ -277,3 +378,5 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             checkAuth();
         });
     </script>
+</body>
+</html>
