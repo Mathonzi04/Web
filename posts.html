@@ -165,39 +165,29 @@
 // Import Supabase client
 import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
-// Initialize Supabase client
 const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Check if user is logged in
-async function checkLogin() {
-    try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            window.location.replace('login.html'); // Redirect to login page if not logged in
-        } else {
-            const uid = user.id;
-            document.getElementById('uid-display').textContent = uid;
-            displayPosts(uid);
-        }
-    } catch (error) {
-        console.error('Error checking login status:', error);
+async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        window.location.replace('login.html');
+        return null;
     }
+    document.getElementById('uid-display').textContent = user.id;
+    return user.id;
 }
 
-checkLogin();
-
-// Display posts
-async function displayPosts(uid, searchTerm = '') {
+async function displayPosts(userId, searchTerm = '') {
     try {
         let query = supabase
             .from('posts')
-            .select('id, title, content', { count: 'exact' })
-            .eq('user_id', uid);
+            .select('id, title, content, image_url_1, image_url_2, image_url_3, image_url_4', { count: 'exact' }) // Select image URLs
+            .eq('user_id', userId);
 
         if (searchTerm) {
-            query = query.ilike('title', `%${searchTerm}%`);
+            query = query.ilike('title', `%${searchTerm}%`).or('ilike', 'content', `%${searchTerm}%`);
         }
 
         const { data, error, count } = await query;
@@ -213,9 +203,20 @@ async function displayPosts(uid, searchTerm = '') {
             data.forEach(post => {
                 const postItem = document.createElement('div');
                 postItem.classList.add('post-item');
+                let imagesHtml = '<div class="post-images">';
+                for (let i = 1; i <= 4; i++) {
+                    const imageUrl = post[`image_url_${i}`];
+                    if (imageUrl) {
+                        imagesHtml += `<div class="post-image-space"><img src="${imageUrl}" alt="Image ${i}"></div>`;
+                    } else {
+                        imagesHtml += '<div class="post-image-space">No Image</div>';
+                    }
+                }
+                imagesHtml += '</div>';
                 postItem.innerHTML = `
                     <h4>${post.title}</h4>
                     <p>${post.content}</p>
+                    ${imagesHtml}
                     <button class="delete-button" data-post-id="${post.id}">Delete</button>
                 `;
                 postsListDiv.appendChild(postItem);
@@ -227,48 +228,50 @@ async function displayPosts(uid, searchTerm = '') {
     }
 }
 
-// Add event listener for add post form
 document.getElementById('add-post-form').addEventListener('submit', async (event) => {
     event.preventDefault();
+    const userId = await checkAuth();
+    if (!userId) return;
+
     const postTitle = document.getElementById('post-title').value;
     const postContent = document.getElementById('post-content').value;
-    const { data: { user } } = await supabase.auth.getUser();
-    const uid = user.id;
+
+    // You'll need to handle image uploads here and get the URLs to store in Supabase
 
     try {
         const { data, error } = await supabase
             .from('posts')
-            .insert([{ user_id: uid, title: postTitle, content: postContent }]);
+            .insert([{ user_id: userId, title: postTitle, content: postContent /*, image_url_1: imageUrl1, ... */ }]); // Add image URLs here
 
         if (error) {
             console.error('Error creating post:', error);
         } else {
             document.getElementById('add-post-form').reset();
-            displayPosts(uid);
+            displayPosts(userId);
         }
     } catch (error) {
         console.error('Unexpected error creating post:', error);
     }
 });
 
-// Add event listener for delete button
 document.getElementById('post-list').addEventListener('click', async (event) => {
+    const userId = await checkAuth();
+    if (!userId) return;
+
     if (event.target.classList.contains('delete-button')) {
         const postId = event.target.dataset.postId;
-        const { data: { user } } = await supabase.auth.getUser();
-        const uid = user.id;
 
         try {
             const { error } = await supabase
                 .from('posts')
                 .delete()
                 .eq('id', postId)
-                .eq('user_id', uid);
+                .eq('user_id', userId);
 
             if (error) {
                 console.error('Error deleting post:', error);
             } else {
-                displayPosts(uid);
+                displayPosts(userId);
             }
         } catch (error) {
             console.error('Unexpected error deleting post:', error);
@@ -276,13 +279,61 @@ document.getElementById('post-list').addEventListener('click', async (event) => 
     }
 });
 
-// Add event listener for search button
 document.getElementById('search-button').addEventListener('click', async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    const uid = user.id;
+    const userId = await checkAuth();
+    if (!userId) return;
+
     const searchTerm = document.getElementById('search-input').value.trim();
-    displayPosts(uid, searchTerm);
+    displayPosts(userId, searchTerm);
 });
+
+document.getElementById('logout-button').addEventListener('click', async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+        console.error('Error signing out:', error);
+        alert('Failed to log out.');
+    } else {
+        window.location.replace('login.html');
+    }
+});
+
+checkAuth().then(userId => {
+    if (userId) {
+        displayPosts(userId);
+    }
+});
+
+// Basic styling for images (you can add more to the <style> section)
+const style = document.createElement('style');
+style.textContent = `
+    .post-images {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        overflow-x: auto; /* Enable horizontal scrolling for many images */
+    }
+    .post-image-space {
+        width: 80px;
+        height: 80px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f9f9f9;
+        color: #777;
+        font-size: 0.7em;
+    }
+    .post-image-space img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+`;
+document.head.appendChild(style);
+
 
     </script>
 </body>
