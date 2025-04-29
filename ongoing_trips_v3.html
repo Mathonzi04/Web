@@ -1,0 +1,279 @@
+```html
+    <div class="container">
+        <h2>Create New Trip</h2>
+        <p><a href="trip_management.html">Trips Statuses</a> </p>
+        <form id="create-new-trip-form">
+            <h3>Company Info</h3>
+            <div class="form-group">
+                <label for="company_name">Name of Company:</label>
+                <input type="text" id="company_name" name="company_name" required>
+            </div>
+            <div class="form-group">
+                <label for="company_tel">Tel of Company:</label>
+                <input type="tel" id="company_tel" name="company_tel">
+            </div>
+
+            <h3>Client Info</h3>
+            <div class="form-group">
+                <label for="client_names">Names of Clients:</label>
+                <input type="text" id="client_names" name="client_names" required>
+            </div>
+            <div class="form-group">
+                <label for="num_clients">Number of Clients:</label>
+                <input type="number" id="num_clients" name="num_clients" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="client_tel">Tel of Clients:</label>
+                <input type="tel" id="client_tel" name="client_tel">
+            </div>
+
+            <h3>Trip Info</h3>
+            <div class="form-group">
+                <label for="place_visited">Place to be Visited:</label>
+                <input type="text" id="place_visited" name="place_visited">
+            </div>
+            <div class="form-group">
+                <label for="time_date_started">Time and Date Started:</label>
+                <input type="datetime-local" id="time_date_started" name="time_date_started" required>
+            </div>
+            <button type="submit">Create Trip</button>
+        </form>
+
+        <h2>Current Trips</h2>
+        <div id="current-trips-list">
+            </div>
+        <h3 id="current-count"></h3>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const createNewTripForm = document.getElementById('create-new-trip-form');
+        const currentTripsList = document.getElementById('current-trips-list');
+        const currentCount = document.getElementById('current-count');
+        let allCurrentTrips = [];
+
+        async function checkAuth() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = '/login.html';
+            } else {
+                loadCurrentTrips();
+            }
+        }
+
+        async function loadCurrentTrips() {
+            const { data, error } = await supabase
+                .from('ongoing_trips_v3')
+                .select('*');
+
+            if (error) {
+                console.error('Error loading trips:', error);
+                alert(`Error loading trips: ${error.message}`);
+            } else if (data) {
+                allCurrentTrips = data;
+                displayCurrentTrips(data);
+            }
+        }
+
+        function displayCurrentTrips(trips) {
+            currentTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('current-trip-item');
+                tripDiv.innerHTML = `
+                    <h3>Trip ID: ${trip.id}</h3>
+                    <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                    <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                    <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                    <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                    <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                    <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                    <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                    <p><span class="info-label">Time & Date Ended:</span> <input type="datetime-local" id="time_date_ended-${trip.id}" value="${trip.time_date_ended || ''}"></p>
+                    <p>
+                        <label for="proof-30-${trip.id}">30% Payment Proof:</label>
+                        <input type="url" id="proof-30-${trip.id}" value="${trip.payment_proof_30_url || ''}">
+                        <button onclick="updatePaymentProof(${trip.id}, 'payment_proof_30_url', document.getElementById('proof-30-${trip.id}').value)">Save 30% Proof</button>
+                        ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : ''}
+                    </p>
+                    <p>
+                        <label for="proof-15-${trip.id}">15% Payment Proof:</label>
+                        <input type="url" id="proof-15-${trip.id}" value="${trip.payment_proof_15_url || ''}">
+                        <button onclick="updatePaymentProof(${trip.id}, 'payment_proof_15_url', document.getElementById('proof-15-${trip.id}').value)">Save 15% Proof</button>
+                        ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : ''}
+                    </p>
+                    <div class="action-buttons">
+                        <button class="status-button green">Trip in Progress</button>
+                        <button onclick="cancelTrip(${trip.id})">Cancel Trip</button>
+                        <button onclick="completeTrip(${trip.id})">Complete Trip</button>
+                        <button onclick="deleteTrip(${trip.id})">Delete Trip</button>
+                        <button onclick="updateEndDate(${trip.id})">Save End Date</button>
+                    </div>
+                `;
+                currentTripsList.appendChild(tripDiv);
+            });
+            currentCount.textContent = `Total Current Trips: ${trips.length}`;
+        }
+
+        createNewTripForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const company_name = document.getElementById('company_name').value;
+            const company_tel = document.getElementById('company_tel').value;
+            const client_names = document.getElementById('client_names').value;
+            const num_clients = parseInt(document.getElementById('num_clients').value);
+            const client_tel = document.getElementById('client_tel').value;
+            const place_visited = document.getElementById('place_visited').value;
+            const time_date_started = document.getElementById('time_date_started').value;
+
+            const { data, error } = await supabase
+                .from('ongoing_trips_v3')
+                .insert([
+                    { company_name, company_tel, client_names, num_clients, client_tel, place_visited, time_date_started },
+                ]);
+
+            if (error) {
+                console.error('Error creating trip:', error);
+                alert(`Error creating trip: ${error.message}`);
+            } else {
+                console.log('Trip created successfully:', data);
+                createNewTripForm.reset();
+                loadCurrentTrips();
+            }
+        });
+
+        async function cancelTrip(tripId) {
+            if (confirm('Are you sure you want to cancel this trip?')) {
+                const { data: tripToCancel, error: fetchError } = await supabase
+                    .from('ongoing_trips_v3')
+                    .select('*')
+                    .eq('id', tripId)
+                    .single();
+
+                if (fetchError) {
+                    console.error('Error fetching trip to cancel:', fetchError);
+                    alert(`Error fetching trip: ${fetchError.message}`);
+                    return;
+                }
+
+                const { error: insertError } = await supabase
+                    .from('canceled_trips_v3')
+                    .insert([tripToCancel]);
+
+                if (insertError) {
+                    console.error('Error inserting into canceled trips:', insertError);
+                    alert(`Error canceling trip: ${insertError.message}`);
+                    return;
+                }
+
+                const { error: deleteError } = await supabase
+                    .from('ongoing_trips_v3')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (deleteError) {
+                    console.error('Error deleting ongoing trip:', deleteError);
+                    alert(`Error canceling trip: ${deleteError.message}`);
+                } else {
+                    console.log('Trip canceled successfully');
+                    loadCurrentTrips();
+                }
+            }
+        }
+
+        async function completeTrip(tripId) {
+            if (confirm('Are you sure this trip is complete?')) {
+                const { data: tripToComplete, error: fetchError } = await supabase
+                    .from('ongoing_trips_v3')
+                    .select('*')
+                    .eq('id', tripId)
+                    .single();
+
+                if (fetchError) {
+                    console.error('Error fetching trip to complete:', fetchError);
+                    alert(`Error fetching trip: ${fetchError.message}`);
+                    return;
+                }
+
+                const { error: insertError } = await supabase
+                    .from('completed_trips_v3')
+                    .insert([tripToComplete]);
+
+                if (insertError) {
+                    console.error('Error inserting into completed trips:', insertError);
+                    alert(`Error completing trip: ${insertError.message}`);
+                    return;
+                }
+
+                const { error: deleteError } = await supabase
+                    .from('ongoing_trips_v3')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (deleteError) {
+                    console.error('Error deleting ongoing trip:', deleteError);
+                    alert(`Error completing trip: ${deleteError.message}`);
+                } else {
+                    console.log('Trip completed successfully');
+                    loadCurrentTrips();
+                }
+            }
+        }
+
+        async function deleteTrip(tripId) {
+            if (confirm('Are you sure you want to delete this trip?')) {
+                const { error } = await supabase
+                    .from('ongoing_trips_v3')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error deleting trip:', error);
+                    alert(`Error deleting trip: ${error.message}`);
+                } else {
+                    console.log('Trip deleted successfully');
+                    loadCurrentTrips();
+                }
+            }
+        }
+
+        async function updatePaymentProof(tripId, columnName, value) {
+            const { error } = await supabase
+                .from('ongoing_trips_v3')
+                .update({ [columnName]: value })
+                .eq('id', tripId);
+
+            if (error) {
+                console.error(`Error updating ${columnName}:`, error);
+                alert(`Error updating payment proof: ${error.message}`);
+            } else {
+                console.log(`${columnName} updated successfully`);
+                loadCurrentTrips();
+            }
+        }
+
+        async function updateEndDate(tripId) {
+            const endDateValue = document.getElementById(`time_date_ended-${tripId}`).value;
+            const { error } = await supabase
+                .from('ongoing_trips_v3')
+                .update({ time_date_ended: endDateValue })
+                .eq('id', tripId);
+
+            if (error) {
+                console.error('Error updating end date:', error);
+                alert(`Error updating end date: ${error.message}`);
+            } else {
+                console.log('End date updated successfully');
+                loadCurrentTrips();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+    </script>
