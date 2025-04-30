@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Trips</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 900px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h2, h3 { color: #5cb85c; margin-top: 20px; }
+        .trip-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 4px; background-color: #f9f9f9; }
+        .info-label { font-weight: bold; color: #337ab7; }
+        .action-buttons button { margin-right: 10px; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .delete-button { background-color: #d9534f; color: white; }
+        .delete-button:hover { background-color: #c9302c; }
+        .search-container { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        #search-place { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        #search-button { background-color: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        #search-button:hover { background-color: #0056b3; }
+        #completed-count { margin-top: 15px; font-weight: bold; color: #5cb85c; }
+       a{text-decoration:none;color:black;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Completed Trips</h2>
+        <p><a href="ongoing_trips_v3.html">In-Progress Trips</a> | <a href="canceled_trips.html">Canceled Trips</a></p>
+
+        <div class="search-container">
+            <input type="text" id="search-place" placeholder="Search Place to Visit">
+            <button id="search-button">Search</button>
+        </div>
+                 <h3 id="completed-count"></h3>
+        <div id="completed-trips-list">
+            </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+        const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        const completedTripsList = document.getElementById('completed-trips-list');
+        const searchPlaceInput = document.getElementById('search-place');
+        const searchButton = document.getElementById('search-button');
+        const completedCountDisplay = document.getElementById('completed-count');
+        let allCompletedTrips = [];
+        
+        async function checkUserLoggedIn() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+        window.location.href = 'login.html'; 
+        }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+        checkUserLoggedIn();
+        loadAllTrips();
+        });
+        async function loadCompletedTrips() {
+            const { data, error } = await supabase
+                .from('completed_trips_v3')
+                .select('*');
+
+            if (error) {
+                console.error('Error loading completed trips:', error);
+                alert(`Error loading completed trips: ${error.message}`);
+            } else if (data) {
+                allCompletedTrips = data;
+                displayCompletedTrips(data);
+                completedCountDisplay.textContent = `Total Completed Trips: ${data.length}`;
+            } else {
+                completedTripsList.innerHTML = '<p>No completed trips found.</p>';
+                completedCountDisplay.textContent = `Total Completed Trips: 0`;
+            }
+        }
+
+        function displayCompletedTrips(trips) {
+            completedTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <h3>Trip ID: ${trip.id}</h3>
+                    <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                    <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                    <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                    <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                    <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                    <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                    <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                    <p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
+                    <p><span class="info-label">30% Payment Proof:</span> ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : 'N/A'}</p>
+                    <p><span class="info-label">15% Payment Proof:</span> ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : 'N/A'}</p>
+                    <div class="action-buttons">
+                        <button class="delete-button" onclick="deleteCompletedTrip(${trip.id})">Delete</button>
+                        <span style="color: #5cb85c; font-weight: bold;">Completed</span>
+                    </div>
+                `;
+                completedTripsList.appendChild(tripDiv);
+            });
+        }
+
+        async function deleteCompletedTrip(tripId) {
+            if (confirm('Are you sure you want to permanently delete this completed trip?')) {
+                const { error } = await supabase
+                    .from('completed_trips_v3')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error deleting completed trip:', error);
+                    alert(`Error deleting trip: ${error.message}`);
+                } else {
+                    console.log('Completed trip deleted successfully');
+                    loadCompletedTrips();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCompletedTrips();
+        });
+
+        searchButton.addEventListener('click', () => {
+            const searchTerm = searchPlaceInput.value.toLowerCase();
+            const filteredTrips = allCompletedTrips.filter(trip =>
+                trip.place_visited && trip.place_visited.toLowerCase().includes(searchTerm)
+            );
+            displayCompletedTrips(filteredTrips);
+        });
+
+        window.deleteCompletedTrip = deleteCompletedTrip;
+    </script>
+</body>
+</html>

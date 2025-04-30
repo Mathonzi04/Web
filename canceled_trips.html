@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canceled Trips</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 950px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h2, h3 { color: #d9534f; margin-top: 20px; }
+        .trip-item { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 4px; background-color: #f9f9f9; }
+        .info-label { font-weight: bold; color: #337ab7; }
+        .action-buttons button { margin-right: 10px; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .delete-button { background-color: #d9534f; color: white; }
+        .delete-button:hover { background-color: #c9302c; }
+        .search-container { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        #search-place { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        #search-button { background-color: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        #search-button:hover { background-color: #0056b3; }
+        .cancellation-reason { margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+        .cancellation-reason input[type="text"] { flex-grow: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .cancellation-reason button { background-color: #f0ad4e; color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .cancellation-reason button:hover { background-color: #eea236; }
+        #canceled-count { margin-top: 15px; font-weight: bold; color: #d9534f; }
+       a{text-decoration:none;color:black;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Canceled Trips</h2>
+        <p><a href="ongoing_trips_v3.html">In-Progress Trips</a> | <a href="completed_trips.html">Completed Trips</a></p>
+
+        <div class="search-container">
+            <input type="text" id="search-place" placeholder="Search Place to Visit">
+            <button id="search-button">Search</button>
+        </div>
+<h3 id="canceled-count"></h3>
+
+        <div id="canceled-trips-list">
+            </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const canceledTripsList = document.getElementById('canceled-trips-list');
+        const searchPlaceInput = document.getElementById('search-place');
+        const searchButton = document.getElementById('search-button');
+        const canceledCountDisplay = document.getElementById('canceled-count');
+        let allCanceledTrips = [];
+
+        async function checkUserLoggedIn() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+        window.location.href = 'login.html'; 
+        }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+        checkUserLoggedIn();
+        loadAllTrips();
+        });
+        async function loadCanceledTrips() {
+            const { data, error } = await supabase
+                .from('canceled_trips_v3')
+                .select('*');
+
+            if (error) {
+                console.error('Error loading canceled trips:', error);
+                alert(`Error loading canceled trips: ${error.message}`);
+            } else if (data) {
+                allCanceledTrips = data;
+                displayCanceledTrips(data);
+                canceledCountDisplay.textContent = `Total Canceled Trips: ${data.length}`;
+            } else {
+                canceledTripsList.innerHTML = '<p>No canceled trips found.</p>';
+                canceledCountDisplay.textContent = `Total Canceled Trips: 0`;
+            }
+        }
+
+        function displayCanceledTrips(trips) {
+            canceledTripsList.innerHTML = '';
+            trips.forEach(trip => {
+                const tripDiv = document.createElement('div');
+                tripDiv.classList.add('trip-item');
+                tripDiv.innerHTML = `
+                    <h3>Trip ID: ${trip.id}</h3>
+                    <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                    <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                    <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                    <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                    <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                    <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                    <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                    <p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
+                    <p><span class="info-label">Reason for Cancellation:</span> ${trip.cancellation_reason || 'N/A'}</p>
+                    <p><span class="info-label">30% Payment Proof:</span> ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank">View</a>` : 'N/A'}</p>
+                    <p><span class="info-label">15% Payment Proof:</span> ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank">View</a>` : 'N/A'}</p>
+                    <div class="cancellation-reason">
+                        <input type="text" id="reason-${trip.id}" placeholder="Reason for cancellation">
+                        <button onclick="updateCancellationReason(${trip.id})">Submit Reason</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="delete-button" onclick="deleteCanceledTrip(${trip.id})">Delete</button>
+                        <span style="color: #d9534f; font-weight: bold;">Canceled</span>
+                    </div>
+                `;
+                canceledTripsList.appendChild(tripDiv);
+            });
+        }
+
+        async function updateCancellationReason(tripId) {
+            const reasonInput = document.getElementById(`reason-${tripId}`);
+            const reason = reasonInput.value.trim();
+
+            if (reason) {
+                const { error } = await supabase
+                    .from('canceled_trips_v3')
+                    .update({ cancellation_reason: reason })
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error updating cancellation reason:', error);
+                    alert(`Error updating reason: ${error.message}`);
+                } else {
+                    console.log('Cancellation reason updated successfully');
+                    reasonInput.value = ''; // Clear the input field
+                    loadCanceledTrips(); // Reload to show the updated reason
+                }
+            } else {
+                alert('Please enter a reason for cancellation.');
+            }
+        }
+
+        async function deleteCanceledTrip(tripId) {
+            if (confirm('Are you sure you want to permanently delete this canceled trip?')) {
+                const { error } = await supabase
+                    .from('canceled_trips_v3')
+                    .delete()
+                    .eq('id', tripId);
+
+                if (error) {
+                    console.error('Error deleting canceled trip:', error);
+                    alert(`Error deleting trip: ${error.message}`);
+                } else {
+                    console.log('Canceled trip deleted successfully');
+                    loadCanceledTrips();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCanceledTrips();
+        });
+
+        searchButton.addEventListener('click', () => {
+            const searchTerm = searchPlaceInput.value.toLowerCase();
+            const filteredTrips = allCanceledTrips.filter(trip =>
+                trip.place_visited && trip.place_visited.toLowerCase().includes(searchTerm)
+            );
+            displayCanceledTrips(filteredTrips);
+        });
+
+        window.deleteCanceledTrip = deleteCanceledTrip;
+        window.updateCancellationReason = updateCancellationReason;
+    </script>
+</body>
+</html>
