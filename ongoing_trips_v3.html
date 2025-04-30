@@ -2,157 +2,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trip Management</title>
-<style>
-body {
-font-family: sans-serif;
-margin: 20px;
-background-color: #f4f4f4;
-}
-.container {
-max-width: 800px;
-margin: 0 auto;
-background-color: #fff;
-padding: 20px;
-border-radius: 8px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-h2, h3 {
-color: #333;
-margin-top: 20px;
-}
-.form-group {
-margin-bottom: 15px;
-}
-label {
-display: block;
-margin-bottom: 5px;
-color: #555;
-font-weight: bold;
-}
-input[type="text"],
-input[type="tel"],
-input[type="number"],
-input[type="datetime-local"],
-input[type="url"] {
-width: calc(100% - 12px);
-padding: 8px;
-border: 1px solid #ddd;
-border-radius: 4px;
-box-sizing: border-box;
-}
-button {
-background-color: #5cb85c;
-color: white;
-padding: 10px 15px;
-border: none;
-border-radius: 4px;
-cursor: pointer;
-font-size: 16px;
-margin-right: 10px;
-}
-button:hover {
-background-color: #4cae4c;
-}
-.current-trip-item {
-border: 1px solid #eee;
-padding: 15px;
-margin-bottom: 15px;
-border-radius: 4px;
-background-color: #f9f9f9;
-}
-.info-label {
-font-weight: bold;
-color: #337ab7;
-}
-.action-buttons button {
-margin-top: 10px;
-background-color: #007bff;
-}
-.action-buttons button:hover {
-background-color: #0056b3;
-}
-.status-button {
-padding: 8px 12px;
-border-radius: 4px;
-color: white;
-font-weight: bold;
-border: none;
-}
-.green {
-background-color: #5cb85c;
-}
-.canceled {
-background-color: #d9534f;
-}
-.completed {
-background-color: #5bc0de;
-}
-.document-link {
-margin-left: 10px;
-color: #007bff;
-text-decoration: none;
-}
-.document-link:hover {
-text-decoration: underline;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Management</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2, h3{
+            color: #333;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="datetime-local"],
+        input[type="url"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .current-trip-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #337ab7;
+        }
+        .action-buttons button {
+            margin-top: 10px;
+            background-color: #007bff;
+        }
+        .action-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .status-button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+        .green {
+            background-color: #5cb85c;
+        }
+        .canceled {
+            background-color: #d9534f;
+        }
+        .completed {
+            background-color: #5bc0de;
+        }
+        .document-link {
+            margin-left: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .document-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-<h2>Create New Trip</h2>
-<form id="create-new-trip-form">
-<h3>Company Info</h3>
-<div class="form-group">
-<label for="company_name">Name of Company:</label>
-<input type="text" id="company_name" name="company_name" required>
-</div>
-<div class="form-group">
-<label for="company_tel">Tel of Company:</label>
-<input type="tel" id="company_tel" name="company_tel">
-</div>
+    <div class="container">
+        <h2>Create New Trip</h2>
+        <p><a href="#">Trips Statuses</a> </p>
+        <form id="create-new-trip-form">
+            <h3>Company Info</h3>
+            <div class="form-group">
+                <label for="company_name">Name of Company:</label>
+                <input type="text" id="company_name" name="company_name" required>
+            </div>
+            <div class="form-group">
+                <label for="company_tel">Tel of Company:</label>
+                <input type="tel" id="company_tel" name="company_tel">
+            </div>
 
-<h3>Client Info</h3>
-<div class="form-group">
-<label for="client_names">Names of Clients:</label>
-<input type="text" id="client_names" name="client_names" required>
-</div>
-<div class="form-group">
-<label for="num_clients">Number of Clients:</label>
-<input type="number" id="num_clients" name="num_clients" min="1" required>
-</div>
-<div class="form-group">
-<label for="client_tel">Tel of Clients:</label>
-<input type="tel" id="client_tel" name="client_tel">
-</div>
+            <h3>Client Info</h3>
+            <div class="form-group">
+                <label for="client_names">Names of Clients:</label>
+                <input type="text" id="client_names" name="client_names" required>
+            </div>
+            <div class="form-group">
+                <label for="num_clients">Number of Clients:</label>
+                <input type="number" id="num_clients" name="num_clients" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="client_tel">Tel of Clients:</label>
+                <input type="tel" id="client_tel" name="client_tel">
+            </div>
 
-<h3>Trip Info</h3>
-<div class="form-group">
-<label for="place_visited">Place to be Visited:</label>
-<input type="text" id="place_visited" name="place_visited">
-</div>
-<div class="form-group">
-<label for="time_date_started">Time and Date Started:</label>
-<input type="datetime-local" id="time_date_started" name="time_date_started" required>
-</div>
-<button type="submit">Create Trip</button>
-</form>
+            <h3>Trip Info</h3>
+            <div class="form-group">
+                <label for="place_visited">Place to be Visited:</label>
+                <input type="text" id="place_visited" name="place_visited">
+            </div>
+            <div class="form-group">
+                <label for="time_date_started">Time and Date Started:</label>
+                <input type="datetime-local" id="time_date_started" name="time_date_started" required>
+            </div>
+            <button type="submit">Create Trip</button>
+        </form>
 <h3 id="current-count"></h3>
 
 
-<h2>Current Trips</h2>
-<div id="current-trips-list">
-</div>
-</div>
+        <h2>Current Trips</h2>
+        <div id="current-trips-list">
+            </div>
+    </div>
 
-<script type="module">
+    <script type="module">
 import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
 const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+const createNewTripForm = document.getElementById('create-new-trip-form');
+const currentTripsList = document.getElementById('current-trips-list');
+const canceledTripsList = document.getElementById('canceled-trips-list');
+const completedTripsList = document.getElementById('completed-trips-list');
+const currentCount = document.getElementById('current-count');
+const canceledCount = document.getElementById('canceled-count');
+const completedCount = document.getElementById('completed-count');
+let allTripsData = [];
 
 async function checkUserLoggedIn() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -166,310 +176,382 @@ document.addEventListener('DOMContentLoaded', () => {
     checkUserLoggedIn();
     loadAllTrips();
 });
-const createNewTripForm = document.getElementById('create-new-trip-form');
-const currentTripsList = document.getElementById('current-trips-list');
-const canceledTripsList = document.getElementById('canceled-trips-list');
-const completedTripsList = document.getElementById('completed-trips-list');
-const currentCount = document.getElementById('current-count');
-const canceledCount = document.getElementById('canceled-count');
-const completedCount = document.getElementById('completed-count');
-let allTripsData = [];
+
 const currentCountDisplay = document.getElementById('current-count');
+
 async function loadCurrentTripsCount() {
-const { data, error, count } = await supabase
-.from('ongoing_trips_v3')
-.select('*', { count: 'exact' });
-if (error) {
-console.error('Error loading ongoing trips count:', error);
-currentCountDisplay.textContent = 'Error loading count.';
-} else {
-currentCountDisplay.textContent = `Total Ongoing Trips: ${count || 0}`;}}
+    const { data, error, count } = await supabase
+        .from('ongoing_trips_v3')
+        .select('*', { count: 'exact' });
+
+    if (error) {
+        console.error('Error loading ongoing trips count:', error);
+        currentCountDisplay.textContent = 'Error loading count.';
+    } else {
+        currentCountDisplay.textContent = `Total Ongoing Trips: ${count || 0}`;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-loadCurrentTripsCount();});
+    loadCurrentTripsCount();
+});
+
 async function loadAllTrips() {
-const { data, error } = await supabase
-.from('ongoing_trips_v3')
-.select('*');
-const { data: canceledData, error: canceledError } = await supabase
-.from('canceled_trips_v3')
-.select('*');
-const { data: completedData, error: completedError } = await supabase
-.from('completed_trips_v3')
-.select('*');
-if (error) {
-console.error('Error loading ongoing trips:', error);
-alert(`Error loading ongoing trips: ${error.message}`);}
-if (canceledError) {
-console.error('Error loading canceled trips:', canceledError);
-alert(`Error loading canceled trips: ${canceledError.message}`);}
-if (completedError) {
-console.error('Error loading completed trips:', completedError);
-alert(`Error loading completed trips: ${completedError.message}`);}
-if (data && canceledData && completedData) {
-displayOngoingTrips(data);
-displayCanceledTrips(canceledData);
-displayCompletedTrips(completedData);
-currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
-canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
-completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
-} else if (data && canceledData) {
-displayOngoingTrips(data);
-displayCanceledTrips(canceledData);
-displayCompletedTrips([]);
-currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
-canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
-completedCount.textContent = `Total Completed Trips: 0`;
-} else if (data && completedData) {
-displayOngoingTrips(data);
-displayCanceledTrips([]);
-displayCompletedTrips(completedData);
-currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
-canceledCount.textContent = `Total Canceled Trips: 0`;
-completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
-} else if (canceledData && completedData) {
-displayOngoingTrips([]);
-displayCanceledTrips(canceledData);
-displayCompletedTrips(completedData);
-currentCount.textContent = `Total Ongoing Trips: 0`;
-canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
-completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
-} else if (data) {
-displayOngoingTrips(data);
-displayCanceledTrips([]);
-displayCompletedTrips([]);
-currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
-canceledCount.textContent = `Total Canceled Trips: 0`;
-completedCount.textContent = `Total Completed Trips: 0`;
-} else if (canceledData) {
-displayOngoingTrips([]);
-displayCanceledTrips(canceledData);
-displayCompletedTrips([]);
-currentCount.textContent = `Total Ongoing Trips: 0`;
-canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
-completedCount.textContent = `Total Completed Trips: 0`;
-} else if (completedData) {
-displayOngoingTrips([]);
-displayCanceledTrips([]);
-displayCompletedTrips(completedData);
-currentCount.textContent = `Total Ongoing Trips: 0`;
-canceledCount.textContent = `Total Canceled Trips: 0`;
-completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
-} else {
-currentTripsList.innerHTML = '<p>No ongoing trips found.</p>';
-canceledTripsList.innerHTML = '<p>No canceled trips found.</p>';
-completedTripsList.innerHTML = '<p>No completed trips found.</p>';
-currentCount.textContent = `Total Ongoing Trips: 0`;
-canceledCount.textContent = `Total Canceled Trips: 0`;
-completedCount.textContent = `Total Completed Trips: 0`;}}
+    const { data, error } = await supabase
+        .from('ongoing_trips_v3')
+        .select('*');
+
+    const { data: canceledData, error: canceledError } = await supabase
+        .from('canceled_trips_v3')
+        .select('*');
+
+    const { data: completedData, error: completedError } = await supabase
+        .from('completed_trips_v3')
+        .select('*');
+
+    if (error) {
+        console.error('Error loading ongoing trips:', error);
+        alert(`Error loading ongoing trips: ${error.message}`);
+    }
+    if (canceledError) {
+        console.error('Error loading canceled trips:', canceledError);
+        alert(`Error loading canceled trips: ${canceledError.message}`);
+    }
+    if (completedError) {
+        console.error('Error loading completed trips:', completedError);
+        alert(`Error loading completed trips: ${completedError.message}`);
+    }
+
+    if (data && canceledData && completedData) {
+        displayOngoingTrips(data);
+        displayCanceledTrips(canceledData);
+        displayCompletedTrips(completedData);
+        currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
+        canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
+        completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
+    } else if (data && canceledData) {
+        displayOngoingTrips(data);
+        displayCanceledTrips(canceledData);
+        displayCompletedTrips([]);
+        currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
+        canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
+        completedCount.textContent = `Total Completed Trips: 0`;
+    } else if (data && completedData) {
+        displayOngoingTrips(data);
+        displayCanceledTrips([]);
+        displayCompletedTrips(completedData);
+        currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
+        canceledCount.textContent = `Total Canceled Trips: 0`;
+        completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
+    } else if (canceledData && completedData) {
+        displayOngoingTrips([]);
+        displayCanceledTrips(canceledData);
+        displayCompletedTrips(completedData);
+        currentCount.textContent = `Total Ongoing Trips: 0`;
+        canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
+        completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
+    } else if (data) {
+        displayOngoingTrips(data);
+        displayCanceledTrips([]);
+        displayCompletedTrips([]);
+        currentCount.textContent = `Total Ongoing Trips: ${data.length}`;
+        canceledCount.textContent = `Total Canceled Trips: 0`;
+        completedCount.textContent = `Total Completed Trips: 0`;
+    } else if (canceledData) {
+        displayOngoingTrips([]);
+        displayCanceledTrips(canceledData);
+        displayCompletedTrips([]);
+        currentCount.textContent = `Total Ongoing Trips: 0`;
+        canceledCount.textContent = `Total Canceled Trips: ${canceledData.length}`;
+        completedCount.textContent = `Total Completed Trips: 0`;
+    } else if (completedData) {
+        displayOngoingTrips([]);
+        displayCanceledTrips([]);
+        displayCompletedTrips(completedData);
+        currentCount.textContent = `Total Ongoing Trips: 0`;
+        canceledCount.textContent = `Total Canceled Trips: 0`;
+        completedCount.textContent = `Total Completed Trips: ${completedData.length}`;
+    } else {
+        currentTripsList.innerHTML = '<p>No ongoing trips found.</p>';
+        canceledTripsList.innerHTML = '<p>No canceled trips found.</p>';
+        completedTripsList.innerHTML = '<p>No completed trips found.</p>';
+        currentCount.textContent = `Total Ongoing Trips: 0`;
+        canceledCount.textContent = `Total Canceled Trips: 0`;
+        completedCount.textContent = `Total Completed Trips: 0`;
+    }
+}
+
 function displayOngoingTrips(trips) {
-currentTripsList.innerHTML = '';
-trips.forEach(trip => {
-const tripDiv = document.createElement('div');
-tripDiv.classList.add('current-trip-item');
-tripDiv.innerHTML = `
-<h3>Trip ID: ${trip.id}</h3>
-<div class="trip-info">
-<p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
-<p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
-<p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
-<p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
-<p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
-<p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
-<p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
-<p><span class="info-label">Time & Date Ended:</span> <input type="datetime-local" id="time_date_ended-${trip.id}" value="${trip.time_date_ended || ''}"></p>
-</div>
-<div class="payment-proof">
-<label for="proof-30-${trip.id}">30% Payment Proof:</label>
-<input type="url" id="proof-30-${trip.id}" value="${trip.payment_proof_30_url || ''}">
-<button onclick="window.updatePaymentProof(${trip.id}, 'payment_proof_30_url', document.getElementById('proof-30-${trip.id}').value)">Save 30% Proof</button>
-${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : ''}
-</div>
-<div class="payment-proof">
-<label for="proof-15-${trip.id}">15% Payment Proof:</label>
-<input type="url" id="proof-15-${trip.id}" value="${trip.payment_proof_15_url || ''}">
-<button onclick="window.updatePaymentProof(${trip.id}, 'payment_proof_15_url', document.getElementById('proof-15-${trip.id}').value)">Save 15% Proof</button>
-${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : ''}
-</div>
-<div class="action-buttons">
-<button class="status-button green">Trip in Progress</button>
-<button onclick="window.cancelTrip(${trip.id})">Cancel Trip</button>
-<button onclick="window.completeTrip(${trip.id})">Complete Trip</button>
-<button onclick="window.deleteTrip(${trip.id})">Delete Trip</button>
-<button onclick="window.updateEndDate(${trip.id})">Save End Date</button>
-</div>`;
-currentTripsList.appendChild(tripDiv);});}
+    currentTripsList.innerHTML = '';
+    trips.forEach(trip => {
+        const tripDiv = document.createElement('div');
+        tripDiv.classList.add('current-trip-item');
+        tripDiv.innerHTML = `
+            <h3>Trip ID: ${trip.id}</h3>
+            <div class="trip-info">
+                <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                <p><span class="info-label">Time & Date Ended:</span> <input type="datetime-local" id="time_date_ended-${trip.id}" value="${trip.time_date_ended || ''}"></p>
+            </div>
+            <div class="payment-proof">
+                <label for="proof-30-${trip.id}">30% Payment Proof:</label>
+                <input type="url" id="proof-30-${trip.id}" value="${trip.payment_proof_30_url || ''}">
+                <button onclick="window.updatePaymentProof(${trip.id}, 'payment_proof_30_url', document.getElementById('proof-30-${trip.id}').value)">Save 30% Proof</button>
+                ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : ''}
+            </div>
+            <div class="payment-proof">
+                <label for="proof-15-${trip.id}">15% Payment Proof:</label>
+                <input type="url" id="proof-15-${trip.id}" value="${trip.payment_proof_15_url || ''}">
+                <button onclick="window.updatePaymentProof(${trip.id}, 'payment_proof_15_url', document.getElementById('proof-15-${trip.id}').value)">Save 15% Proof</button>
+                ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : ''}
+            </div>
+            <div class="action-buttons">
+                <button class="status-button green">Trip in Progress</button>
+                <button onclick="window.cancelTrip(${trip.id})">Cancel Trip</button>
+                <button onclick="window.completeTrip(${trip.id})">Complete Trip</button>
+                <button onclick="window.deleteTrip(${trip.id})">Delete Trip</button>
+                <button onclick="window.updateEndDate(${trip.id})">Save End Date</button>
+            </div>
+        `;
+        currentTripsList.appendChild(tripDiv);
+    });
+}
+
 function displayCanceledTrips(trips) {
-canceledTripsList.innerHTML = '';
-trips.forEach(trip => {
-const tripDiv = document.createElement('div');
-tripDiv.classList.add('canceled-trip-item');
-tripDiv.innerHTML = `
-<h3>Trip ID: ${trip.id}</h3>
-<div class="trip-info">
-<p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
-<p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
-<p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
-<p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
-<p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
-<p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
-<p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
-<p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
-<p><label for="proof-30-canceled-${trip.id}">30% Payment Proof:</label>
-${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}</p><p>
-<label for="proof-15-canceled-${trip.id}">15% Payment Proof:</label>
-${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}</p>
-<div class="action-buttons">
-<button class="status-button canceled">Canceled</button>
-<button onclick="window.deleteTrip(${trip.id})">Delete Trip</button></div></div>`;
-canceledTripsList.appendChild(tripDiv);});}
+    canceledTripsList.innerHTML = '';
+    trips.forEach(trip => {
+        const tripDiv = document.createElement('div');
+        tripDiv.classList.add('canceled-trip-item');
+        tripDiv.innerHTML = `
+            <h3>Trip ID: ${trip.id}</h3>
+            <div class="trip-info">
+                <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                <p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
+                <p>
+                    <label for="proof-30-canceled-${trip.id}">30% Payment Proof:</label>
+                    ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
+                </p>
+                <p>
+                    <label for="proof-15-canceled-${trip.id}">15% Payment Proof:</label>
+                    ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
+                </p>
+                <div class="action-buttons">
+                    <button class="status-button canceled">Canceled</button>
+                    <button onclick="window.deleteTrip(${trip.id})">Delete Trip</button>
+                </div>
+            </div>
+        `;
+        canceledTripsList.appendChild(tripDiv);
+    });
+}
+
 function displayCompletedTrips(trips) {
-completedTripsList.innerHTML = '';
-trips.forEach(trip => {
-const tripDiv = document.createElement('div');
-tripDiv.classList.add('completed-trip-item');
-tripDiv.innerHTML = `
-<h3>Trip ID: ${trip.id}</h3>
-<div class="trip-info">
-<p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
-<p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
-<p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
-<p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
-<p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
-<p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
-<p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
-<p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
-<p>
-<label for="proof-30-completed-${trip.id}">30% Payment Proof:</label>
-${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
-</p>
-<p>
-<label for="proof-15-completed-${trip.id}">15% Payment Proof:</label>
-${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
-</p>
-<div class="action-buttons">
-<button class="status-button completed">Completed</button>
-<button onclick="window.deleteTrip(${trip.id})">Delete Trip</button>
-</div>
-</div>
-`;
-completedTripsList.appendChild(tripDiv); });}
+    completedTripsList.innerHTML = '';
+    trips.forEach(trip => {
+        const tripDiv = document.createElement('div');
+        tripDiv.classList.add('completed-trip-item');
+        tripDiv.innerHTML = `
+            <h3>Trip ID: ${trip.id}</h3>
+            <div class="trip-info">
+                <p><span class="info-label">Company Name:</span> ${trip.company_name}</p>
+                <p><span class="info-label">Company Tel:</span> ${trip.company_tel || 'N/A'}</p>
+                <p><span class="info-label">Client Names:</span> ${trip.client_names}</p>
+                <p><span class="info-label">Number of Clients:</span> ${trip.num_clients}</p>
+                <p><span class="info-label">Client Tel:</span> ${trip.client_tel || 'N/A'}</p>
+                <p><span class="info-label">Place to Visit:</span> ${trip.place_visited || 'N/A'}</p>
+                <p><span class="info-label">Time & Date Started:</span> ${trip.time_date_started}</p>
+                <p><span class="info-label">Time & Date Ended:</span> ${trip.time_date_ended || 'N/A'}</p>
+                <p>
+                    <label for="proof-30-completed-${trip.id}">30% Payment Proof:</label>
+                    ${trip.payment_proof_30_url ? `<a href="${trip.payment_proof_30_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
+                </p>
+                <p>
+                    <label for="proof-15-completed-${trip.id}">15% Payment Proof:</label>
+                    ${trip.payment_proof_15_url ? `<a href="${trip.payment_proof_15_url}" target="_blank" class="document-link">View PDF</a>` : 'N/A'}
+                </p>
+                <div class="action-buttons">
+                    <button class="status-button completed">Completed</button>
+                    <button onclick="window.deleteTrip(${trip.id})">Delete Trip</button>
+                </div>
+            </div>
+        `;
+        completedTripsList.appendChild(tripDiv);
+    });
+}
+
 createNewTripForm.addEventListener('submit', async (event) => {
-event.preventDefault();
-const company_name = document.getElementById('company_name').value;
-const company_tel = document.getElementById('company_tel').value;
-const client_names = document.getElementById('client_names').value;
-const num_clients = parseInt(document.getElementById('num_clients').value);
-const client_tel = document.getElementById('client_tel').value;
-const place_visited = document.getElementById('place_visited').value;
-const time_date_started = document.getElementById('time_date_started').value;
-const { data, error } = await supabase
-.from('ongoing_trips_v3')
-.insert([
-{ company_name, company_tel, client_names, num_clients, client_tel, place_visited, time_date_started },
-]);
-if (error) {
-console.error('Error creating trip:', error);
-alert(`Error creating trip: ${error.message}`);
-} else {
-console.log('Trip created successfully:', data);
-createNewTripForm.reset();
-loadAllTrips();}});
+    event.preventDefault();
+
+    const company_name = document.getElementById('company_name').value;
+    const company_tel = document.getElementById('company_tel').value;
+    const client_names = document.getElementById('client_names').value;
+    const num_clients = parseInt(document.getElementById('num_clients').value);
+    const client_tel = document.getElementById('client_tel').value;
+    const place_visited = document.getElementById('place_visited').value;
+    const time_date_started = document.getElementById('time_date_started').value;
+
+    const { data, error } = await supabase
+        .from('ongoing_trips_v3')
+        .insert([
+            { company_name, company_tel, client_names, num_clients, client_tel, place_visited, time_date_started },
+        ]);
+
+    if (error) {
+        console.error('Error creating trip:', error);
+        alert(`Error creating trip: ${error.message}`);
+    } else {
+        console.log('Trip created successfully:', data);
+        createNewTripForm.reset();
+        loadAllTrips();
+    }
+});
+
 async function cancelTrip(tripId) {
-if (confirm('Are you sure you want to cancel this trip?')) {
-const { data: tripToCancel, error: fetchError } = await supabase
-.from('ongoing_trips_v3')
-.select('*')
-.eq('id', tripId)
-.single();
-if (fetchError) {
-console.error('Error fetching trip to cancel:', fetchError);
-alert(`Error fetching trip: ${fetchError.message}`);
-return;}
-const { error: insertError } = await supabase
-.from('canceled_trips_v3')
-.insert([tripToCancel]);
-if (insertError) {
-console.error('Error inserting into canceled trips:', insertError);
-alert(`Error canceling trip: ${insertError.message}`);
-return;}
-const { error: deleteError } = await supabase
-.from('ongoing_trips_v3')
-.delete()
-.eq('id', tripId);
-if (deleteError) {
-console.error('Error deleting ongoing trip:', deleteError);
-alert(`Error canceling trip: ${deleteError.message}`);
-} else {
-console.log('Trip canceled successfully');
-loadAllTrips();}}}
+    if (confirm('Are you sure you want to cancel this trip?')) {
+        const { data: tripToCancel, error: fetchError } = await supabase
+            .from('ongoing_trips_v3')
+            .select('*')
+            .eq('id', tripId)
+            .single();
+
+        if (fetchError) {
+            console.error('Error fetching trip to cancel:', fetchError);
+            alert(`Error fetching trip: ${fetchError.message}`);
+            return;
+        }
+
+        const { error: insertError } = await supabase
+            .from('canceled_trips_v3')
+            .insert([tripToCancel]);
+
+        if (insertError) {
+            console.error('Error inserting into canceled trips:', insertError);
+            alert(`Error canceling trip: ${insertError.message}`);
+            return;
+        }
+
+        const { error: deleteError } = await supabase
+            .from('ongoing_trips_v3')
+            .delete()
+            .eq('id', tripId);
+
+        if (deleteError) {
+            console.error('Error deleting ongoing trip:', deleteError);
+            alert(`Error canceling trip: ${deleteError.message}`);
+        } else {
+            console.log('Trip canceled successfully');
+            loadAllTrips();
+        }
+    }
+}
+
 async function completeTrip(tripId) {
-if (confirm('Are you sure this trip is complete?')) {
-const { data: tripToComplete, error: fetchError } = await supabase
-.from('ongoing_trips_v3')
-.select('*')
-.eq('id', tripId)
-.single();
-if (fetchError) {
-console.error('Error fetching trip to complete:', fetchError);
-alert(`Error fetching trip: ${fetchError.message}`);
-return;}
-const { error: insertError } = await supabase
-.from('completed_trips_v3')
-.insert([tripToComplete]);
-if (insertError) {
-alert(`Error completing trip: ${insertError.message}`);
-return;}
-const { error: deleteError } = await supabase
-.from('ongoing_trips_v3')
-.delete()
-.eq('id', tripId);
-if (deleteError) {
-console.error('Error deleting ongoing trip:', deleteError);
-alert(`Error completing trip: ${deleteError.message}`);
-} else {
-console.log('Trip completed successfully');
-loadAllTrips();}}}
-async function deleteTrip(tripId) {
-if (confirm('Are you sure you want to delete this trip?')) {
-const { error } = await supabase
-.from('ongoing_trips_v3')
-.delete()
-.eq('id', tripId);
-if (error) {
-console.error('Error deleting trip:', error);
-alert(`Error deleting trip: ${error.message}`);
-} else {
-console.log('Trip deleted successfully');
-loadAllTrips();}}}
-async function updatePaymentProof(tripId, columnName, value) {
-const { error } = await supabase
-.from('ongoing_trips_v3')
-.update({ [columnName]: value })
-.eq('id', tripId);
-if (error) {
-console.error(`Error updating ${columnName}:`, error);
-alert(`Error updating payment proof: ${error.message}`);
-} else {
-console.log(`${columnName} updated successfully`);
-loadAllTrips();}}
-async function updateEndDate(tripId) {
-const endDateValue = document.getElementById(`time_date_ended-${tripId}`).value;
-const { error } = await supabase
-.from('ongoing_trips_v3')
-.update({ time_date_ended: endDateValue })
-.eq('id', tripId);
-if (error) {
-console.error('Error updating end date:', error);
-alert(`Error updating end date: ${error.message}`);
-} else {
-console.log('End date updated successfully');
-loadAllTrips();}}
-document.addEventListener('DOMContentLoaded', () => {
-loadAllTrips();
-});  
-window.updatePaymentProof = updatePaymentProof;
-window.cancelTrip = cancelTrip;
-window.completeTrip = completeTrip;
-window.deleteTrip = deleteTrip;
-window.updateEndDate = updateEndDate;
-</script>
+    if (confirm('Are you sure this trip is complete?')) {
+        const { data: tripToComplete, error: fetchError } = await supabase
+            .from('ongoing_trips_v3')
+            .select('*')
+            .eq('id', tripId)
+            .single();
+
+        if (fetchError) {
+            console.error('Error fetching trip to complete:', fetchError);
+            alert(`Error fetching trip: ${fetchError.message}`);
+            return;
+        }
+
+        const { error: insertError } = await supabase
+            .from('completed_trips_v3')
+            .insert([tripToComplete]);
+
+        if (insertError) {
+            alert(`Error completing trip: ${insertError.message}`);
+            return;
+            }
+            
+            const { error: deleteError } = await supabase
+            .from('ongoing_trips_v3')
+            .delete()
+            .eq('id', tripId);
+            
+            if (deleteError) {
+            console.error('Error deleting ongoing trip:', deleteError);
+            alert(`Error completing trip: ${deleteError.message}`);
+            } else {
+            console.log('Trip completed successfully');
+            loadAllTrips();
+            }
+            }
+            }
+            
+            async function deleteTrip(tripId) {
+            if (confirm('Are you sure you want to delete this trip?')) {
+            const { error } = await supabase
+            .from('ongoing_trips_v3')
+            .delete()
+            .eq('id', tripId);
+            
+            if (error) {
+            console.error('Error deleting trip:', error);
+            alert(`Error deleting trip: ${error.message}`);
+            } else {
+            console.log('Trip deleted successfully');
+            loadAllTrips();
+            }
+            }
+            }
+            
+            async function updatePaymentProof(tripId, columnName, value) {
+            const { error } = await supabase
+            .from('ongoing_trips_v3')
+            .update({ [columnName]: value })
+            .eq('id', tripId);
+            
+            if (error) {
+            console.error(`Error updating ${columnName}:`, error);
+            alert(`Error updating payment proof: ${error.message}`);
+            } else {
+            console.log(`${columnName} updated successfully`);
+            loadAllTrips();
+            }
+            }
+            
+            async function updateEndDate(tripId) {
+            const endDateValue = document.getElementById(`time_date_ended-${tripId}`).value;
+            const { error } = await supabase
+            .from('ongoing_trips_v3')
+            .update({ time_date_ended: endDateValue })
+            .eq('id', tripId);
+            
+            if (error) {
+            console.error('Error updating end date:', error);
+            alert(`Error updating end date: ${error.message}`);
+            } else {
+            console.log('End date updated successfully');
+            loadAllTrips();
+            }
+            }
+            
+            document.addEventListener('DOMContentLoaded', () => {
+            loadAllTrips();
+            });
+            
+            window.updatePaymentProof = updatePaymentProof;
+            window.cancelTrip = cancelTrip;
+            window.completeTrip = completeTrip;
+            window.deleteTrip = deleteTrip;
+            window.updateEndDate = updateEndDate;
+  
+    </script>
+</body>
+</html>
