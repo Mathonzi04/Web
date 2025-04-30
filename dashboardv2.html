@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,6 @@
         header h1 { margin: 0; font-size: 2.8em; font-weight: 600; }
         .link-button { display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #42a5f5; color: #fff; border: none; border-radius: 6px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s ease-in-out; }
         .link-button:hover { background-color: #1976d2; }
-        .auth-message { text-align: center; padding: 20px; color: #d32f2f; font-weight: bold; }
         @media (max-width: 768px) {
             .dashboard-container { grid-template-columns: 1fr; }
             .dashboard-item { border-left: 4px solid #1e88e5; }
@@ -28,137 +26,125 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Admin Dashboard</h1>
-        </header>
-        <div id="auth-check">
-            <p class="auth-message">Checking authentication...</p>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+    <div class="dashboard-container">
+        <div class="dashboard-item">
+            <h2 class="item-title">Canceled Trips</h2>
+            <span id="canceled-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of canceled trips</span>
+            <a href="canceled_trips.html" class="link-button">View Details</a>
         </div>
-        <div id="dashboard-content" style="display: none;">
-            <div class="dashboard-container">
-                <div class="dashboard-item">
-                    <h2 class="item-title">Canceled Trips</h2>
-                    <span id="canceled-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of canceled trips</span>
-                    <a href="canceled_trips.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Completed Trips</h2>
-                    <span id="completed-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of completed trips</span>
-                    <a href="completed_trips.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Ongoing Trips</h2>
-                    <span id="ongoing-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of ongoing trips</span>
-                    <a href="ongoing_trips_v3.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Verified Users</h2>
-                    <span id="verified-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total verified users (excluding rejected)</span>
-                    <a href="verifiedusers.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Posts</h2>
-                    <span id="posts-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of posts</span>
-                    <a href="posts.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Requested Trips</h2>
-                    <span id="requested-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of new trip requests</span>
-                    <a href="triprequest.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Emails Sent (Requests)</h2>
-                    <span id="sent-requests-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total emails sent for trip requests</span>
-                    <a href="triprequest.html" class="link-button">View Details</a>
-                </div>
-            </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Completed Trips</h2>
+            <span id="completed-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of completed trips</span>
+            <a href="completed_trips.html" class="link-button">View Details</a>
         </div>
-        <div id="auth-redirect" style="display: none; text-align: center; padding: 20px;">
-            <p class="auth-message">Please log in to access this page.</p>
-            <a href="/login.html" class="link-button">Go to Login</a>
+        <div class="dashboard-item">
+            <h2 class="item-title">Ongoing Trips</h2>
+            <span id="ongoing-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of ongoing trips</span>
+            <a href="index.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Verified Users</h2>
+            <span id="verified-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total verified users (excluding rejected)</span>
+            <a href="verified_companies.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Posts</h2>
+            <span id="posts-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of posts</span>
+            <a href="#" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Requested Trips</h2>
+            <span id="requested-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of new trip requests</span>
+            <a href="requested_trips.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Emails Sent (Requests)</h2>
+            <span id="sent-requests-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total emails sent for trip requests</span>
+            <a href="requested_trips.html" class="link-button">View Details</a>
         </div>
     </div>
 
     <script type="module">
-            
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-
-const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-async function fetchRowCount(tableName, elementId) {
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+    
+    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    async function fetchRowCount(tableName, elementId) {
     const { count, error } = await supabase
-        .from(tableName)
-        .select('*', { count: 'exact' });
+    .from(tableName)
+    .select('*', { count: 'exact' });
     const countElement = document.getElementById(elementId);
     if (error) {
-        console.error(`Error fetching count for ${tableName}:`, error);
-        countElement.textContent = 'Error';
-        countElement.classList.remove('loading-text');
+    console.error(`Error fetching count for ${tableName}:`, error);
+    countElement.textContent = 'Error';
+    countElement.classList.remove('loading-text');
     } else {
-        countElement.textContent = count || 0;
-        countElement.classList.remove('loading-text');
+    countElement.textContent = count || 0;
+    countElement.classList.remove('loading-text');
     }
-}
-
-async function fetchSentRequestsCount() {
+    }
+    
+    async function fetchSentRequestsCount() {
     const { count, error } = await supabase
-        .from('requested_trips')
-        .select('*', { count: 'exact' })
-        .eq('email_sent', true);
+    .from('requested_trips')
+    .select('*', { count: 'exact' })
+    .eq('email_sent', true);
     const countElement = document.getElementById('sent-requests-count');
     if (error) {
-        console.error('Error fetching sent requests count:', error);
-        countElement.textContent = 'Error';
-        countElement.classList.remove('loading-text');
+    console.error('Error fetching sent requests count:', error);
+    countElement.textContent = 'Error';
+    countElement.classList.remove('loading-text');
     } else {
-        countElement.textContent = count || 0;
-        countElement.classList.remove('loading-text');
+    countElement.textContent = count || 0;
+    countElement.classList.remove('loading-text');
     }
-}
-
-async function loadVerifiedUsersCount() {
+    }
+    
+    async function loadVerifiedUsersCount() {
     const { count, error } = await supabase
-        .from('verified_companies')
-        .select('*', { count: 'exact' })
-        .not('bank_statement_status', 'eq', 'rejected')
-        .not('business_registration_status', 'eq', 'rejected')
-        .not('signed_contract_status', 'eq', 'rejected');
+    .from('verified_companies')
+    .select('*', { count: 'exact' })
+    .not('bank_statement_status', 'eq', 'rejected')
+    .not('business_registration_status', 'eq', 'rejected')
+    .not('signed_contract_status', 'eq', 'rejected');
     const countElement = document.getElementById('verified-companies-count');
     if (error) {
-        console.error('Error loading verified users count:', error);
-        countElement.textContent = 'Error';
-        countElement.classList.remove('loading-text');
+    console.error('Error loading verified users count:', error);
+    countElement.textContent = 'Error';
+    countElement.classList.remove('loading-text');
     } else {
-        countElement.textContent = count || 0;
-        countElement.classList.remove('loading-text');
+    countElement.textContent = count || 0;
+    countElement.classList.remove('loading-text');
     }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
+    }
+    
+    document.addEventListener('DOMContentLoaded', async () => {
     const { data: { user } } = await supabase.auth.getUser();
-
+    
     if (!user) {
-        window.location.href = 'login.html';
+    window.location.href = 'login.html';
     } else {
-        fetchRowCount('canceled_trips_v3', 'canceled-trips-count');
-        fetchRowCount('completed_trips_v3', 'completed-trips-count');
-        fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
-        loadVerifiedUsersCount();
-        fetchRowCount('posts', 'posts-count');
-        fetchRowCount('requested_trips', 'requested-trips-count');
-        fetchSentRequestsCount();
+    fetchRowCount('canceled_trips_v3', 'canceled-trips-count');
+    fetchRowCount('completed_trips_v3', 'completed-trips-count');
+    fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
+    loadVerifiedUsersCount();
+    fetchRowCount('posts', 'posts-count');
+    fetchRowCount('requested_trips', 'requested-trips-count');
+    fetchSentRequestsCount();
     }
-});
-</script>
+    });
+    </script>
 </body>
-    </html>
+                </html>
