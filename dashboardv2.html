@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Dashboard</title>
+    <title>Dashboard</title>
     <style>
         body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f6f8; color: #344054; }
         .dashboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 30px; max-width: 1200px; margin: 30px auto; }
@@ -88,10 +88,10 @@
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+                import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
 const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA5NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
         const authCheckDiv = document.getElementById('auth-check');
@@ -148,9 +148,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             const { count, error } = await supabase
                 .from('verified_companies')
                 .select('*', { count: 'exact' })
-                .not('bank_statement_status', 'eq', 'rejected')
-                .not('business_registration_status', 'eq', 'rejected')
-                .not('signed_contract_status', 'eq', 'rejected');
+                .not('status', 'eq', 'rejected');
 
             const countElement = document.getElementById('verified-count');
             if (error) {
@@ -168,7 +166,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
             fetchRowCount('completed_trips_v3', 'completed-trips-count');
             fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
             loadVerifiedUsersCount();
-            fetchRowCount('posts_v3', 'posts-count');
+            fetchRowCount('posts', 'posts-count');
             fetchRowCount('requested_trips', 'requested-trips-count');
             fetchSentRequestsCount();
         }
@@ -176,6 +174,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
         });
+
     </script>
 </body>
     </html>
