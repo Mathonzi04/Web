@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Advanced Dashboard</title>
     <style>
         body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f6f8; color: #344054; }
         .dashboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 30px; max-width: 1200px; margin: 30px auto; }
@@ -75,76 +75,74 @@
     </div>
 
     <script type="module">
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-    
-    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    async function fetchRowCount(tableName, elementId) {
-    const { count, error } = await supabase
-    .from(tableName)
-    .select('*', { count: 'exact' });
-    const countElement = document.getElementById(elementId);
-    if (error) {
-    console.error(`Error fetching count for ${tableName}:`, error);
-    countElement.textContent = 'Error';
-    countElement.classList.remove('loading-text');
-    } else {
-    countElement.textContent = count || 0;
-    countElement.classList.remove('loading-text');
-    }
-    }
-    
-    async function fetchSentRequestsCount() {
-    const { count, error } = await supabase
-    .from('requested_trips')
-    .select('*', { count: 'exact' })
-    .eq('email_sent', true);
-    const countElement = document.getElementById('sent-requests-count');
-    if (error) {
-    console.error('Error fetching sent requests count:', error);
-    countElement.textContent = 'Error';
-    countElement.classList.remove('loading-text');
-    } else {
-    countElement.textContent = count || 0;
-    countElement.classList.remove('loading-text');
-    }
-    }
-    
-    async function loadVerifiedUsersCount() {
-    const { count, error } = await supabase
-    .from('verified_companies')
-    .select('*', { count: 'exact' })
-    .not('bank_statement_status', 'eq', 'rejected')
-    .not('business_registration_status', 'eq', 'rejected')
-    .not('signed_contract_status', 'eq', 'rejected');
-    const countElement = document.getElementById('verified-companies-count');
-    if (error) {
-    console.error('Error loading verified users count:', error);
-    countElement.textContent = 'Error';
-    countElement.classList.remove('loading-text');
-    } else {
-    countElement.textContent = count || 0;
-    countElement.classList.remove('loading-text');
-    }
-    }
-    
-    document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-    window.location.href = 'login.html';
-    } else {
-    fetchRowCount('canceled_trips_v3', 'canceled-trips-count');
-    fetchRowCount('completed_trips_v3', 'completed-trips-count');
-    fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
-    loadVerifiedUsersCount();
-    fetchRowCount('posts', 'posts-count');
-    fetchRowCount('requested_trips', 'requested-trips-count');
-    fetchSentRequestsCount();
-    }
-    });
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+        async function fetchRowCount(tableName, elementId) {
+            const { count, error } = await supabase
+                .from(tableName)
+                .select('*', { count: 'exact' });
+
+            const countElement = document.getElementById(elementId);
+            if (error) {
+                console.error(`Error fetching count for ${tableName}:`, error);
+                countElement.textContent = 'Error';
+                countElement.classList.remove('loading-text');
+            } else {
+                countElement.textContent = count || 0;
+                countElement.classList.remove('loading-text');
+            }
+        }
+
+        async function fetchSentRequestsCount() {
+            const { count, error } = await supabase
+                .from('requested_trips')
+                .select('*', { count: 'exact' })
+                .eq('email_sent', true);
+
+            const countElement = document.getElementById('sent-requests-count');
+            if (error) {
+                console.error('Error fetching sent requests count:', error);
+                countElement.textContent = 'Error';
+                countElement.classList.remove('loading-text');
+            } else {
+                countElement.textContent = count || 0;
+                countElement.classList.remove('loading-text');
+            }
+        }
+
+        async function loadVerifiedUsersCount() {
+            const { count, error } = await supabase
+                .from('verified_companies')
+                .select('*', { count: 'exact' })
+                .not('bank_statement_status', 'eq', 'rejected')
+                .not('business_registration_status', 'eq', 'rejected')
+                .not('signed_contract_status', 'eq', 'rejected');
+
+            const countElement = document.getElementById('verified-count');
+            if (error) {
+                console.error('Error loading verified users count:', error);
+                countElement.textContent = 'Error';
+                countElement.classList.remove('loading-text');
+            } else {
+                countElement.textContent = count || 0;
+                countElement.classList.remove('loading-text');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRowCount('canceled_trips_v3', 'canceled-trips-count');
+            fetchRowCount('completed_trips_v3', 'completed-trips-count');
+            fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
+            loadVerifiedUsersCount();
+            fetchRowCount('posts', 'posts-count');
+            fetchRowCount('requested_trips', 'requested-trips-count');
+            fetchSentRequestsCount();
+            // Add calls for other tables you want to display
+        });
     </script>
 </body>
                 </html>
