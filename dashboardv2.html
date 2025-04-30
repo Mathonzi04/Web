@@ -29,51 +29,51 @@
     <header>
         <h1>Admin Dashboard</h1>
     </header>
-            <div id="dashboard-content" style="display: none;">
-            <div class="dashboard-container">
-                <div class="dashboard-item">
-                    <h2 class="item-title">Canceled Trips</h2>
-                    <span id="canceled-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of canceled trips</span>
-                    <a href="canceled_trips.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Completed Trips</h2>
-                    <span id="completed-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of completed trips</span>
-                    <a href="completed_trips.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Ongoing Trips</h2>
-                    <span id="ongoing-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of ongoing trips</span>
-                    <a href="ongoing_trips_v3.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Verified Users</h2>
-                    <span id="verified-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total verified users (excluding rejected)</span>
-                    <a href="verifiedusers.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Posts</h2>
-                    <span id="posts-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of posts</span>
-                    <a href="posts.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Requested Trips</h2>
-                    <span id="requested-trips-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total number of new trip requests</span>
-                    <a href="triprequest.html" class="link-button">View Details</a>
-                </div>
-                <div class="dashboard-item">
-                    <h2 class="item-title">Emails Sent (Requests)</h2>
-                    <span id="sent-requests-count" class="item-count loading-text">Loading...</span>
-                    <span class="item-label">Total emails sent for trip requests</span>
-                    <a href="triprequest.html" class="link-button">View Details</a>
-                </div>
-            </div>
+    <div class="dashboard-container">
+        <div class="dashboard-item">
+            <h2 class="item-title">Canceled Trips</h2>
+            <span id="canceled-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of canceled trips</span>
+            <a href="canceled_trips.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Completed Trips</h2>
+            <span id="completed-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of completed trips</span>
+            <a href="completed_trips.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Ongoing Trips</h2>
+            <span id="ongoing-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of ongoing trips</span>
+            <a href="ongoing_trips_v3.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Verified Users</h2>
+            <span id="verified-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total verified users (excluding rejected)</span>
+            <a href="verifiedusers.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Posts</h2>
+            <span id="posts-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of posts</span>
+            <a href="posts.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Requested Trips</h2>
+            <span id="requested-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of new trip requests</span>
+            <a href="triprequest.html" class="link-button">View Details</a>
+        </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Emails Sent (Requests)</h2>
+            <span id="sent-requests-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total emails sent for trip requests</span>
+            <a href="triprequest.html" class="link-button">View Details</a>
+        </div>
+    </div>
+
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
 
@@ -145,4 +145,4 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         });
     </script>
 </body>
-                </html>
+</html>
