@@ -53,7 +53,7 @@
             <h2 class="item-title">Verified Companies</h2>
             <span id="verified-companies-count" class="item-count loading-text">Loading...</span>
             <span class="item-label">Total number of verified companies</span>
-            <a href="virefiedusers.html" class="link-button">View Details</a>
+            <a href="verifiedusers.html" class="link-button">View Details</a>
         </div>
         <div class="dashboard-item">
             <h2 class="item-title">Posts</h2>
@@ -81,7 +81,18 @@
 const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
+        async function checkUserLoggedIn() {
+    const { data: { user } } = await supabase.auth.getUser();
 
+    if (!user) {
+        window.location.href = 'login.html'; // redirect to login page if user is not logged in
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkUserLoggedIn();
+    loadAllTrips();
+});
         async function fetchRowCount(tableName, elementId) {
             const { count, error } = await supabase
                 .from(tableName)
