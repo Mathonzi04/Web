@@ -1,143 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <style type="text/css">
-        * { padding: 0; margin: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; width: 100%; }
-        .header { position: fixed; top: 0; left: 0; width: 100%; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; height: 70px; }
-        .header h3 { font-weight: bold; font-size: 24px; }
-        .header h4 a { text-decoration: none; color: black; }
-        .content { margin-top: 100px; display: flex; flex-wrap: wrap; justify-content: space-around; }
-        .column { background-color: #f7f7f7; width: 150px; height: 120px; padding: 20px; margin: 10px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .number { font-size: 36px; font-weight: bold; color: #337ab7; }
-        .label { font-size: 18px; color: #666; }
-        .label a { text-decoration:none; color:black; font-weight:1hv; }
-        #requested_trips_column { position: relative; }
-        #send_email_button { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background-color: #5cb85c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 14px; }
-        #send_email_button:hover { background-color: #4cae4c; }
+    <style>
+        body { font-family: 'Nunito', sans-serif; margin: 0; background-color: #f7fafc; color: #2d3748; }
+        .dashboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 30px; max-width: 1200px; margin: 30px auto; }
+        .dashboard-item { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 25px; border-left: 6px solid #4299e1; transition: transform 0.3s ease-in-out; }
+        .dashboard-item:hover { transform: translateY(-5px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
+        .item-title { font-size: 1.75em; color: #2d3748; margin-bottom: 15px; }
+        .item-count { font-size: 3em; color: #4299e1; font-weight: 700; }
+        .item-label { color: #718096; font-size: 0.9em; margin-top: 8px; display: block; }
+        .loading-text { color: #a0aec0; font-style: italic; }
+        header { background-color: #4299e1; color: #fff; padding: 30px 0; text-align: center; margin-bottom: 30px; border-radius: 8px 8px 0 0; }
+        header h1 { margin: 0; font-size: 2.5em; font-weight: 600; }
+        .link-button { display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #667eea; color: #fff; border: none; border-radius: 6px; text-decoration: none; font-size: 0.9em; transition: background-color 0.2s ease-in-out; }
+        .link-button:hover { background-color: #5a67d8; }
+        @media (max-width: 768px) {
+            .dashboard-container { grid-template-columns: 1fr; }
+            .dashboard-item { border-left: 4px solid #4299e1; }
+            header h1 { font-size: 2em; }
+        }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="header">
-        <h3>Dashboard</h3>
-        <h4 id="logout-link"><a href="login.html">Log out</a></h4>
-    </div>
-    <div class="content">
-        <div class="column">
-            <p id="no_of_users" class="number">0</p>
-            <p class="label"> <a href="verifiedcompanies.html" >Verified Companies</a></p>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+    <div class="dashboard-container">
+        <div class="dashboard-item">
+            <h2 class="item-title">Canceled Trips</h2>
+            <span id="canceled-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of canceled trips</span>
+            <a href="canceled_trips.html" class="link-button">View Details</a>
         </div>
-        <div class="column">
-            <p id="posts" class="number">0</p>
-            <p class="label"><a href="posts.html">Posts</a></p>
+        <div class="dashboard-item">
+            <h2 class="item-title">Completed Trips</h2>
+            <span id="completed-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of completed trips</span>
+            <a href="completed_trips.html" class="link-button">View Details</a>
         </div>
-        <div class="column">
-            <p id="ongoing_trips" class="number">0</p>
-            <p class="label"><a href="currenttrips.html">Current Trips</a></p>
+        <div class="dashboard-item">
+            <h2 class="item-title">Ongoing Trips</h2>
+            <span id="ongoing-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of ongoing trips</span>
+            <a href="ongoing_trips_v3.html" class="link-button">View Details</a>
         </div>
-        <div class="column">
-            <p id="completed_trips" class="number">0</p>
-            <p class="label"><a href="completed_trips.html"> Completed Trips</a></p>
+        <div class="dashboard-item">
+            <h2 class="item-title">Verified Companies</h2>
+            <span id="verified-companies-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of verified companies</span>
+            <a href="virefiedusers.html" class="link-button">View Details</a>
         </div>
-        <div class="column">
-            <p id="canceled_trips" class="number">0</p>
-            <p class="label"><a href="canceled_trips.html">Canceled Trips</a></p>
+        <div class="dashboard-item">
+            <h2 class="item-title">Posts</h2>
+            <span id="posts-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of posts</span>
+            <a href="posts.html" class="link-button">View Details</a>
         </div>
-        <div id="requested_trips_column" class="column">
-            <p id="requested_trips" class="number">0</p>
-            <p class="label"><a href="requestedtrips.html" >New Requested Trips</a></p>
-            <button id="send_email_button" style="display:none;">Send Email</button>
+        <div class="dashboard-item">
+            <h2 class="item-title">Requested Trips</h2>
+            <span id="requested-trips-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of new trip requests</span>
+            <a href="triprequest.html" class="link-button">View Details</a>
         </div>
-    </div>
+        <div class="dashboard-item">
+            <h2 class="item-title">Emails Sent (Requests)</h2>
+            <span id="sent-requests-count" class="item-count loading-text">Loading...</span>
+            <span class="item-label">Total number of emails sent for trip requests</span>
+            <a href="triprequest.html" class="link-button">View Details</a>
+        </div>
+        </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
 const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-        async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.replace('login.html'); // Redirect to login page
-            } else {
-                console.log('Logged in user:', user);
-                // Optionally display user info or perform other actions
-            }
-        }
+        async function fetchRowCount(tableName, elementId) {
+            const { count, error } = await supabase
+                .from(tableName)
+                .select('*', { count: 'exact' });
 
-        async function fetchDashboardData() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return; // Don't fetch data if not logged in
-
-            try {
-                const { data: users, error: usersError } = await supabase
-                    .from('verified_companies')
-                    .select('count', { head: true });
-                if (usersError) console.error('Error fetching users count:', usersError);
-                document.getElementById('no_of_users').textContent = users ? users : 0;
-
-                const { data: posts, error: postsError } = await supabase
-                    .from('posts')
-                    .select('count', { head: true });
-                if (postsError) console.error('Error fetching posts count:', postsError);
-                document.getElementById('posts').textContent = posts ? posts : 0;
-
-                const { data: ongoingTrips, error: ongoingTripsError } = await supabase
-                    .from('ongoing_trips')
-                    .select('count', { head: true });
-                if (ongoingTripsError) console.error('Error fetching ongoing trips count:', ongoingTripsError);
-                document.getElementById('ongoing_trips').textContent = ongoingTrips ? ongoingTrips : 0;
-
-                const { data: completedTrips, error: completedTripsError } = await supabase
-                    .from('completed_trips')
-                    .select('count', { head: true });
-                if (completedTripsError) console.error('Error fetching completed trips count:', completedTripsError);
-                document.getElementById('completed_trips').textContent = completedTrips ? completedTrips : 0;
-
-                const { data: canceledTrips, error: canceledTripsError } = await supabase
-                    .from('canceled_trips')
-                    .select('count', { head: true });
-                if (canceledTripsError) console.error('Error fetching canceled trips count:', canceledTripsError);
-                document.getElementById('canceled_trips').textContent = canceledTrips ? canceledTrips : 0;
-
-                const { data: requestedTrips, error: requestedTripsError } = await supabase
-                    .from('requested_trips')
-                    .select('count', { head: true });
-                if (requestedTripsError) console.error('Error fetching requested trips count:', requestedTripsError);
-                const requestedTripsCount = requestedTrips ? requestedTrips : 0;
-                document.getElementById('requested_trips').textContent = requestedTripsCount;
-                document.getElementById('send_email_button').style.display = requestedTripsCount > 0 ? 'block' : 'none';
-
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            await checkAuth();
-            fetchDashboardData();
-        });
-
-        document.getElementById('send_email_button').addEventListener('click', () => {
-            alert('Send email functionality will be implemented here.');
-        });
-
-        // Basic logout functionality
-        document.getElementById('logout-link').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const { error } = await supabase.auth.signOut();
+            const countElement = document.getElementById(elementId);
             if (error) {
-                console.error('Error signing out:', error);
-                alert('Failed to log out.');
+                console.error(`Error fetching count for ${tableName}:`, error);
+                countElement.textContent = 'Error';
+                countElement.classList.remove('loading-text');
             } else {
-                window.location.replace('login.html');
+                countElement.textContent = count || 0;
+                countElement.classList.remove('loading-text');
             }
+        }
+
+        async function fetchSentRequestsCount() {
+            const { count, error } = await supabase
+                .from('requested_trips')
+                .select('*', { count: 'exact' })
+                .eq('email_sent', true);
+
+            const countElement = document.getElementById('sent-requests-count');
+            if (error) {
+                console.error('Error fetching sent requests count:', error);
+                countElement.textContent = 'Error';
+                countElement.classList.remove('loading-text');
+            } else {
+                countElement.textContent = count || 0;
+                countElement.classList.remove('loading-text');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRowCount('canceled_trips_v3', 'canceled-trips-count');
+            fetchRowCount('completed_trips_v3', 'completed-trips-count');
+            fetchRowCount('ongoing_trips_v3', 'ongoing-trips-count');
+            fetchRowCount('verified_companies', 'verified-companies-count');
+            fetchRowCount('posts', 'posts-count');
+            fetchRowCount('requested_trips', 'requested-trips-count');
+            fetchSentRequestsCount();
         });
     </script>
 </body>
-</html>
 </html>
