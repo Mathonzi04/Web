@@ -1,177 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add New Post</title>
-  <style type="text/css">
-    .posts {
-      width: 90%;
-      margin-top: 20px;
-      border: 1px solid #ccc;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    .post-item {
-      border-bottom: 1px dashed #eee;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-    }
-    .post-item:last-child {
-      border-bottom: none;
-    }
-    .post-title {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .post-content {
-      margin-bottom: 10px;
-    }
-    h3 {
-      margin-top: 0;
-    }
-    h4#numposts {
-      margin-top: 5px;
-      color: #777;
-    }
-    .post input[type="text"], .post textarea {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-    .post button#submit {
-      font-size: 15px;
-      width: 100px;
-      padding: 9px;
-      border: none;
-      color: white;
-      border-radius: 7px;
-      background-color: #34C759;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TomTom Location Tracker</title>
+    
+    <!-- TomTom Maps CSS -->
+    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css' />
+    
+    <style>
+        /* Map container styling */
+        #map {
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Geolocation button styling */
+        #locate-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <h1>Create a New Post</h1>
-  <div id="user-info">
-    <p>Your User ID: <span id="uid-display"></span></p>
-  </div>
+    <div id="map"></div>
+    <button id="locate-btn">📍 Locate Me</button>
 
-  <form id="add-post-form" class="post">
-    <div>
-      <label for="post-title">Post Title:</label>
-      <input type="text" id="post-title" name="post-title">
-    </div>
-    <div>
-      <label for="post-content">Content:</label>
-      <textarea id="post-content" name="post-content"></textarea>
-    </div>
-    <button type="submit" id="submit">Submit Post</button>
-  </form>
-
-  <div class="posts" id="posts-display">
-    <h3>Posts</h3>
-    <h4 id="numposts"></h4>
-    <div id="post-list">
-      </div>
-  </div>
-
-  <script type="module">
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-
-    // Replace with your actual Supabase URL and Key
-    const supabaseUrl = 'https://vefcftvmjuksycmyrvmi.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlZmNmdHZtanVrc3ljbXlydm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMTI4OTgsImV4cCI6MjA1NzY4ODg5OH0.VXcB8J56mK51kIGqBzYPZUh8d1wQ5rR4DlyA22r-vsA';
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Your provided User ID
-    const uid = '470e23b6-ce31-49b3-8547-de5827a70857';
-
-    // Display the UID on the page
-    document.getElementById('uid-display').textContent = uid;
-
-    document.getElementById('add-post-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      const postTitle = document.getElementById('post-title').value;
-      const postContent = document.getElementById('post-content').value;
-
-      if (uid) {
-        const { data, error } = await supabase
-          .from('posts') // Use your 'posts' table name
-          .insert([
-            { user_id: uid, title: postTitle, content: postContent },
-          ]);
-
-        if (error) {
-          console.error('Error creating post:', error);
-          alert('Failed to create post.');
-        } else {
-          console.log('Post created successfully:', data);
-          alert('Post created successfully!');
-          // Optionally clear the form
-          document.getElementById('add-post-form').reset();
-          // Refresh the post list after adding a new post
-          displayPosts();
-        }
-      } else {
-        alert('User ID is missing.');
+    <!-- TomTom Maps JS SDK -->
+    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js'></script>
+    
+    <script>
+      const API_KEY = 'c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm';
+      let map = null;
+      let marker = null;
+      
+      // Initialize map
+      function initMap(center = [-121.913, 37.361]) {
+      // Default: San Jose
+      map = tt.map({
+      key: API_KEY,
+      container: 'map',
+      center: center,
+      zoom: 13,
+      language: 'en-GB'
+      });
+      
+      // Add zoom controls
+      map.addControl(new tt.FullscreenControl());
+      map.addControl(new tt.NavigationControl());
       }
-    });
-
-    async function displayPosts() {
-      if (supabase) {
-        try {
-          const { data, error, count } = await supabase
-            .from('posts') // Use your 'posts' table name
-            .select('title, content', { count: 'exact' }); // Select title and content and get the total count
-
-          const postsListDiv = document.getElementById('post-list');
-          postsListDiv.innerHTML = ''; // Clear previous posts
-
-          if (error) {
-            console.error('Error fetching posts:', error);
-            postsListDiv.textContent = 'Failed to load posts.';
-            document.getElementById('numposts').textContent = '';
-          } else if (data && data.length > 0) {
-            data.forEach(post => {
-              const postItem = document.createElement('div');
-              postItem.classList.add('post-item');
-
-              const titleElement = document.createElement('div');
-              titleElement.classList.add('post-title');
-              titleElement.textContent = post.title;
-
-              const contentElement = document.createElement('div');
-              contentElement.classList.add('post-content');
-              contentElement.textContent = post.content;
-
-              postItem.appendChild(titleElement);
-              postItem.appendChild(contentElement);
-              postsListDiv.appendChild(postItem);
-            });
-            document.getElementById('numposts').textContent = `Total Posts: ${count}`;
-          } else {
-            postsListDiv.textContent = 'No posts found.';
-            document.getElementById('numposts').textContent = 'Total Posts: 0';
-          }
-        } catch (error) {
-          console.error('Unexpected error fetching posts:', error);
-          document.getElementById('posts-display').textContent = 'Failed to load posts.';
-          document.getElementById('numposts').textContent = '';
-        }
-      } else {
-        console.error('Supabase not initialized.');
-        document.getElementById('posts-display').textContent = 'Failed to connect to database.';
-        document.getElementById('numposts').textContent = '';
+      
+      // Get user's current location
+      function locateUser() {
+      if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
       }
-    }
-
-    // Call displayPosts when the page loads
-    displayPosts();
-  </script>
+      
+      navigator.geolocation.getCurrentPosition(
+      position => {
+      if (isNaN(position.coords.longitude) || isNaN(position.coords.latitude)) {
+      alert('Invalid coordinates.');
+      return;
+      }
+      
+      const coords = [position.coords.longitude, position.coords.latitude];
+      
+      map.flyTo({ center: coords, zoom: 15 });
+      
+      // Add/update marker
+      if (marker) {
+      marker.setLngLat(coords);
+      } else {
+      marker = new tt.Marker()
+      .setLngLat(coords)
+      .addTo(map);
+      }
+      },
+      error => {
+      console.error('Error getting location:', error);
+      alert("Error getting location: " + error.message);
+      }
+      );
+      }
+      
+      // Initialize map on load
+      window.onload = initMap;
+      
+      // Add click handler for locate button
+      document.getElementById('locate-btn').addEventListener('click', locateUser);
+      </script>
 </body>
-  </html>
+</html>
