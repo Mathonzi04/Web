@@ -1,30 +1,28 @@
-
-<head>
+<html>
   <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css" type="text/css" >                                                                      
+                                                         
   <script type="text/javascript" src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"></script>
+  <style>
+    #coordinates {
+      text-align: center;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-top: 1px solid #ccc;
+    }
+  </style>
 </head>
-<style>
-  #coordinates {
-    text-align: center;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-top: 1px solid #ccc;
-  }
-</style>
 <body>
   <div id="map" style="width:300px; height:300px;"></div>
-  <div class="coordinates" id="coordinates" >
-  
-  </div>
-  
-  
+  <div id="coordinates"></div>
   <script type="text/javascript">
+    const coordinatesDiv = document.getElementById('coordinates');
     navigator.geolocation.getCurrentPosition(position => {
       const longitude = position.coords.longitude;
       const latitude = position.coords.latitude;
       console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
-       coordinatesDiv.innerText = `Longitude: ${longitude}, Latitude: ${latitude}`;
-       
+
+      coordinatesDiv.innerText = `Longitude: ${longitude}, Latitude: ${latitude}`;
+
       const center = [longitude, latitude];
       const map = tt.map({
         key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
@@ -40,8 +38,8 @@
       });
     }, error => {
       console.error('Error getting location:', error);
+      coordinatesDiv.innerText = 'Error getting location';
     });
   </script>
 </body>
 </html>
-
