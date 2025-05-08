@@ -1,45 +1,175 @@
-<html>
-  <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css" type="text/css" >                                                                      
-                                                         
-  <script type="text/javascript" src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"></script>
-  <style>
-    #coordinates {
-      text-align: center;
-      padding: 10px;
-      background-color: #f0f0f0;
-      border-top: 1px solid #ccc;
-    }
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    * { padding: 0; margin: 0; box-sizing: border-box; }
+    body { padding: 0; width: 100%; background-color: #f4f4f4; font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
+    .letter { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 8px; background-color: #dc3545; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); z-index: 100; }
+    h3{ padding:15px; margin-top:10px; }
+    p[id="fullCoordinates"]{ margin-top:7px; }
+    .letter a { color: white; text-decoration: none; font-weight: bold; font-size: 16px; }
+    .letter a:hover { opacity: 0.8; }
+    .map[id="map"]{ margin-top:50px; background-color:white; }
+    .coordinates{ width:100%; background-color:white; color:grey; text-align:center; font-size:17px; }
+    .content { position: fixed; bottom: 0; left: 0; display: flex; justify-content: space-around; width: 100%; padding: 15px 0; background-color: #fff; box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); }
+    .content a { text-decoration: none; color: grey; font-size: 16px; display: flex; flex-direction: column; align-items: center; }
+    .content a:hover { color: #007bff; }
+    .content strong { color: #007bff; }
+    .nav-icon { font-size: 20px; margin-bottom: 5px; }
   </style>
 </head>
 <body>
-  <div id="map" style="width:100%; height:600px;"></div>
-  <div id="coordinates"></div>
-  <script type="text/javascript">
-    const coordinatesDiv = document.getElementById('coordinates');
+
+<div class="header">
+<h3 id="fullName"></h3>
+  <div class="letter" id="LetterOfuser">
+    <a href="#">Account Disabled</a>
+  </div>
+</div>
+
+ <p id="fullCoordinates"></p>
+
+ <div class="map"  id="map" style="width:100%; height:500px;">
+ </div>
+ <div class="coordinates"  id="coordinates"></div>
+
+  <div class="content">
+    <a href="#" onclick="return false;" style="color:#6c757d;">
+      <div class="nav-icon">🏠</div>
+      Home
+    </a>
+    <a href="#" onclick="return false;">
+      <div class="nav-icon">🔔</div>
+      Notifications
+    </a>
+    <a href="#" onclick="return false;">
+      <div class="nav-icon">👤</div>
+      Profile
+    </a>
+    <a href="#" onclick="return false;">
+      <div class="nav-icon">⚙️</div>
+      Settings
+    </a>
+  </div>
+
+<script type="module">
+import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+
+const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('user_id');
+const disabledUserId = 'f106fd0b-6a29-4faa-afc7-2dd4c10847f9';
+
+if (userId === disabledUserId) {
+  document.body.innerHTML = `
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; text-align: center;">
+      <div>
+        <h2 style="color: #dc3545;">Account Temporarily Disabled</h2>
+        <p>Your account has been temporarily disabled. Please contact customer support for assistance.</p>
+        <a href="customer_care.html" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
+      </div>
+    </div>
+  `;
+} else {
+  async function fetchUserData() {
+    try {
+      const { data, error } = await supabase
+        .from('user_data')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+      } else {
+        document.getElementById('fullName').textContent = `${data.name} ${data.surname}`;
+        document.getElementById('fullCoordinates').textContent = `Latitude: ${data.latitude}, Longitude: ${data.longitude}`;
+        window.globalLatitude = data.latitude;
+        window.globalLongitude = data.longitude;
+        window.dispatchEvent(new Event('coordinatesReady'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  fetchUserData();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.content a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        alert('Your account is temporarily disabled. Navigation is restricted.');
+      });
+    });
+  });
+}
+</script>
+
+<script type="text/javascript">
+if ('${userId}' !== 'f106fd0b-6a29-4faa-afc7-2dd4c10847f9') {
+  window.addEventListener('coordinatesReady', () => {
     navigator.geolocation.getCurrentPosition(position => {
-      const longitude = position.coords.longitude;
-      const latitude = position.coords.latitude;
-      console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
-
-      coordinatesDiv.innerText = `Longitude: ${longitude}, Latitude: ${latitude}`;
-
-      const center = [longitude, latitude];
-      const map = tt.map({
-        key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
-        container: "map",
-        center: center,
-        zoom: 10
-      });
-
-      map.on('load', () => {
-        new tt.Marker()
-          .setLngLat(center)
-          .addTo(map);
-      });
+      const userLng = position.coords.longitude;
+      const userLat = position.coords.latitude;
+      const coordinatesDiv = document.getElementById('coordinates');
+      coordinatesDiv.innerHTML = `
+        Home: ${window.globalLatitude}, ${window.globalLongitude}<br>
+        Your Location: ${userLat}, ${userLng}
+      `;
+      initializeMap(
+        parseFloat(window.globalLatitude),
+        parseFloat(window.globalLongitude),
+        userLat,
+        userLng
+      );
     }, error => {
       console.error('Error getting location:', error);
-      coordinatesDiv.innerText = 'Error getting location';
+      initializeMap(
+        parseFloat(window.globalLatitude),
+        parseFloat(window.globalLongitude)
+      );
     });
-  </script>
+  });
+
+  function initializeMap(homeLat, homeLng, userLat, userLng) {
+    const map = tt.map({
+      key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
+      container: "map",
+      style: "tomtom://vector/1/basic-main",
+      zoom: 13
+    });
+    const homeMarker = new tt.Marker({ color: '#FF0000' })
+      .setLngLat([homeLng, homeLat])
+      .addTo(map);
+    new tt.Popup({ offset: 25 })
+      .setLngLat([homeLng, homeLat])
+      .setHTML("<b>Home Location</b>")
+      .addTo(map);
+    if(userLat && userLng) {
+      const userMarker = new tt.Marker({ color: '#007bff' })
+        .setLngLat([userLng, userLat])
+        .addTo(map);
+      new tt.Popup({ offset: 25 })
+        .setLngLat([userLng, userLat])
+        .setHTML("<b>Your Current Location</b>")
+        .addTo(map);
+      const bounds = new tt.LngLatBounds()
+        .extend([homeLng, homeLat])
+        .extend([userLng, userLat]);
+      map.fitBounds(bounds, { padding: 50 });
+    } else {
+      map.setCenter([homeLng, homeLat]);
+    }
+  }
+}
+</script>
+
 </body>
-</html>
