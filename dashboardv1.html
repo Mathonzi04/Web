@@ -1,97 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TomTom Location Tracker</title>
-    
-    <!-- TomTom Maps CSS -->
-    <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css' />
-    
-    <style>
-        /* Map container styling */
-        #map {
-            width: 100%;
-            height: 100vh; /* Full viewport height */
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        /* Geolocation button styling */
-        #locate-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+<html class='use-all-space'>
+  <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css'>
+    <link rel='stylesheet' type='text/css' href='../assets/ui-library/index.css'/>
 </head>
 <body>
-    <div id="map"></div>
-    <button id="locate-btn">📍 Locate Me</button>
-
-    <!-- TomTom Maps JS SDK -->
-    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js'></script>
-    
+    <div id='map' class='map'></div>
+    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
+    <script type='text/javascript' src='../assets/js/mobile-or-tablet.js'></script>
     <script>
-        // Replace with your TomTom API Key
-        const API_KEY = 'c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm';
-        let map = null;
-
-        // Initialize map
-        function initMap(center = [-121.913, 37.361]) { // Default: San Jose
-            map = tt.map({
-                key: API_KEY,
-                container: 'map',
-                center: center,
-                zoom: 13,
-                language: 'en-GB'
-            });
-
-            // Add zoom controls
-            map.addControl(new tt.FullscreenControl());
-            map.addControl(new tt.NavigationControl());
-        }
-
-        // Get user's current location
-        function locateUser() {
-            if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    const coords = [position.coords.longitude, position.coords.latitude];
-                    map.flyTo({ center: coords, zoom: 15 });
-                    
-                    // Add/update marker
-                    if (window.marker) {
-                        window.marker.setLngLat(coords);
-                    } else {
-                        window.marker = new tt.Marker()
-                            .setLngLat(coords)
-                            .addTo(map);
-                    }
-                },
-                error => {
-                    alert("Error getting location: " + error.message);
-                }
-            );
-        }
-
-        // Initialize map on load
-        window.onload = initMap;
-
-        // Add click handler for locate button
-        document.getElementById('locate-btn').addEventListener('click', locateUser);
+        var map = tt.map({
+            key: 'c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm',
+            container: 'map',
+            dragPan: !isMobileOrTablet()
+        });
+        map.addControl(new tt.FullscreenControl());
+        map.addControl(new tt.NavigationControl());
     </script>
 </body>
 </html>
