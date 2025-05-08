@@ -1,20 +1,31 @@
-<!DOCTYPE html>
-<html class='use-all-space'>
-  <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css'>
-    <link rel='stylesheet' type='text/css' href='../assets/ui-library/index.css'/>
+<head>
+  <link rel="stylesheet" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css" type="text/css" >                                                                      
+  <script type="text/javascript" src="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"></script>
 </head>
 <body>
-    <div id='map' class='map'></div>
-    <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
-    <script type='text/javascript' src='../assets/js/mobile-or-tablet.js'></script>
-    <script>
-        var map = tt.map({
-            key: 'c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm',
-            container: 'map',
-            dragPan: !isMobileOrTablet()
-        });
-        map.addControl(new tt.FullscreenControl());
-        map.addControl(new tt.NavigationControl());
-    </script>
+  <div id="map" style="width:300px; height:300px;"></div>
+  <script type="text/javascript">
+    navigator.geolocation.getCurrentPosition(position => {
+      const longitude = position.coords.longitude;
+      const latitude = position.coords.latitude;
+      console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
+
+      const center = [longitude, latitude];
+      const map = tt.map({
+        key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
+        container: "map",
+        center: center,
+        zoom: 10
+      });
+
+      map.on('load', () => {
+        new tt.Marker()
+          .setLngLat(center)
+          .addTo(map);
+      });
+    }, error => {
+      console.error('Error getting location:', error);
+    });
+  </script>
 </body>
 </html>
