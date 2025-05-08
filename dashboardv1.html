@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Home</title>
+  <title>Home (Testing Mode)</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
     * { padding: 0; margin: 0; box-sizing: border-box; }
     body { padding: 0; width: 100%; background-color: #f4f4f4; font-family: sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-    .letter { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 8px; background-color: #dc3545; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); z-index: 100; }
+    .letter { position: fixed; top: 20px; right: 20px; padding: 10px 15px; border-radius: 8px; background-color: #28a745; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); z-index: 100; }
     h3{ padding:15px; margin-top:10px; }
     p[id="fullCoordinates"]{ margin-top:7px; }
     .letter a { color: white; text-decoration: none; font-weight: bold; font-size: 16px; }
@@ -27,7 +26,7 @@
 <div class="header">
 <h3 id="fullName"></h3>
   <div class="letter" id="LetterOfuser">
-    <a href="#">Account Disabled</a>
+    <a href="#">Testing Mode</a>
   </div>
 </div>
 
@@ -38,19 +37,19 @@
  <div class="coordinates"  id="coordinates"></div>
 
   <div class="content">
-    <a href="#" onclick="return false;" style="color:#6c757d;">
+    <a href="home.html" style="color:#007bff; font-weight: bold;">
       <div class="nav-icon">🏠</div>
       Home
     </a>
-    <a href="#" onclick="return false;">
+    <a href="notifications.html">
       <div class="nav-icon">🔔</div>
       Notifications
     </a>
-    <a href="#" onclick="return false;">
+    <a href="profile.html">
       <div class="nav-icon">👤</div>
       Profile
     </a>
-    <a href="#" onclick="return false;">
+    <a href="settingsV3.html">
       <div class="nav-icon">⚙️</div>
       Settings
     </a>
@@ -65,111 +64,89 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const urlParams = new URLSearchParams(window.location.search);
 const userId = urlParams.get('user_id');
-const disabledUserId = 'f106fd0b-6a29-4faa-afc7-2dd4c10847f9';
+const testUserId = 'f106fd0b-6a29-4faa-afc7-2dd4c10847f9';
 
-if (userId === disabledUserId) {
-  document.body.innerHTML = `
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; text-align: center;">
-      <div>
-        <h2 style="color: #dc3545;">Account Temporarily Disabled</h2>
-        <p>Your account has been temporarily disabled. Please contact customer support for assistance.</p>
-        <a href="customer_care.html" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Contact Support</a>
-      </div>
-    </div>
-  `;
-} else {
-  async function fetchUserData() {
-    try {
-      const { data, error } = await supabase
-        .from('user_data')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
+async function fetchUserData() {
+  try {
+    const { data, error } = await supabase
+      .from('user_data')
+      .select('*')
+      .eq('user_id', testUserId)
+      .single();
 
-      if (error) {
-        console.error('Error fetching user data:', error);
-      } else {
-        document.getElementById('fullName').textContent = `${data.name} ${data.surname}`;
-        document.getElementById('fullCoordinates').textContent = `Latitude: ${data.latitude}, Longitude: ${data.longitude}`;
-        window.globalLatitude = data.latitude;
-        window.globalLongitude = data.longitude;
-        window.dispatchEvent(new Event('coordinatesReady'));
-      }
-    } catch (error) {
-      console.error('Error:', error);
+    if (error) {
+      console.error('Error fetching user data:', error);
+    } else {
+      document.getElementById('fullName').textContent = `${data.name} ${data.surname}`;
+      document.getElementById('fullCoordinates').textContent = `Latitude: ${data.latitude}, Longitude: ${data.longitude}`;
+      window.globalLatitude = data.latitude;
+      window.globalLongitude = data.longitude;
+      window.dispatchEvent(new Event('coordinatesReady'));
     }
+  } catch (error) {
+    console.error('Error:', error);
   }
-  fetchUserData();
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const navLinks = document.querySelectorAll('.content a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        alert('Your account is temporarily disabled. Navigation is restricted.');
-      });
-    });
-  });
 }
+
+fetchUserData();
 </script>
 
 <script type="text/javascript">
-if ('${userId}' !== 'f106fd0b-6a29-4faa-afc7-2dd4c10847f9') {
-  window.addEventListener('coordinatesReady', () => {
-    navigator.geolocation.getCurrentPosition(position => {
-      const userLng = position.coords.longitude;
-      const userLat = position.coords.latitude;
-      const coordinatesDiv = document.getElementById('coordinates');
-      coordinatesDiv.innerHTML = `
-        Home: ${window.globalLatitude}, ${window.globalLongitude}<br>
-        Your Location: ${userLat}, ${userLng}
-      `;
-      initializeMap(
-        parseFloat(window.globalLatitude),
-        parseFloat(window.globalLongitude),
-        userLat,
-        userLng
-      );
-    }, error => {
-      console.error('Error getting location:', error);
-      initializeMap(
-        parseFloat(window.globalLatitude),
-        parseFloat(window.globalLongitude)
-      );
-    });
+window.addEventListener('coordinatesReady', () => {
+  navigator.geolocation.getCurrentPosition(position => {
+    const userLng = position.coords.longitude;
+    const userLat = position.coords.latitude;
+    const coordinatesDiv = document.getElementById('coordinates');
+    coordinatesDiv.innerHTML = `
+      Home: ${window.globalLatitude}, ${window.globalLongitude}<br>
+      Your Location: ${userLat}, ${userLng}
+    `;
+    initializeMap(
+      parseFloat(window.globalLatitude),
+      parseFloat(window.globalLongitude),
+      userLat,
+      userLng
+    );
+  }, error => {
+    console.error('Error getting location:', error);
+    initializeMap(
+      parseFloat(window.globalLatitude),
+      parseFloat(window.globalLongitude)
+    );
   });
+});
 
-  function initializeMap(homeLat, homeLng, userLat, userLng) {
-    const map = tt.map({
-      key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
-      container: "map",
-      style: "tomtom://vector/1/basic-main",
-      zoom: 13
-    });
-    const homeMarker = new tt.Marker({ color: '#FF0000' })
-      .setLngLat([homeLng, homeLat])
+function initializeMap(homeLat, homeLng, userLat, userLng) {
+  const map = tt.map({
+    key: "c5v6Y8ugRk5mGOGUipPdpcIfsXxwCwWm",
+    container: "map",
+    style: "tomtom://vector/1/basic-main",
+    zoom: 13
+  });
+  const homeMarker = new tt.Marker({ color: '#FF0000' })
+    .setLngLat([homeLng, homeLat])
+    .addTo(map);
+  new tt.Popup({ offset: 25 })
+    .setLngLat([homeLng, homeLat])
+    .setHTML("<b>Home Location</b>")
+    .addTo(map);
+  if(userLat && userLng) {
+    const userMarker = new tt.Marker({ color: '#007bff' })
+      .setLngLat([userLng, userLat])
       .addTo(map);
     new tt.Popup({ offset: 25 })
-      .setLngLat([homeLng, homeLat])
-      .setHTML("<b>Home Location</b>")
+      .setLngLat([userLng, userLat])
+      .setHTML("<b>Your Current Location</b>")
       .addTo(map);
-    if(userLat && userLng) {
-      const userMarker = new tt.Marker({ color: '#007bff' })
-        .setLngLat([userLng, userLat])
-        .addTo(map);
-      new tt.Popup({ offset: 25 })
-        .setLngLat([userLng, userLat])
-        .setHTML("<b>Your Current Location</b>")
-        .addTo(map);
-      const bounds = new tt.LngLatBounds()
-        .extend([homeLng, homeLat])
-        .extend([userLng, userLat]);
-      map.fitBounds(bounds, { padding: 50 });
-    } else {
-      map.setCenter([homeLng, homeLat]);
-    }
+    const bounds = new tt.LngLatBounds()
+      .extend([homeLng, homeLat])
+      .extend([userLng, userLat]);
+    map.fitBounds(bounds, { padding: 50 });
+  } else {
+    map.setCenter([homeLng, homeLat]);
   }
 }
 </script>
 
 </body>
+  </html>
