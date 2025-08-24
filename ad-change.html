@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Change</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style type="text/css">
+*{
+
+padding: 0;
+margin: 0;
+}
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 98%;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:3px;
+  border-bottom: 1px solid #eee;
+  height:70px;
+}
+
+p[id="name"]{
+font-size:15px;
+font-weight:bold;
+font-size:16px;
+}
+.image1{
+margin-top:100px;
+text-align:center;
+border: 2px solid #eee;
+width:90%;
+margin-left:5px;
+border-radius:10px;
+padding:10px;
+}
+.image2{
+margin-top:10px;
+text-align:center;
+border: 2px solid #eee;
+width:90%;
+margin-left:5px;
+border-radius:10px;
+padding:10px;
+}
+h3{
+font-weight:bold;
+font-size:20px;
+}
+form[id="adOne"]{
+margin-top:15px;
+display:flex;
+gap:20px;
+}
+button[id="submit"]{
+width:70px;
+padding:7px;
+background-color:#FF3636;
+border:none;
+font-weight:bold;
+border-radius:4px;
+color: #FFF;
+}
+</style>
+
+</head>
+<body>
+<div class="header"	>
+<p id="name"><b>Ad Center</b></p>
+</div>
+
+<div class="image1" >
+<h3><b>Front Page ad</b></h3>
+<form id="adOne">
+<input type="file" id="file"> 
+<button id="submit" >Submit</button>
+</form>
+</div>
+
+<div class="image2" >
+<h3><b>Back Page ad</b></h3>
+<form id="adOnerff">
+<input type="file" id="file" accept=".jpg, .png"> 
+<button id="submit" >Submit</button>
+</form>
+</div>
+
+</body>
+
+<script type="module">
+
+import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const form = document.getElementById('adOne');
+
+form.addEventListener('submit', async (event) => {
+    alert("form submitted");
+  event.preventDefault();
+  const avatarFile = document.getElementById("file").files[0];
+
+  if(!avatarFile){
+  alert("Please add a file");
+  return;
+  }
+  try{
+const { data, error } = await supabase
+  .storage
+  from('AdsImage')
+  .upload( avatarFile.name, avatarFile, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+if (error) {
+     throw error;
+     alert('Error uploading iyyyymage:', error);
+     
+   }
+   console.log(data);
+   alert('Image uploaded successfully');
+ } catch (error) {
+   alert('Error uploading image:', error);
+ }
+});
+</script>
+
+
+</html>
+
+
