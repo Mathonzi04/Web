@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHSpec Check - Checkout</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f2f2f2;
+            color: #1f2937;
+            padding: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #ffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h4 {
+            color: #000;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cart-funct {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .cart-image {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ef4444;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 8px 18px;
+            width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-container input {
+            border: none;
+            background: transparent;
+            padding: 5px;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+        
+        /* Navigation */
+        .nav-links {
+            position: relative;
+        }
+        
+        #nav-check {
+            display: none;
+        }
+        
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 35px;
+            height: 25px;
+            cursor: pointer;
+        }
+        
+        .nav-toggle span {
+            height: 3px;
+            width: 100%;
+            background-color: #333;
+            border-radius: 3px;
+        }
+        
+        .nav-list {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            width: 550px;
+            justify-content: center;
+        }
+        
+        .nav-list li a {
+            text-decoration: none;
+            color: #000;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .nav-list li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .socials {
+            display: flex;
+            gap: 12px;
+            margin-left: 25px;
+        }
+        
+        .socials i {
+            font-size: 22px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .socials i:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Main content */
+        .main-content {
+            padding: 25px;
+            flex: 1;
+        }
+        
+        .checkout-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .checkout-form {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .order-summary {
+            width: 350px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            align-self: flex-start;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E9C46A;
+            color: #1f2937;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2A9D8F;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .payment-option.selected {
+            border-color: #2A9D8F;
+            background-color: rgba(42, 157, 143, 0.05);
+        }
+        
+        .payment-option input {
+            margin: 0;
+        }
+        
+        .payment-option label {
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .payment-option img {
+            height: 24px;
+            margin-left: auto;
+        }
+        
+        .pep-store-info {
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .pep-store-info a {
+            color: #2A9D8F;
+            text-decoration: none;
+        }
+        
+        .pep-store-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .order-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .order-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .order-item-details {
+            flex-grow: 1;
+        }
+        
+        .order-item-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        
+        .order-item-price {
+            color: #2A9D8F;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .order-item-quantity {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .order-total {
+            margin-top: 20px;
+            font-weight: 700;
+            padding-top: 15px;
+            border-top: 2px solid #e5e7eb;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 16px;
+            background: #2A9D8F;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #1a936f;
+        }
+        
+        .checkout-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 20px;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .footer-section p, .footer-section a {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 12px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .footer-social a {
+            font-size: 20px;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 30px;
+            font-size: 14px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .checkout-container {
+                flex-direction: column;
+            }
+            
+            .order-summary {
+                width: 100%;
+            }
+            
+            .header {
+                flex-wrap: wrap;
+            }
+            
+            .nav-list {
+                width: 100%;
+            }
+            
+            .search-container {
+                width: 100%;
+                order: 3;
+                margin-top: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: flex;
+            }
+            
+            .nav-list {
+                display: none;
+                position: absolute;
+                top: 105px;
+                left: -20px;
+                width: 382px;
+                background: #ffff;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                gap: 15px;
+            }
+            
+            #nav-check:checked ~ .nav-list {
+                display: flex;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .footer-section {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .checkout-form, .order-summary {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <!-----Start of Nav-bar--->
+        <div class="nav-links">
+            <input type="checkbox" id="nav-check">
+            <label for="nav-check" class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <ul class="nav-list">
+                <li><a href="homev4.html">Home</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">About us</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+        <!--End of nav bar-->  
+        
+        <h4>TECHSpec Check</h4>
+        
+        <div class="cart-funct">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <i class="fas fa-search" style="color:#333;"></i>
+            </div>
+            <div class="cart-image">
+                <a href="homev4.html">
+                    <i class="fas fa-shopping-cart" style="font-size:24px; color:#333;"></i> 
+                </a>
+                <div class="cart-count" id="count">0</div>
+            </div>
+        </div> 
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 style="margin: 20px 0 30px; text-align: center; color: #1f2937;">Checkout</h1>
+        
+        <div class="checkout-container">
+            <!-- Checkout Form -->
+            <div class="checkout-form">
+                <h2 class="section-title">Customer Information</h2>
+                
+                <form id="checkout-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first-name">First Name</label>
+                            <input type="text" id="first-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="last-name">Last Name</label>
+                            <input type="text" id="last-name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Cell Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    
+                    <h2 class="section-title" style="margin-top: 40px;">Delivery Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="pep-code">Nearest PEP Store Code</label>
+                        <input type="text" id="pep-code" placeholder="e.g., PEP1234" required>
+                        <div class="pep-store-info">
+                            <p>Don't know your nearest PEP Store? <a href="https://www.pepstores.com/store-locator/" target="_blank">Find your nearest PEP store</a></p>
+                            <p>We use Paxi for delivery. Your order will be delivered to the PEP store you specify.</p>
+                        </div>
+                    </div>
+                    
+                    <h2 class="section-title" style="margin-top: 40px;">Payment Method</h2>
+                    
+                    <div class="payment-option" id="paypal-option">
+                        <input type="radio" id="paypal" name="payment-method" value="paypal" checked>
+                        <label for="paypal">PayPal</label>
+                        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal">
+                    </div>
+                    
+                    <button type="submit" class="checkout-btn" id="place-order-btn">Place Order</button>
+                </form>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2 class="section-title">Order Summary</h2>
+                <div id="order-items"></div>
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span id="order-total">R 0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>TECHSpec Check</h3>
+                <p>Your trusted partner for quality tech products and accessories. We offer the latest gadgets at competitive prices.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="homev4.html">Home</a>
+                <a href="#">About Us</a>
+                <a href="#">Send Complaint</a>
+                <a href="#">Blog</a>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Tech Street, Johannesburg</p>
+                <p><i class="fas fa-phone"></i> +27 11 123 4567</p>
+                <p><i class="fas fa-envelope"></i> info@techspeccheck.co.za</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to our newsletter for the latest product updates and special offers.</p>
+                <form>
+                    <input type="email" placeholder="Your Email" style="padding:10px; width:100%; border-radius:5px; border:none; margin-bottom:10px;">
+                    <button type="submit" style="padding:10px 15px; background:white; color:#2A9D8F; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 TECHSpec Check. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script type="module">
+    
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+     
+     const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+     const supabase = createClient(supabaseUrl, supabaseKey);
+         
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retrieve cart data from sessionStorage
+            const cartData = sessionStorage.getItem('checkoutCart');
+            const cart = cartData ? JSON.parse(cartData) : [];
+            
+            // Update cart count in header
+            const cartCount = document.getElementById('count');
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Display order items and calculate total
+            const orderItemsContainer = document.getElementById('order-items');
+            const orderTotalElement = document.getElementById('order-total');
+            
+            if (cart.length === 0) {
+                orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Your cart is empty</p>';
+                orderTotalElement.textContent = 'R 0.00';
+                document.getElementById('place-order-btn').disabled = true;
+                return;
+            }
+            
+            let total = 0;
+            orderItemsContainer.innerHTML = '';
+            
+            cart.forEach(item => {
+                const price = item.price;
+                const itemTotal = price * item.quantity;
+                total += itemTotal;
+                
+                const orderItem = document.createElement('div');
+                orderItem.classList.add('order-item');
+                orderItem.innerHTML = `
+                    <img src="${item.image_url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70x70?text=Product'">
+                    <div class="order-item-details">
+                        <div class="order-item-name">${item.name}</div>
+                        <div class="order-item-price">R ${price.toFixed(2)}</div>
+                        <div class="order-item-quantity">Quantity: ${item.quantity}</div>
+                    </div>
+                `;
+                
+                orderItemsContainer.appendChild(orderItem);
+            });
+            
+            orderTotalElement.textContent = `R ${total.toFixed(2)}`;
+            
+            // Handle form submission
+            document.getElementById('checkout-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const firstName = document.getElementById('first-name').value;
+                const lastName = document.getElementById('last-name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const pepCode = document.getElementById('pep-code').value;
+                const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+                
+                // Create order object
+                const order = {
+                    customer: {
+                        firstName,
+                        lastName,
+                        email,
+                        phone
+                    },
+                    delivery: {
+                        pepCode
+                    },
+                    payment: {
+                        method: paymentMethod
+                    },
+                    items: cart,
+                    total: total,
+                    orderDate: new Date().toISOString()
+                };
+                
+                // In a real application, you would send this data to your server
+                // For demonstration, we'll store it in sessionStorage and show a confirmation
+                sessionStorage.setItem('orderData', JSON.stringify(order));
+                
+                // Show confirmation message
+                alert('Order placed successfully! You will receive a confirmation email shortly.');
+                
+                // Clear cart and redirect to home page
+                sessionStorage.removeItem('checkoutCart');
+                window.location.href = 'homev4.html';
+            });
+            
+            // Payment option selection
+            document.getElementById('paypal-option').addEventListener('click', function() {
+                document.getElementById('paypal').checked = true;
+            });
+        });
+    </script>
+</body>
+</html>
