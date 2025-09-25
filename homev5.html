@@ -273,17 +273,23 @@
             color: #991b1b;
         }
         
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
         .add-to-cart {
             background-color: #2A9D8F;
             color: white;
             border: none;
             padding: 8px 0;
             border-radius: 5px;
-            margin-top: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s ease;
             font-size: 13px;
+            flex: 2;
         }
         
         .add-to-cart:hover {
@@ -295,11 +301,62 @@
             cursor: not-allowed;
         }
         
+        .action-btn {
+            flex: 1;
+            background-color: #f3f4f6;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .copy-link-btn {
+            color: #3b82f6;
+        }
+        
+        .copy-link-btn:hover {
+            background-color: #dbeafe;
+        }
+        
+        .more-info-btn {
+            color: #8b5cf6;
+        }
+        
+        .more-info-btn:hover {
+            background-color: #ede9fe;
+        }
+        
         .loading {
             text-align: center;
             padding: 40px;
             color: #6b7280;
             font-size: 18px;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         /* Cart Popup */
@@ -606,6 +663,11 @@
                 margin-top: 8px;
             }
             
+            .action-btn {
+                font-size: 11px;
+                padding: 6px 0;
+            }
+            
             .content-header h4 {
                 font-size: 1.3rem;
             }
@@ -652,6 +714,9 @@
             </div>
         </div> 
     </div>
+    
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
     
     <!-- Cart Popup -->
     <div class="cart-popup" id="cart-popup">
@@ -731,12 +796,11 @@
     </div>
 
     <script type="module">
-       
         import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
         
         const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
-       const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = createClient(supabaseUrl, supabaseKey);
         
         // Cart functionality
         let cart = [];
@@ -746,7 +810,17 @@
         const cartTotal = document.getElementById('cart-total');
         const searchInput = document.getElementById('search-input');
         const checkoutBtn = document.getElementById('checkout-btn');
+        const toast = document.getElementById('toast');
         let allProducts = [];
+
+        // Function to show toast notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
         // Function to update cart UI
         function updateCartUI() {
@@ -823,6 +897,7 @@
             }
             
             updateCartUI();
+            showToast('Product added to cart!');
             // Save cart to localStorage
             saveCartToStorage();
         }
@@ -857,6 +932,7 @@
         function removeFromCart(productId) {
             cart = cart.filter(item => item.id !== productId);
             updateCartUI();
+            showToast('Product removed from cart!');
             // Save cart to localStorage
             saveCartToStorage();
         }
@@ -902,6 +978,29 @@
             localStorage.removeItem('techSpecCart');
         }
 
+        // Function to copy product link to clipboard - FIXED TO USE REFERENCE
+        function copyProductLink(product) {
+            // Create a unique URL for the product using its reference (6-digit code)
+            const productUrl = `${window.location.origin}/product-details.html?ref=${product.reference}`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(productUrl).then(() => {
+                showToast('Product link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy link. Please try again.');
+            });
+        }
+
+        // Function to redirect to product details page
+        function viewProductDetails(product) {
+            // Save product data to sessionStorage for the details page
+            sessionStorage.setItem('currentProduct', JSON.stringify(product));
+            
+            // Redirect to product details page
+            window.location.href = `product-details.html?ref=${product.reference}`;
+        }
+
         // Function to create product box element
         function createProductBox(product) {
             const productBox = document.createElement('div');
@@ -918,15 +1017,31 @@
                         <div class="price">R ${product.price.toFixed(2)}</div>
                         <div class="status ${product.quantity > 0 ? 'in-stock' : 'depleted'}">${product.quantity > 0 ? 'In Stock' : 'Out of Stock'}</div>
                     </div>
-                    <button class="add-to-cart" ${product.quantity <= 0 ? 'disabled' : ''}>
-                        Add to Cart
-                    </button>
+                    <div class="product-actions">
+                        <button class="add-to-cart" ${product.quantity <= 0 ? 'disabled' : ''}>
+                            Add to Cart
+                        </button>
+                        <button class="action-btn copy-link-btn" title="Copy product link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button class="action-btn more-info-btn" title="More information">
+                            <i class="fas fa-info"></i>
+                        </button>
+                    </div>
                 </div>
             `;
 
             // Add event listener to the Add to Cart button
             const addButton = productBox.querySelector('.add-to-cart');
             addButton.addEventListener('click', () => addToCart(product));
+
+            // Add event listener to the Copy Link button
+            const copyLinkButton = productBox.querySelector('.copy-link-btn');
+            copyLinkButton.addEventListener('click', () => copyProductLink(product));
+
+            // Add event listener to the More Info button
+            const moreInfoButton = productBox.querySelector('.more-info-btn');
+            moreInfoButton.addEventListener('click', () => viewProductDetails(product));
 
             return productBox;
         }
