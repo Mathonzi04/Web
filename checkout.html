@@ -318,6 +318,13 @@
             font-size: 14px;
         }
         
+        .order-summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+        
         .order-total {
             margin-top: 20px;
             font-weight: 700;
@@ -349,6 +356,31 @@
         .checkout-btn:disabled {
             background-color: #9ca3af;
             cursor: not-allowed;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .toast.error {
+            background-color: #ef4444;
         }
         
         /* Footer */
@@ -508,7 +540,7 @@
                 <span></span>
             </label>
             <ul class="nav-list">
-                <li><a href="homev4.html">Home</a></li>
+                <li><a href="homev7.html">Home</a></li>
                 <li><a href="#">Blog</a></li>
                 <li><a href="#">About us</a></li>
                 <li><a href="#">Contact Us</a></li>
@@ -524,13 +556,16 @@
                 <i class="fas fa-search" style="color:#333;"></i>
             </div>
             <div class="cart-image">
-                <a href="homev4.html">
+                <a href="homev7.html">
                     <i class="fas fa-shopping-cart" style="font-size:24px; color:#333;"></i> 
                 </a>
                 <div class="cart-count" id="count">0</div>
             </div>
         </div> 
     </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -590,6 +625,7 @@
             <div class="order-summary">
                 <h2 class="section-title">Order Summary</h2>
                 <div id="order-items"></div>
+                <div id="order-summary-details"></div>
                 <div class="order-total">
                     <span>Total:</span>
                     <span id="order-total">R 0.00</span>
@@ -614,7 +650,7 @@
             
             <div class="footer-section">
                 <h3>Quick Links</h3>
-                <a href="homev4.html">Home</a>
+                <a href="homev7.html">Home</a>
                 <a href="#">About Us</a>
                 <a href="#">Send Complaint</a>
                 <a href="#">Blog</a>
@@ -643,13 +679,23 @@
     </div>
 
     <script type="module">
-    
-    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
-     
-     const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
-     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
-     const supabase = createClient(supabaseUrl, supabaseKey);
-         
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+        
+        const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        // Function to show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isError ? 'toast error' : 'toast';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Retrieve cart data from sessionStorage
             const cartData = sessionStorage.getItem('checkoutCart');
@@ -662,6 +708,7 @@
             
             // Display order items and calculate total
             const orderItemsContainer = document.getElementById('order-items');
+            const orderSummaryDetails = document.getElementById('order-summary-details');
             const orderTotalElement = document.getElementById('order-total');
             
             if (cart.length === 0) {
@@ -671,13 +718,14 @@
                 return;
             }
             
-            let total = 0;
+            let subtotal = 0;
+            const deliveryFee = 60.00; // R60 Paxi delivery fee
             orderItemsContainer.innerHTML = '';
             
             cart.forEach(item => {
                 const price = item.price;
                 const itemTotal = price * item.quantity;
-                total += itemTotal;
+                subtotal += itemTotal;
                 
                 const orderItem = document.createElement('div');
                 orderItem.classList.add('order-item');
@@ -693,10 +741,25 @@
                 orderItemsContainer.appendChild(orderItem);
             });
             
+            // Calculate total with delivery fee
+            const total = subtotal + deliveryFee;
+            
+            // Display order summary details
+            orderSummaryDetails.innerHTML = `
+                <div class="order-summary-line">
+                    <span>Subtotal:</span>
+                    <span>R ${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="order-summary-line">
+                    <span>Delivery (Paxi):</span>
+                    <span>R ${deliveryFee.toFixed(2)}</span>
+                </div>
+            `;
+            
             orderTotalElement.textContent = `R ${total.toFixed(2)}`;
             
             // Handle form submission
-            document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            document.getElementById('checkout-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Get form values
@@ -709,33 +772,47 @@
                 
                 // Create order object
                 const order = {
-                    customer: {
-                        firstName,
-                        lastName,
-                        email,
-                        phone
-                    },
-                    delivery: {
-                        pepCode
-                    },
-                    payment: {
-                        method: paymentMethod
-                    },
-                    items: cart,
+                    customer_first_name: firstName,
+                    customer_last_name: lastName,
+                    customer_email: email,
+                    customer_phone: phone,
+                    pep_store_code: pepCode,
+                    payment_method: paymentMethod,
+                    subtotal: subtotal,
+                    delivery_fee: deliveryFee,
                     total: total,
-                    orderDate: new Date().toISOString()
+                    items: cart,
+                    order_date: new Date().toISOString(),
+                    status: 'pending'
                 };
                 
-                // In a real application, you would send this data to your server
-                // For demonstration, we'll store it in sessionStorage and show a confirmation
-                sessionStorage.setItem('orderData', JSON.stringify(order));
-                
-                // Show confirmation message
-                alert('Order placed successfully! You will receive a confirmation email shortly.');
-                
-                // Clear cart and redirect to home page
-                sessionStorage.removeItem('checkoutCart');
-                window.location.href = 'homev4.html';
+                try {
+                    // Insert order into Supabase
+                    const { data, error } = await supabase
+                        .from('orders')
+                        .insert([order])
+                        .select();
+                    
+                    if (error) {
+                        console.error('Error inserting order:', error);
+                        showToast('Error placing order. Please try again.', true);
+                        return;
+                    }
+                    
+                    // Show success message
+                    showToast('Order placed successfully! You will receive a confirmation email shortly.');
+                    
+                    // Clear cart and redirect to home page after a delay
+                    setTimeout(() => {
+                        sessionStorage.removeItem('checkoutCart');
+                        localStorage.removeItem('techSpecCart');
+                        window.location.href = 'homev7.html';
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error placing order. Please try again.', true);
+                }
             });
             
             // Payment option selection
@@ -745,4 +822,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
