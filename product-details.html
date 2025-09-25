@@ -109,6 +109,26 @@
             color: #6b7280;
         }
         
+        .returnable-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .returnable-yes {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .returnable-no {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
         .stock-status {
             display: inline-block;
             padding: 5px 15px;
@@ -196,6 +216,10 @@
             <h1 class="product-name" id="product-name">Product Name</h1>
             <div class="product-price" id="product-price">R 0.00</div>
             <div class="stock-status" id="stock-status">In Stock</div>
+            <div class="returnable-status" id="returnable-status">
+                <i class="fas fa-undo-alt"></i>
+                <span>Returnable: N/A</span>
+            </div>
             <p class="product-description" id="product-description">Product description will appear here.</p>
             
             <div class="product-specs">
@@ -268,13 +292,23 @@
                 document.getElementById('add-to-cart-btn').disabled = true;
             }
             
+            // Set returnable status
+            const returnableStatus = document.getElementById('returnable-status');
+            if (product.returnable) {
+                returnableStatus.innerHTML = '<i class="fas fa-undo-alt"></i><span>Returnable: Yes</span>';
+                returnableStatus.className = 'returnable-status returnable-yes';
+            } else {
+                returnableStatus.innerHTML = '<i class="fas fa-ban"></i><span>Returnable: No</span>';
+                returnableStatus.className = 'returnable-status returnable-no';
+            }
+            
             // Add to cart functionality
             document.getElementById('add-to-cart-btn').addEventListener('click', function() {
                 // Get existing cart from localStorage
                 let cart = JSON.parse(localStorage.getItem('techSpecCart') || '[]');
                 
                 // Check if product already in cart
-                const existingItem = cart.find(item => item.id === product.id);
+                const existingItem = cart.find(item => item.reference === product.reference);
                 
                 if (existingItem) {
                     if (existingItem.quantity < product.quantity) {
@@ -285,7 +319,7 @@
                     }
                 } else {
                     cart.push({
-                        id: product.id,
+                        reference: product.reference,
                         name: product.name,
                         price: product.price,
                         image_url: product.image_url,
@@ -299,7 +333,7 @@
                 alert('Product added to cart!');
             });
             
-            // Copy link functionality
+            // Copy link functionality using reference
             document.getElementById('copy-link-btn').addEventListener('click', function() {
                 const productUrl = window.location.href.split('?')[0] + `?ref=${product.reference}`;
                 
@@ -313,4 +347,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
