@@ -678,148 +678,189 @@
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+</body>
+<script type="module">
+    import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+    
+    const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Function to show toast notification
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = isError ? 'toast error' : 'toast';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+    
+    // Function to generate unique reference number
+    function generateReferenceNumber() {
+        const timestamp = Date.now().toString().slice(-6);
+        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        return `TSC${timestamp}${random}`;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Retrieve cart data from sessionStorage
+        const cartData = sessionStorage.getItem('checkoutCart');
+        const cart = cartData ? JSON.parse(cartData) : [];
         
-        const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        // Update cart count in header
+        const cartCount = document.getElementById('count');
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartCount.textContent = totalItems;
         
-        // Function to show toast notification
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = isError ? 'toast error' : 'toast';
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+        // Display order items and calculate total
+        const orderItemsContainer = document.getElementById('order-items');
+        const orderSummaryDetails = document.getElementById('order-summary-details');
+        const orderTotalElement = document.getElementById('order-total');
+        
+        if (cart.length === 0) {
+            orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Your cart is empty</p>';
+            orderTotalElement.textContent = 'R 0.00';
+            document.getElementById('place-order-btn').disabled = true;
+            return;
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
-            // Retrieve cart data from sessionStorage
-            const cartData = sessionStorage.getItem('checkoutCart');
-            const cart = cartData ? JSON.parse(cartData) : [];
+        let subtotal = 0;
+        const deliveryFee = 60.00; // R60 Paxi delivery fee
+        orderItemsContainer.innerHTML = '';
+        
+        cart.forEach(item => {
+            const price = item.price;
+            const itemTotal = price * item.quantity;
+            subtotal += itemTotal;
             
-            // Update cart count in header
-            const cartCount = document.getElementById('count');
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems;
-            
-            // Display order items and calculate total
-            const orderItemsContainer = document.getElementById('order-items');
-            const orderSummaryDetails = document.getElementById('order-summary-details');
-            const orderTotalElement = document.getElementById('order-total');
-            
-            if (cart.length === 0) {
-                orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Your cart is empty</p>';
-                orderTotalElement.textContent = 'R 0.00';
-                document.getElementById('place-order-btn').disabled = true;
-                return;
-            }
-            
-            let subtotal = 0;
-            const deliveryFee = 60.00; // R60 Paxi delivery fee
-            orderItemsContainer.innerHTML = '';
-            
-            cart.forEach(item => {
-                const price = item.price;
-                const itemTotal = price * item.quantity;
-                subtotal += itemTotal;
-                
-                const orderItem = document.createElement('div');
-                orderItem.classList.add('order-item');
-                orderItem.innerHTML = `
-                    <img src="${item.image_url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70x70?text=Product'">
-                    <div class="order-item-details">
-                        <div class="order-item-name">${item.name}</div>
-                        <div class="order-item-price">R ${price.toFixed(2)}</div>
-                        <div class="order-item-quantity">Quantity: ${item.quantity}</div>
-                    </div>
-                `;
-                
-                orderItemsContainer.appendChild(orderItem);
-            });
-            
-            // Calculate total with delivery fee
-            const total = subtotal + deliveryFee;
-            
-            // Display order summary details
-            orderSummaryDetails.innerHTML = `
-                <div class="order-summary-line">
-                    <span>Subtotal:</span>
-                    <span>R ${subtotal.toFixed(2)}</span>
-                </div>
-                <div class="order-summary-line">
-                    <span>Delivery (Paxi):</span>
-                    <span>R ${deliveryFee.toFixed(2)}</span>
+            const orderItem = document.createElement('div');
+            orderItem.classList.add('order-item');
+            orderItem.innerHTML = `
+                <img src="${item.image_url}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/70x70?text=Product'">
+                <div class="order-item-details">
+                    <div class="order-item-name">${item.name}</div>
+                    <div class="order-item-price">R ${price.toFixed(2)}</div>
+                    <div class="order-item-quantity">Quantity: ${item.quantity}</div>
                 </div>
             `;
             
-            orderTotalElement.textContent = `R ${total.toFixed(2)}`;
-            
-            // Handle form submission
-            document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                // Get form values
-                const firstName = document.getElementById('first-name').value;
-                const lastName = document.getElementById('last-name').value;
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                const pepCode = document.getElementById('pep-code').value;
-                const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-                
-                // Create order object
-                const order = {
-                    customer_first_name: firstName,
-                    customer_last_name: lastName,
-                    customer_email: email,
-                    customer_phone: phone,
-                    pep_store_code: pepCode,
-                    payment_method: paymentMethod,
-                    subtotal: subtotal,
-                    delivery_fee: deliveryFee,
-                    total: total,
-                    items: cart,
-                    order_date: new Date().toISOString(),
-                    status: 'pending'
-                };
-                
-                try {
-                    // Insert order into Supabase
-                    const { data, error } = await supabase
-                        .from('orders')
-                        .insert([order])
-                        .select();
-                    
-                    if (error) {
-                        console.error('Error inserting order:', error);
-                        showToast('Error placing order. Please try again.', true);
-                        return;
-                    }
-                    
-                    // Show success message
-                    showToast('Order placed successfully! You will receive a confirmation email shortly.');
-                    
-                    // Clear cart and redirect to home page after a delay
-                    setTimeout(() => {
-                        sessionStorage.removeItem('checkoutCart');
-                        localStorage.removeItem('techSpecCart');
-                        window.location.href = 'homev7.html';
-                    }, 2000);
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    showToast('Error placing order. Please try again.', true);
-                }
-            });
-            
-            // Payment option selection
-            document.getElementById('paypal-option').addEventListener('click', function() {
-                document.getElementById('paypal').checked = true;
-            });
+            orderItemsContainer.appendChild(orderItem);
         });
-    </script>
-</body>
+        
+        // Calculate total with delivery fee
+        const total = subtotal + deliveryFee;
+        
+        // Display order summary details
+        orderSummaryDetails.innerHTML = `
+            <div class="order-summary-line">
+                <span>Subtotal:</span>
+                <span>R ${subtotal.toFixed(2)}</span>
+            </div>
+            <div class="order-summary-line">
+                <span>Delivery (Paxi):</span>
+                <span>R ${deliveryFee.toFixed(2)}</span>
+            </div>
+        `;
+        
+        orderTotalElement.textContent = `R ${total.toFixed(2)}`;
+        
+        // Handle form submission
+        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const pepCode = document.getElementById('pep-code').value;
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            
+            // Generate reference number
+            const referenceNumber = generateReferenceNumber();
+            
+            // Create customer order object (Table 1)
+            const customerOrder = {
+                customer_first_name: firstName,
+                customer_last_name: lastName,
+                customer_email: email,
+                customer_phone: phone,
+                reference_number: referenceNumber,
+                pep_store_code: pepCode,
+                payment_method: paymentMethod,
+                subtotal: subtotal,
+                delivery_fee: deliveryFee,
+                total: total,
+                items: cart,
+                order_date: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            // Create package tracking object (Table 2)
+            const packageTracking = {
+                customer_first_name: firstName,
+                customer_last_name: lastName,
+                customer_email: email,
+                customer_phone: phone,
+                reference_number: referenceNumber,
+                pep_store_code: pepCode,
+                order_details: `${cart.length} item(s) - Total: R ${total.toFixed(2)}`,
+                order_approved_date: null,
+                ready_for_delivery_date: null,
+                on_delivery_time: null,
+                reached_destination_time: null,
+                order_picked_message: null,
+                current_status: 'order_received',
+                status_update_date: new Date().toISOString()
+            };
+            
+            try {
+                // Insert customer order into Supabase (Table 1)
+                const { data: orderData, error: orderError } = await supabase
+                    .from('customer_orders')
+                    .insert([customerOrder])
+                    .select();
+                
+                if (orderError) {
+                    console.error('Error inserting order:', orderError);
+                    showToast('Error placing order. Please try again.', true);
+                    return;
+                }
+                
+                // Insert package tracking into Supabase (Table 2)
+                const { data: trackingData, error: trackingError } = await supabase
+                    .from('package_tracking')
+                    .insert([packageTracking])
+                    .select();
+                
+                if (trackingError) {
+                    console.error('Error inserting tracking:', trackingError);
+                    showToast('Order placed but tracking not initialized. Contact support.', true);
+                    // We don't return here because the order was successfully created
+                }
+                
+                // Show success message with reference number
+                showToast(`Order placed successfully! Your reference: ${referenceNumber}`);
+                
+                // Clear cart and redirect to home page after a delay
+                setTimeout(() => {
+                    sessionStorage.removeItem('checkoutCart');
+                    localStorage.removeItem('techSpecCart');
+                    window.location.href = 'homev7.html';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error placing order. Please try again.', true);
+            }
+        });
+        
+        // Payment option selection
+        document.getElementById('paypal-option').addEventListener('click', function() {
+            document.getElementById('paypal').checked = true;
+        });
+    });
+</script>
     </html>
