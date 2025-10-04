@@ -5,528 +5,528 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TECHSpec Check - Checkout</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f2f2f2;
-            color: #1f2937;
-            padding: 0;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        /* Header Styles */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: #ffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header h4 {
-            color: #000;
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-        
-        .cart-funct {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .cart-image {
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: #ef4444;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .search-container {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            padding: 8px 18px;
-            width: 300px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .search-container input {
-            border: none;
-            background: transparent;
-            padding: 5px;
-            width: 100%;
-            outline: none;
-            font-size: 15px;
-        }
-        
-        /* Navigation */
-        .nav-links {
-            position: relative;
-        }
-        
-        #nav-check {
-            display: none;
-        }
-        
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 35px;
-            height: 25px;
-            cursor: pointer;
-        }
-        
-        .nav-toggle span {
-            height: 3px;
-            width: 100%;
-            background-color: #333;
-            border-radius: 3px;
-        }
-        
-        .nav-list {
-            display: flex;
-            gap: 25px;
-            list-style: none;
-            width: 550px;
-            justify-content: center;
-        }
-        
-        .nav-list li a {
-            text-decoration: none;
-            color: #000;
-            font-weight: 500;
-            transition: color 0.3s;
-            font-size: 16px;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-        
-        .nav-list li a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .socials {
-            display: flex;
-            gap: 12px;
-            margin-left: 25px;
-        }
-        
-        .socials i {
-            font-size: 22px;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 8px;
-            border-radius: 50%;
-            transition: background-color 0.3s;
-        }
-        
-        .socials i:hover {
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Main content */
-        .main-content {
-            padding: 25px;
-            flex: 1;
-        }
-        
-        .checkout-container {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
-        .checkout-form {
-            flex: 1;
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-        
-        .order-summary {
-            width: 350px;
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            align-self: flex-start;
-        }
-        
-        .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #E9C46A;
-            color: #1f2937;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #2A9D8F;
-            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-        
-        .payment-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-        
-        .payment-option.selected {
-            border-color: #2A9D8F;
-            background-color: rgba(42, 157, 143, 0.05);
-        }
-        
-        .payment-option input {
-            margin: 0;
-        }
-        
-        .payment-option label {
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0;
-        }
-        
-        .payment-option img {
-            height: 24px;
-            margin-left: auto;
-        }
-        
-        .pep-store-info {
-            background-color: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        .pep-store-info a {
-            color: #2A9D8F;
-            text-decoration: none;
-        }
-        
-        .pep-store-info a:hover {
-            text-decoration: underline;
-        }
-        
-        .order-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 18px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid #f3f4f6;
-        }
-        
-        .order-item img {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        
-        .order-item-details {
-            flex-grow: 1;
-        }
-        
-        .order-item-name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 6px;
-        }
-        
-        .order-item-price {
-            color: #2A9D8F;
-            font-weight: 700;
-            font-size: 16px;
-        }
-        
-        .order-item-quantity {
-            color: #6b7280;
-            font-size: 14px;
-        }
-        
-        .order-summary-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 5px 0;
-        }
-        
-        .order-total {
-            margin-top: 20px;
-            font-weight: 700;
-            padding-top: 15px;
-            border-top: 2px solid #e5e7eb;
-            font-size: 18px;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .checkout-btn {
-            width: 100%;
-            padding: 16px;
-            background: #2A9D8F;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        
-        .checkout-btn:hover {
-            background-color: #1a936f;
-        }
-        
-        .checkout-btn:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-        }
-        
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #10b981;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 1001;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .toast.error {
-            background-color: #ef4444;
-        }
-        
-        /* Footer */
-        .footer {
-            background: #333;
-            color: white;
-            padding: 40px 20px;
-            margin-top: auto;
-        }
-        
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-section h3 {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 10px;
-        }
-        
-        .footer-section p, .footer-section a {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 12px;
-            display: block;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-section a:hover {
-            color: white;
-            text-decoration: underline;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .footer-social a {
-            font-size: 20px;
-            color: white;
-            background-color: rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            margin-top: 30px;
-            font-size: 14px;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 968px) {
-            .checkout-container {
-                flex-direction: column;
-            }
-            
-            .order-summary {
-                width: 100%;
-            }
-            
-            .header {
-                flex-wrap: wrap;
-            }
-            
-            .nav-list {
-                width: 100%;
-            }
-            
-            .search-container {
-                width: 100%;
-                order: 3;
-                margin-top: 15px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-toggle {
-                display: flex;
-            }
-            
-            .nav-list {
-                display: none;
-                position: absolute;
-                top: 105px;
-                left: -20px;
-                width: 382px;
-                background: #ffff;
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-                gap: 15px;
-            }
-            
-            #nav-check:checked ~ .nav-list {
-                display: flex;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .footer-section {
-                min-width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 15px;
-            }
-            
-            .checkout-form, .order-summary {
-                padding: 20px;
-            }
-            
-            .section-title {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+ <style>
+     * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     }
+     
+     body {
+         background-color: #f2f2f2;
+         color: #1f2937;
+         padding: 0;
+         max-width: 1200px;
+         margin: 0 auto;
+         display: flex;
+         flex-direction: column;
+         min-height: 100vh;
+     }
+     
+     /* Header Styles */
+     .header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding: 15px 20px;
+         background: #ffff;
+         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+         position: sticky;
+         top: 0;
+         z-index: 100;
+     }
+     
+     .header h4 {
+         color: #000;
+         font-size: 1.8rem;
+         font-weight: 700;
+         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+     }
+     
+     .cart-funct {
+         display: flex;
+         align-items: center;
+         gap: 20px;
+     }
+     
+     .cart-image {
+         position: relative;
+         cursor: pointer;
+     }
+     
+     .cart-count {
+         position: absolute;
+         top: -8px;
+         right: -8px;
+         background-color: #ef4444;
+         color: white;
+         width: 22px;
+         height: 22px;
+         border-radius: 50%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         font-size: 12px;
+         font-weight: bold;
+         cursor: pointer;
+         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+     }
+     
+     .search-container {
+         display: flex;
+         align-items: center;
+         background: rgba(255, 255, 255, 0.9);
+         border-radius: 25px;
+         padding: 8px 18px;
+         width: 300px;
+         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+     }
+     
+     .search-container input {
+         border: none;
+         background: transparent;
+         padding: 5px;
+         width: 100%;
+         outline: none;
+         font-size: 15px;
+     }
+     
+     /* Navigation */
+     .nav-links {
+         position: relative;
+     }
+     
+     #nav-check {
+         display: none;
+     }
+     
+     .nav-toggle {
+         display: none;
+         flex-direction: column;
+         justify-content: space-between;
+         width: 35px;
+         height: 25px;
+         cursor: pointer;
+     }
+     
+     .nav-toggle span {
+         height: 3px;
+         width: 100%;
+         background-color: #333;
+         border-radius: 3px;
+     }
+     
+     .nav-list {
+         display: flex;
+         gap: 25px;
+         list-style: none;
+         width: 550px;
+         justify-content: center;
+     }
+     
+     .nav-list li a {
+         text-decoration: none;
+         color: #000;
+         font-weight: 500;
+         transition: color 0.3s;
+         font-size: 16px;
+         padding: 5px 10px;
+         border-radius: 5px;
+     }
+     
+     .nav-list li a:hover {
+         background-color: rgba(255, 255, 255, 0.2);
+     }
+     
+     .socials {
+         display: flex;
+         gap: 12px;
+         margin-left: 25px;
+     }
+     
+     .socials i {
+         font-size: 22px;
+         color: white;
+         background-color: rgba(0, 0, 0, 0.2);
+         padding: 8px;
+         border-radius: 50%;
+         transition: background-color 0.3s;
+     }
+     
+     .socials i:hover {
+         background-color: rgba(0, 0, 0, 0.4);
+     }
+     
+     /* Main content */
+     .main-content {
+         padding: 25px;
+         flex: 1;
+     }
+     
+     .checkout-container {
+         display: flex;
+         gap: 30px;
+         margin-bottom: 40px;
+     }
+     
+     .checkout-form {
+         flex: 1;
+         background: white;
+         border-radius: 12px;
+         padding: 25px;
+         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+     }
+     
+     .order-summary {
+         width: 350px;
+         background: white;
+         border-radius: 12px;
+         padding: 25px;
+         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+         align-self: flex-start;
+     }
+     
+     .section-title {
+         font-size: 1.4rem;
+         margin-bottom: 20px;
+         padding-bottom: 10px;
+         border-bottom: 2px solid #E9C46A;
+         color: #1f2937;
+     }
+     
+     .form-group {
+         margin-bottom: 20px;
+     }
+     
+     .form-group label {
+         display: block;
+         margin-bottom: 8px;
+         font-weight: 600;
+         color: #374151;
+     }
+     
+     .form-group input,
+     .form-group select {
+         width: 100%;
+         padding: 12px 15px;
+         border: 1px solid #d1d5db;
+         border-radius: 8px;
+         font-size: 16px;
+         transition: border-color 0.3s;
+     }
+     
+     .form-group input:focus,
+     .form-group select:focus {
+         outline: none;
+         border-color: #2A9D8F;
+         box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+     }
+     
+     .form-row {
+         display: flex;
+         gap: 15px;
+     }
+     
+     .form-row .form-group {
+         flex: 1;
+     }
+     
+     .payment-option {
+         display: flex;
+         align-items: center;
+         gap: 10px;
+         padding: 15px;
+         border: 2px solid #e5e7eb;
+         border-radius: 8px;
+         margin-bottom: 15px;
+         cursor: pointer;
+         transition: border-color 0.3s;
+     }
+     
+     .payment-option.selected {
+         border-color: #2A9D8F;
+         background-color: rgba(42, 157, 143, 0.05);
+     }
+     
+     .payment-option input {
+         margin: 0;
+     }
+     
+     .payment-option label {
+         font-weight: 600;
+         cursor: pointer;
+         margin: 0;
+     }
+     
+     .payment-option img {
+         height: 24px;
+         margin-left: auto;
+     }
+     
+     .pep-store-info {
+         background-color: #f9fafb;
+         padding: 15px;
+         border-radius: 8px;
+         margin-top: 10px;
+         font-size: 14px;
+         color: #6b7280;
+     }
+     
+     .pep-store-info a {
+         color: #2A9D8F;
+         text-decoration: none;
+     }
+     
+     .pep-store-info a:hover {
+         text-decoration: underline;
+     }
+     
+     .order-item {
+         display: flex;
+         gap: 15px;
+         margin-bottom: 18px;
+         padding-bottom: 18px;
+         border-bottom: 1px solid #f3f4f6;
+     }
+     
+     .order-item img {
+         width: 70px;
+         height: 70px;
+         object-fit: cover;
+         border-radius: 10px;
+     }
+     
+     .order-item-details {
+         flex-grow: 1;
+     }
+     
+     .order-item-name {
+         font-weight: 600;
+         font-size: 15px;
+         margin-bottom: 6px;
+     }
+     
+     .order-item-price {
+         color: #2A9D8F;
+         font-weight: 700;
+         font-size: 16px;
+     }
+     
+     .order-item-quantity {
+         color: #6b7280;
+         font-size: 14px;
+     }
+     
+     .order-summary-line {
+         display: flex;
+         justify-content: space-between;
+         margin-bottom: 10px;
+         padding: 5px 0;
+     }
+     
+     .order-total {
+         margin-top: 20px;
+         font-weight: 700;
+         padding-top: 15px;
+         border-top: 2px solid #e5e7eb;
+         font-size: 18px;
+         display: flex;
+         justify-content: space-between;
+     }
+     
+     .checkout-btn {
+         width: 100%;
+         padding: 16px;
+         background: #2A9D8F;
+         color: white;
+         border: none;
+         border-radius: 8px;
+         font-weight: 700;
+         margin-top: 20px;
+         cursor: pointer;
+         font-size: 16px;
+         transition: background-color 0.3s;
+     }
+     
+     .checkout-btn:hover {
+         background-color: #1a936f;
+     }
+     
+     .checkout-btn:disabled {
+         background-color: #9ca3af;
+         cursor: not-allowed;
+     }
+     
+     /* Toast notification */
+     .toast {
+         position: fixed;
+         bottom: 20px;
+         right: 20px;
+         background-color: #10b981;
+         color: white;
+         padding: 12px 20px;
+         border-radius: 5px;
+         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+         z-index: 1001;
+         opacity: 0;
+         transform: translateY(20px);
+         transition: opacity 0.3s, transform 0.3s;
+     }
+     
+     .toast.show {
+         opacity: 1;
+         transform: translateY(0);
+     }
+     
+     .toast.error {
+         background-color: #ef4444;
+     }
+     
+     /* Footer */
+     .footer {
+         background: #333;
+         color: white;
+         padding: 40px 20px;
+         margin-top: auto;
+     }
+     
+     .footer-content {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: space-between;
+         max-width: 1200px;
+         margin: 0 auto;
+     }
+     
+     .footer-section {
+         flex: 1;
+         min-width: 250px;
+         margin-bottom: 30px;
+     }
+     
+     .footer-section h3 {
+         font-size: 1.4rem;
+         margin-bottom: 20px;
+         border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+         padding-bottom: 10px;
+     }
+     
+     .footer-section p, .footer-section a {
+         color: rgba(255, 255, 255, 0.9);
+         margin-bottom: 12px;
+         display: block;
+         text-decoration: none;
+         transition: color 0.3s;
+     }
+     
+     .footer-section a:hover {
+         color: white;
+         text-decoration: underline;
+     }
+     
+     .footer-social {
+         display: flex;
+         gap: 15px;
+         margin-top: 20px;
+     }
+     
+     .footer-social a {
+         font-size: 20px;
+         color: white;
+         background-color: rgba(255, 255, 255, 0.2);
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         transition: background-color 0.3s;
+     }
+     
+     .footer-social a:hover {
+         background-color: rgba(255, 255, 255, 0.3);
+     }
+     
+     .footer-bottom {
+         text-align: center;
+         padding-top: 30px;
+         border-top: 1px solid rgba(255, 255, 255, 0.3);
+         margin-top: 30px;
+         font-size: 14px;
+     }
+     
+     /* Responsive Design */
+     @media (max-width: 968px) {
+         .checkout-container {
+             flex-direction: column;
+         }
+         
+         .order-summary {
+             width: 100%;
+         }
+         
+         .header {
+             flex-wrap: wrap;
+         }
+         
+         .nav-list {
+             width: 100%;
+         }
+         
+         .search-container {
+             width: 100%;
+             order: 3;
+             margin-top: 15px;
+         }
+     }
+     
+     @media (max-width: 768px) {
+         .nav-toggle {
+             display: flex;
+         }
+         
+         .nav-list {
+             display: none;
+             position: absolute;
+             top: 105px;
+             left: -20px;
+             width: 382px;
+             background: #ffff;
+             flex-direction: column;
+             padding: 20px;
+             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+             gap: 15px;
+         }
+         
+         #nav-check:checked ~ .nav-list {
+             display: flex;
+         }
+         
+         .form-row {
+             flex-direction: column;
+             gap: 0;
+         }
+         
+         .footer-section {
+             min-width: 100%;
+         }
+     }
+     
+     @media (max-width: 480px) {
+         .main-content {
+             padding: 15px;
+         }
+         
+         .checkout-form, .order-summary {
+             padding: 20px;
+         }
+         
+         .section-title {
+             font-size: 1.2rem;
+         }
+     }
+ </style>
 </head>
 <body>
     <!-- Header -->
@@ -570,6 +570,10 @@
     <!-- Main Content -->
     <div class="main-content">
         <h1 style="margin: 20px 0 30px; text-align: center; color: #1f2937;">Checkout</h1>
+        
+        <!-- Debug Button -->
+        <button class="debug-toggle" onclick="toggleDebug()">Show Debug Info</button>
+        <div class="debug-info" id="debug-info"></div>
         
         <div class="checkout-container">
             <!-- Checkout Form -->
@@ -636,46 +640,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>TECHSpec Check</h3>
-                <p>Your trusted partner for quality tech products and accessories. We offer the latest gadgets at competitive prices.</p>
-                <div class="footer-social">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="homev7.html">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Send Complaint</a>
-                <a href="#">Blog</a>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Contact Info</h3>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Tech Street, Johannesburg</p>
-                <p><i class="fas fa-phone"></i> +27 11 123 4567</p>
-                <p><i class="fas fa-envelope"></i> info@techspeccheck.co.za</p>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Newsletter</h3>
-                <p>Subscribe to our newsletter for the latest product updates and special offers.</p>
-                <form>
-                    <input type="email" placeholder="Your Email" style="padding:10px; width:100%; border-radius:5px; border:none; margin-bottom:10px;">
-                    <button type="submit" style="padding:10px 15px; background:white; color:#2A9D8F; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Subscribe</button>
-                </form>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2023 TECHSpec Check. All rights reserved.</p>
-        </div>
+        <!-- ... keep your existing footer ... -->
     </div>
 
 </body>
@@ -686,10 +651,22 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
     const supabase = createClient(supabaseUrl, supabaseKey);
     
-    // EmailJS configuration - TESTING MODE
+    // EmailJS configuration
     const EMAILJS_SERVICE_ID = 'service_4gnbbyk';
     const EMAILJS_TEMPLATE_ID = 'template_azwzt8e';
     const EMAILJS_PUBLIC_KEY = '7EubRJ1uO-BIK3faQ';
+    
+    // Debug functions
+    function logDebug(message) {
+        const debugInfo = document.getElementById('debug-info');
+        debugInfo.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
+        console.log(message);
+    }
+    
+    function toggleDebug() {
+        const debugInfo = document.getElementById('debug-info');
+        debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+    }
     
     // Function to show toast notification
     function showToast(message, isError = false) {
@@ -723,6 +700,8 @@
     // Function to send confirmation email
     async function sendOrderConfirmationEmail(orderData, cart) {
         try {
+            logDebug('Starting email sending process...');
+            
             // Format the order date
             const orderDate = new Date().toLocaleDateString('en-ZA', {
                 year: 'numeric',
@@ -746,38 +725,56 @@
                 total: orderData.total.toFixed(2)
             };
             
-            console.log('EmailJS Parameters:', templateParams);
+            logDebug('Template parameters prepared:');
+            logDebug(JSON.stringify(templateParams, null, 2));
             
             // Load EmailJS library dynamically
+            logDebug('Loading EmailJS library...');
             await new Promise((resolve, reject) => {
                 if (window.emailjs) {
+                    logDebug('EmailJS already loaded');
                     resolve();
                     return;
                 }
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-                script.onload = resolve;
-                script.onerror = reject;
+                script.onload = () => {
+                    logDebug('EmailJS library loaded successfully');
+                    resolve();
+                };
+                script.onerror = () => {
+                    logDebug('Failed to load EmailJS library');
+                    reject(new Error('Failed to load EmailJS library'));
+                };
                 document.head.appendChild(script);
             });
             
             // Initialize EmailJS
+            logDebug('Initializing EmailJS with public key...');
             emailjs.init(EMAILJS_PUBLIC_KEY);
+            logDebug('EmailJS initialized');
             
             // Send email
+            logDebug('Sending email via EmailJS...');
             const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-            console.log('Email sent successfully:', result);
-            return true;
+            logDebug('Email sent successfully: ' + JSON.stringify(result));
+            return { success: true, result };
+            
         } catch (error) {
-            console.error('Failed to send email:', error);
-            return false;
+            logDebug('Email sending failed: ' + error.toString());
+            logDebug('Error details: ' + JSON.stringify(error, null, 2));
+            return { success: false, error };
         }
     }
     
     document.addEventListener('DOMContentLoaded', function() {
+        logDebug('Page loaded - Checkout system ready');
+        
         // Retrieve cart data from sessionStorage
         const cartData = sessionStorage.getItem('checkoutCart');
         const cart = cartData ? JSON.parse(cartData) : [];
+        
+        logDebug(`Cart loaded with ${cart.length} items`);
         
         // Update cart count in header
         const cartCount = document.getElementById('count');
@@ -793,6 +790,7 @@
             orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Your cart is empty</p>';
             orderTotalElement.textContent = 'R 0.00';
             document.getElementById('place-order-btn').disabled = true;
+            logDebug('Cart is empty - disabling order button');
             return;
         }
         
@@ -835,6 +833,7 @@
         `;
         
         orderTotalElement.textContent = `R ${total.toFixed(2)}`;
+        logDebug(`Order total calculated: R ${total.toFixed(2)}`);
         
         // Handle form submission
         document.getElementById('checkout-form').addEventListener('submit', async function(e) {
@@ -844,6 +843,8 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
             
+            logDebug('Form submission started');
+            
             // Get form values
             const firstName = document.getElementById('first-name').value;
             const lastName = document.getElementById('last-name').value;
@@ -852,8 +853,11 @@
             const pepCode = document.getElementById('pep-code').value;
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
             
+            logDebug(`Customer: ${firstName} ${lastName}, Email: ${email}`);
+            
             // Generate reference number
             const referenceNumber = generateReferenceNumber();
+            logDebug(`Generated reference number: ${referenceNumber}`);
             
             // Create customer order object (Table 1)
             const customerOrder = {
@@ -891,6 +895,8 @@
             };
             
             try {
+                logDebug('Inserting order into Supabase...');
+                
                 // Insert customer order into Supabase (Table 1)
                 const { data: orderData, error: orderError } = await supabase
                     .from('customer_orders')
@@ -898,12 +904,15 @@
                     .select();
                 
                 if (orderError) {
+                    logDebug('Supabase order error: ' + orderError.message);
                     console.error('Error inserting order:', orderError);
                     showToast('Error placing order. Please try again.', true);
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Place Order';
                     return;
                 }
+                
+                logDebug('Order inserted into Supabase successfully');
                 
                 // Insert package tracking into Supabase (Table 2)
                 const { data: trackingData, error: trackingError } = await supabase
@@ -912,45 +921,51 @@
                     .select();
                 
                 if (trackingError) {
+                    logDebug('Supabase tracking error: ' + trackingError.message);
                     console.error('Error inserting tracking:', trackingError);
-                    // Don't show error to user, just log it
-                    console.log('Tracking not initialized but order was created');
+                } else {
+                    logDebug('Tracking inserted into Supabase successfully');
                 }
                 
                 // Send confirmation email (TESTING MODE - no redirect)
-                const emailSent = await sendOrderConfirmationEmail(customerOrder, cart);
+                logDebug('Attempting to send confirmation email...');
+                const emailResult = await sendOrderConfirmationEmail(customerOrder, cart);
                 
-                if (emailSent) {
+                if (emailResult.success) {
+                    logDebug('Email sent successfully');
                     showToast(`✅ Order placed successfully! Confirmation email sent to ${email}. Your reference: ${referenceNumber}`);
-                    
-                    // Clear cart but DON'T redirect - testing mode
-                    sessionStorage.removeItem('checkoutCart');
-                    localStorage.removeItem('techSpecCart');
-                    
-                    // Reset form
-                    document.getElementById('checkout-form').reset();
-                    
-                    // Reset order summary
-                    orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Order completed successfully!</p>';
-                    orderSummaryDetails.innerHTML = '';
-                    orderTotalElement.textContent = 'R 0.00';
-                    cartCount.textContent = '0';
-                    
                 } else {
-                    showToast(`⚠️ Order placed but email failed. Your reference: ${referenceNumber}. Check console for details.`);
+                    logDebug('Email failed: ' + emailResult.error);
+                    showToast(`⚠️ Order placed but email failed. Your reference: ${referenceNumber}. Click "Show Debug Info" for details.`);
                 }
                 
+                // Clear cart but DON'T redirect - testing mode
+                sessionStorage.removeItem('checkoutCart');
+                localStorage.removeItem('techSpecCart');
+                logDebug('Cart cleared from storage');
+                
+                // Reset form
+                document.getElementById('checkout-form').reset();
+                
+                // Reset order summary
+                orderItemsContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#6b7280;">Order completed successfully!</p>';
+                orderSummaryDetails.innerHTML = '';
+                orderTotalElement.textContent = 'R 0.00';
+                cartCount.textContent = '0';
+                
+                logDebug('Checkout process completed successfully');
+                
+            } catch (error) {
+                logDebug('Unexpected error: ' + error.toString());
+                console.error('Error:', error);
+                showToast('Error placing order. Please try again.', true);
+            } finally {
                 // Re-enable button after process
                 setTimeout(() => {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Place Order';
+                    logDebug('Order button re-enabled');
                 }, 3000);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Error placing order. Please try again.', true);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Place Order';
             }
         });
         
