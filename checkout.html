@@ -640,11 +640,50 @@
 
     <!-- Footer -->
     <div class="footer">
-        <!-- ... keep your existing footer ... -->
+       <div class="footer-content">
+           <div class="footer-section">
+               <h3>TECHSpec Check</h3>
+               <p>Your trusted partner for quality tech products and accessories. We offer the latest gadgets at competitive prices.</p>
+               <div class="footer-social">
+                   <a href="#"><i class="fab fa-facebook-f"></i></a>
+                   <a href="#"><i class="fab fa-twitter"></i></a>
+                   <a href="#"><i class="fab fa-instagram"></i></a>
+                   <a href="#"><i class="fab fa-linkedin-in"></i></a>
+               </div>
+           </div>
+           
+           <div class="footer-section">
+               <h3>Quick Links</h3>
+               <a href="homev7.html">Home</a>
+               <a href="#">About Us</a>
+               <a href="#">Send Complaint</a>
+               <a href="#">Blog</a>
+           </div>
+           
+           <div class="footer-section">
+               <h3>Contact Info</h3>
+               <p><i class="fas fa-map-marker-alt"></i> 123 Tech Street, Johannesburg</p>
+               <p><i class="fas fa-phone"></i> +27 11 123 4567</p>
+               <p><i class="fas fa-envelope"></i> info@techspeccheck.co.za</p>
+           </div>
+           
+           <div class="footer-section">
+               <h3>Newsletter</h3>
+               <p>Subscribe to our newsletter for the latest product updates and special offers.</p>
+               <form>
+                   <input type="email" placeholder="Your Email" style="padding:10px; width:100%; border-radius:5px; border:none; margin-bottom:10px;">
+                   <button type="submit" style="padding:10px 15px; background:white; color:#2A9D8F; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Subscribe</button>
+               </form>
+           </div>
+       </div>
+       
+       <div class="footer-bottom">
+           <p>&copy; 2023 TECHSpec Check. All rights reserved.</p>
+       </div>
     </div>
 
 </body>
-            <script type="module">
+<script type="module">
     import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
     
     const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
@@ -656,7 +695,6 @@
     const EMAILJS_TEMPLATE_ID = 'template_yzeuxf7';
     const EMAILJS_PUBLIC_KEY = '7EubRJ1uO-BIK3faQ';
     
-    template_yzeuxf7
     // Debug functions
     function logDebug(message) {
         const debugInfo = document.getElementById('debug-info');
@@ -698,76 +736,75 @@
         `).join('');
     }
     
-    // Function to send confirmation email
-    async function sendOrderConfirmationEmail(orderData, cart) {
-    try {
-    logDebug('Starting email sending process...');
-    
-    // Format the order date
-    const orderDate = new Date().toLocaleDateString('en-ZA', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-    });
-    
-    // Prepare email parameters - CORRECTED FOR YOUR TEMPLATE
-    const templateParams = {
-    customer_email: orderData.customer_email, // This maps to {{customer_email}} in template
-    customer_name: `${orderData.customer_first_name} ${orderData.customer_last_name}`,
-    reference_number: orderData.reference_number, // This maps to {{reference_number}} in template
-    order_date: orderDate,
-    pep_store_code: orderData.pep_store_code,
-    payment_method: orderData.payment_method,
-    items: formatOrderItemsForEmail(cart),
-    subtotal: orderData.subtotal.toFixed(2),
-    delivery_fee: orderData.delivery_fee.toFixed(2),
-    total: orderData.total.toFixed(2)
-    };
-    
-    logDebug('Template parameters prepared:');
-    logDebug(JSON.stringify(templateParams, null, 2));
-    
-    // Load EmailJS library dynamically
-    logDebug('Loading EmailJS library...');
-    await new Promise((resolve, reject) => {
-    if (window.emailjs) {
-    logDebug('EmailJS already loaded');
-    resolve();
-    return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-    script.onload = () => {
-    logDebug('EmailJS library loaded successfully');
-    resolve();
-    };
-    script.onerror = () => {
-    logDebug('Failed to load EmailJS library');
-    reject(new Error('Failed to load EmailJS library'));
-    };
-    document.head.appendChild(script);
-    });
-    
-    // Initialize EmailJS
-    logDebug('Initializing EmailJS with public key...');
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    logDebug('EmailJS initialized');
-    
-    // Send email
-    logDebug('Sending email via EmailJS...');
-    const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-    logDebug('Email sent successfully: ' + JSON.stringify(result));
-    return { success: true, result };
-    
-    } catch (error) {
-    logDebug('Email sending failed: ' + error.toString());
-    logDebug('Error details: ' + JSON.stringify(error, null, 2));
-    return { success: false, error };
-    }
-    }
-    
+ // Function to send confirmation email
+ async function sendOrderConfirmationEmail(orderData, cart) {
+ try {
+ logDebug('Starting email sending process...');
+ 
+ // Format the order date
+ const orderDate = new Date().toLocaleDateString('en-ZA', {
+ year: 'numeric',
+ month: 'long',
+ day: 'numeric',
+ hour: '2-digit',
+ minute: '2-digit'
+ });
+ 
+ // Prepare email parameters - CORRECTED FOR YOUR TEMPLATE
+ const templateParams = {
+ customer_email: orderData.customer_email, // This maps to {{customer_email}} in template
+ customer_name: `${orderData.customer_first_name} ${orderData.customer_last_name}`,
+ reference_number: orderData.reference_number, // This maps to {{reference_number}} in template
+ order_date: orderDate,
+ pep_store_code: orderData.pep_store_code,
+ payment_method: orderData.payment_method,
+ items: formatOrderItemsForEmail(cart),
+ subtotal: orderData.subtotal.toFixed(2),
+ delivery_fee: orderData.delivery_fee.toFixed(2),
+ total: orderData.total.toFixed(2)
+ };
+ 
+ logDebug('Template parameters prepared:');
+ logDebug(JSON.stringify(templateParams, null, 2));
+ 
+ // Load EmailJS library dynamically
+ logDebug('Loading EmailJS library...');
+ await new Promise((resolve, reject) => {
+ if (window.emailjs) {
+ logDebug('EmailJS already loaded');
+ resolve();
+ return;
+ }
+ const script = document.createElement('script');
+ script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+ script.onload = () => {
+ logDebug('EmailJS library loaded successfully');
+ resolve();
+ };
+ script.onerror = () => {
+ logDebug('Failed to load EmailJS library');
+ reject(new Error('Failed to load EmailJS library'));
+ };
+ document.head.appendChild(script);
+ });
+ 
+ // Initialize EmailJS
+ logDebug('Initializing EmailJS with public key...');
+ emailjs.init(EMAILJS_PUBLIC_KEY);
+ logDebug('EmailJS initialized');
+ 
+ // Send email
+ logDebug('Sending email via EmailJS...');
+ const result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+ logDebug('Email sent successfully: ' + JSON.stringify(result));
+ return { success: true, result };
+ 
+ } catch (error) {
+ logDebug('Email sending failed: ' + error.toString());
+ logDebug('Error details: ' + JSON.stringify(error, null, 2));
+ return { success: false, error };
+ }
+ }
     document.addEventListener('DOMContentLoaded', function() {
         logDebug('Page loaded - Checkout system ready');
         
@@ -975,5 +1012,5 @@
             document.getElementById('paypal').checked = true;
         });
     });
-            </script>              
+</script>
     </html>
