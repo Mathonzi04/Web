@@ -246,7 +246,13 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+               import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js';
+        
+        const supabaseUrl = 'https://wtiqgcsucpcqgyqutcmq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0aXFnY3N1Y3BjcWd5cXV0Y21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0MzMzNDYsImV4cCI6MjA2MjAwOTM0Nn0.MtXBQ9qXTPwWEBh8l5jYh_zDYKkYyiUc2WwaA5wrtpE';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+    
         document.addEventListener('DOMContentLoaded', function() {
             // Get product data from sessionStorage
             const productData = sessionStorage.getItem('currentProduct');
