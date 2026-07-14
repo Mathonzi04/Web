@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenity Spa | Nails & Massage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #fdfaf7;
+            --bg-secondary: #f7f1eb;
+            --surface: #ffffff;
+            --text: #3d2c2a;
+            --text-secondary: #6b5b58;
+            --text-muted: #9c8b87;
+            --accent: #c8957c;
+            --accent-light: #e8cfc4;
+            --accent-dark: #a6735a;
+            --gold: #c9a96e;
+            --gold-light: #f0e4cc;
+            --rose: #e0b4b4;
+            --rose-light: #f9e8e8;
+            --green: #8aab9e;
+            --green-light: #e3efe9;
+            --border: #e5ddd6;
+            --border-light: #f0e9e2;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ── Navbar ─────────────────────── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(253, 250, 247, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.06);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-logo .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--accent-dark);
+            overflow: hidden;
+        }
+        .nav-logo .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            letter-spacing: 0.4px;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            border-radius: 1px;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-dark);
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        .nav-cta {
+            background: var(--accent) !important;
+            color: #fff !important;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px;
+            transition: var(--transition) !important;
+        }
+        .nav-cta:hover {
+            background: var(--accent-dark) !important;
+            box-shadow: 0 4px 20px rgba(200, 149, 124, 0.35);
+            transform: translateY(-2px);
+        }
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 8px;
+        }
+        .hamburger span {
+            width: 26px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 1px;
+            transition: var(--transition);
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* ── Hero ──────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #fdfaf7 0%, #f9f2ea 40%, #f5e8db 100%);
+        }
+        .hero-bg-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.25;
+            pointer-events: none;
+            border-radius: 0 0 0 80px;
+            mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.5) 30%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.5) 30%, transparent 100%);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -15%;
+            right: -10%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(200, 149, 124, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -8%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(224, 180, 180, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-content .hero-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-dark);
+            background: var(--rose-light);
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: 3.4rem;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+        .hero-content h1 .highlight {
+            color: var(--accent-dark);
+            font-style: italic;
+        }
+        .hero-content .tagline {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 440px;
+            line-height: 1.8;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 30px;
+            border-radius: 28px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.4px;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            box-shadow: 0 8px 28px rgba(200, 149, 124, 0.35);
+            transform: translateY(-3px);
+        }
+        .btn-outline {
+            border: 2px solid var(--accent);
+            color: var(--accent-dark);
+            background: transparent;
+        }
+        .btn-outline:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-dark);
+            transform: translateY(-3px);
+        }
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .hero-visual .spa-card {
+            width: 340px;
+            height: 420px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        .spa-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .spa-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(200, 149, 124, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(224, 180, 180, 0.12) 0%, transparent 60%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .spa-card .icon-large {
+            font-size: 5.5rem;
+            color: #fff;
+            opacity: 0.85;
+            z-index: 2;
+            animation: float-spa 4s ease-in-out infinite;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes float-spa {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+        .hero-floating-badge {
+            position: absolute;
+            bottom: 40px;
+            right: -15px;
+            background: var(--surface);
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-dark);
+            border: 1px solid var(--border-light);
+            z-index: 3;
+        }
+        .hero-floating-badge .badge-star {
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        /* ── Sections ──────────────────── */
+        .section {
+            padding: 90px 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+        .section-header .section-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-dark);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: inline-block;
+            background: var(--rose-light);
+            padding: 6px 16px;
+            border-radius: 14px;
+        }
+        .section-header h2 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        .section-header .divider {
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+            margin: 0 auto;
+            border-radius: 1px;
+        }
+
+        /* ── Services ──────────────────── */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .service-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card .service-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .service-card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+        .service-card:hover::before {
+            opacity: 1;
+        }
+        .service-card:hover .service-img {
+            transform: scale(1.03);
+        }
+        .service-card .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--rose-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.3rem;
+            color: var(--accent-dark);
+            transition: var(--transition);
+        }
+        .service-card:hover .service-icon {
+            background: var(--accent-light);
+        }
+        .service-card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .service-card .service-price {
+            font-weight: 700;
+            color: var(--accent-dark);
+            font-size: 1.05rem;
+        }
+
+        /* ── About ─────────────────────── */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .about-image-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+        .about-image {
+            width: 300px;
+            height: 360px;
+            border-radius: var(--radius-lg);
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+        }
+        .about-image::after {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border-radius: 28px;
+            border: 2px dashed var(--accent-light);
+            pointer-events: none;
+            animation: rotate-dash 25s linear infinite;
+            z-index: -1;
+        }
+        @keyframes rotate-dash {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .about-text h3 {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 14px;
+        }
+        .about-text p {
+            color: var(--text-secondary);
+            margin-bottom: 18px;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        .about-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+        .highlight-item i {
+            color: var(--accent-dark);
+            font-size: 1rem;
+            width: 18px;
+            text-align: center;
+        }
+
+        /* ── Pricing ───────────────────── */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 5px 18px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            z-index: 2;
+        }
+        .pricing-card h3 {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+        }
+        .pricing-card .price {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--accent-dark);
+            margin: 10px 0;
+        }
+        .pricing-card .price span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .pricing-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 18px 0 22px;
+            text-align: left;
+        }
+        .pricing-card ul li {
+            padding: 7px 0;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pricing-card ul li i {
+            color: var(--green);
+            font-size: 0.8rem;
+        }
+        .pricing-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ── Testimonials ─────────────── */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .testimonial-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: var(--transition);
+        }
+        .testimonial-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+        .testimonial-card .stars {
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+        .testimonial-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+        .testimonial-card .client {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .testimonial-card .client-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .testimonial-card .client-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .testimonial-card .client-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .testimonial-card .client-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Booking ──────────────────── */
+        .booking-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+        .booking-info h3 {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 400;
+            margin-bottom: 14px;
+        }
+        .booking-info p {
+            color: var(--text-secondary);
+            margin-bottom: 22px;
+            font-size: 0.95rem;
+        }
+        .booking-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .booking-detail i {
+            width: 38px;
+            height: 38px;
+            background: var(--rose-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-dark);
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+        .booking-form {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+        }
+        .booking-form input,
+        .booking-form select,
+        .booking-form textarea {
+            width: 100%;
+            padding: 13px 16px;
+            margin-bottom: 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            resize: vertical;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .booking-form input:focus,
+        .booking-form select:focus,
+        .booking-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200, 149, 124, 0.08);
+        }
+        .booking-form textarea {
+            min-height: 90px;
+        }
+        .booking-form .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .booking-form select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%239c8b87'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        /* ── Gallery ──────────────────── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+        .gallery-item:hover {
+            transform: scale(1.04);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(200, 149, 124, 0.08);
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            border-radius: var(--radius);
+        }
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        /* ── Footer ───────────────────── */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: var(--bg-secondary);
+        }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .footer .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            font-size: 1rem;
+            text-decoration: none;
+        }
+        .footer .social-links a:hover {
+            color: var(--accent-dark);
+            border-color: var(--accent);
+            background: var(--rose-light);
+            transform: translateY(-3px);
+        }
+
+        /* ── Responsive ──────────────── */
+        @media (max-width: 900px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 36px;
+            }
+            .hero-content h1 {
+                font-size: 2.4rem;
+            }
+            .hero-content .tagline {
+                margin: 0 auto 28px;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+            .hero-visual .spa-card {
+                width: 250px;
+                height: 320px;
+            }
+            .hero-floating-badge {
+                right: 0;
+                bottom: 20px;
+            }
+            .hero-bg-image {
+                width: 100%;
+                opacity: 0.12;
+                border-radius: 0;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .about-highlights {
+                justify-content: center;
+            }
+            .highlight-item {
+                justify-content: center;
+            }
+            .booking-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: var(--bg);
+                flex-direction: column;
+                padding: 100px 30px 40px;
+                gap: 22px;
+                transition: var(--transition);
+                border-left: 1px solid var(--border-light);
+                box-shadow: -4px 0 30px rgba(0, 0, 0, 0.06);
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .hero-content h1 {
+                font-size: 1.9rem;
+            }
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+            .services-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .service-card {
+                padding: 16px 10px;
+            }
+            .service-card .service-img {
+                height: 100px;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+            }
+            .nav-container {
+                height: 62px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <span class="logo-icon"><img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=80&h=80&fit=crop&crop=center" alt="Spa logo flower" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-spa\'></i>';"></span>
+                Serenity Spa
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#booking" class="nav-cta">Book Now</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <img class="hero-bg-image" src="https://images.unsplash.com/photo-1540555700478-4be289fbec6c?w=900&h=1200&fit=crop" alt="Spa stones and flowers background" loading="lazy" onerror="this.style.display='none';">
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-tag">✨ Luxury Spa Experience</span>
+                <h1>Indulge in <span class="highlight">Beautiful Nails</span> & Relaxing Massage</h1>
+                <p class="tagline">
+                    Escape the everyday and rejuvenate your body and spirit. From exquisite nail art
+                    to deeply therapeutic massages, we craft moments of pure serenity just for you.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#booking" class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i> Book Appointment
+                    </a>
+                    <a href="#services" class="btn btn-outline">
+                        <i class="fas fa-list-ul"></i> Our Services
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="spa-card">
+                    <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=500&h=600&fit=crop" alt="Woman receiving spa massage" loading="lazy" onerror="this.style.display='none';">
+                    <i class="fas fa-spa icon-large"></i>
+                </div>
+                <div class="hero-floating-badge">
+                    <span class="badge-star">★</span> 4.9 Rating · 500+ Reviews
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="services">
+        <div class="section-header">
+            <span class="section-tag">Our Services</span>
+            <h2>What We Offer</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=250&fit=crop" alt="Manicure service" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-hand-sparkles"></i></div>
+                <h3>Manicure</h3>
+                <p>Classic, gel, and acrylic manicures with a wide range of colors and nail art.</p>
+                <span class="service-price">From $35</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400&h=250&fit=crop" alt="Pedicure service" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-shoe-prints"></i></div>
+                <h3>Pedicure</h3>
+                <p>Soothing foot soaks, exfoliation, and perfect polish for beautiful, healthy feet.</p>
+                <span class="service-price">From $45</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=400&h=250&fit=crop" alt="Nail art design" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
+                <h3>Nail Art</h3>
+                <p>Custom designs, gems, ombre, and trendy patterns crafted by our skilled artists.</p>
+                <span class="service-price">From $25</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=250&fit=crop" alt="Swedish massage" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-massage"></i></div>
+                <h3>Swedish Massage</h3>
+                <p>Gentle, flowing strokes to melt away tension and promote total relaxation.</p>
+                <span class="service-price">From $80</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=400&h=250&fit=crop" alt="Deep tissue massage" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-hot-tub"></i></div>
+                <h3>Deep Tissue</h3>
+                <p>Targeted pressure to release chronic muscle tightness and restore mobility.</p>
+                <span class="service-price">From $95</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=400&h=250&fit=crop" alt="Hot stone therapy" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-gem"></i></div>
+                <h3>Hot Stone Therapy</h3>
+                <p>Warm basalt stones combined with therapeutic massage for deep muscle relief.</p>
+                <span class="service-price">From $110</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400&h=250&fit=crop" alt="Aromatherapy massage" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-leaf"></i></div>
+                <h3>Aromatherapy</h3>
+                <p>Essential oil blends enhance your massage experience for mind-body harmony.</p>
+                <span class="service-price">From $90</span>
+            </div>
+            <div class="service-card">
+                <img class="service-img" src="https://images.unsplash.com/photo-1570194065650-d99fb4e8a5cf?w=400&h=250&fit=crop" alt="Facial treatment" loading="lazy" onerror="this.style.display='none';">
+                <div class="service-icon"><i class="fas fa-face-smile"></i></div>
+                <h3>Facial Treatment</h3>
+                <p>Rejuvenating facials with premium products for a radiant, youthful glow.</p>
+                <span class="service-price">From $70</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="section-header">
+            <span class="section-tag">About Us</span>
+            <h2>Your Sanctuary of Serenity</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="about-grid">
+            <div class="about-image-wrapper">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=400&h=500&fit=crop" alt="Spa interior with candles and flowers" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'about-image\' style=\'display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--accent);\'><i class=\'fas fa-spa\'></i></div>';">
+                </div>
+            </div>
+            <div class="about-text">
+                <h3>Welcome to Serenity Spa</h3>
+                <p>
+                    Founded in 2018, Serenity Spa was born from a passion for holistic beauty and
+                    wellness. Our mission is to provide a tranquil escape where expert nail care meets
+                    therapeutic massage — all under one peaceful roof.
+                </p>
+                <p>
+                    Every treatment is tailored to your needs, using only premium, cruelty-free products
+                    and techniques refined by our certified professionals. We believe self-care is not a luxury,
+                    but a necessity.
+                </p>
+                <div class="about-highlights">
+                    <div class="highlight-item"><i class="fas fa-check-circle"></i> Licensed Therapists</div>
+                    <div class="highlight-item"><i class="fas fa-check-circle"></i> Organic Products</div>
+                    <div class="highlight-item"><i class="fas fa-check-circle"></i> Private Suites</div>
+                    <div class="highlight-item"><i class="fas fa-check-circle"></i> Free Parking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="pricing">
+        <div class="section-header">
+            <span class="section-tag">Pricing Plans</span>
+            <h2>Choose Your Package</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Basic Bliss</h3>
+                <div class="price">$65<span>/session</span></div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Classic Manicure</li>
+                    <li><i class="fas fa-check"></i> 30-min Foot Massage</li>
+                    <li><i class="fas fa-check"></i> Polish of Choice</li>
+                    <li><i class="fas fa-check"></i> Herbal Tea</li>
+                </ul>
+                <a href="#booking" class="btn btn-outline">Book Now</a>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Serenity Duo</h3>
+                <div class="price">$130<span>/session</span></div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Gel Manicure & Pedicure</li>
+                    <li><i class="fas fa-check"></i> 60-min Swedish Massage</li>
+                    <li><i class="fas fa-check"></i> Nail Art Design</li>
+                    <li><i class="fas fa-check"></i> Aromatherapy Upgrade</li>
+                    <li><i class="fas fa-check"></i> Complimentary Drink</li>
+                </ul>
+                <a href="#booking" class="btn btn-primary">Book Now</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Ultimate Escape</h3>
+                <div class="price">$210<span>/session</span></div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Full Nail Art Set</li>
+                    <li><i class="fas fa-check"></i> 90-min Deep Tissue</li>
+                    <li><i class="fas fa-check"></i> Hot Stone Add-on</li>
+                    <li><i class="fas fa-check"></i> Facial Treatment</li>
+                    <li><i class="fas fa-check"></i> Private Suite</li>
+                </ul>
+                <a href="#booking" class="btn btn-outline">Book Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="testimonials">
+        <div class="section-header">
+            <span class="section-tag">Testimonials</span>
+            <h2>What Our Clients Say</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p>"The best massage I've ever had! The atmosphere is so calming and the therapists are incredibly skilled. I left feeling like a new person."</p>
+                <div class="client">
+                    <div class="client-avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" alt="Client Sarah" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'client-avatar\' style=\'background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent-dark);\'>SJ</div>';"></div>
+                    <div>
+                        <div class="client-name">Sarah Johnson</div>
+                        <div class="client-label">Regular Client</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p>"My nails have never looked this gorgeous! The attention to detail is unmatched. Serenity Spa is my go-to for all things beauty and relaxation."</p>
+                <div class="client">
+                    <div class="client-avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" alt="Client Mia" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'client-avatar\' style=\'background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent-dark);\'>MR</div>';"></div>
+                    <div>
+                        <div class="client-name">Mia Rodriguez</div>
+                        <div class="client-label">Nail Art Enthusiast</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p>"I booked the Ultimate Escape package for my anniversary and it was worth every penny. The private suite, the hot stones — pure heaven."</p>
+                <div class="client">
+                    <div class="client-avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" alt="Client David" loading="lazy" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'client-avatar\' style=\'background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent-dark);\'>DK</div>';"></div>
+                    <div>
+                        <div class="client-name">David Kim</div>
+                        <div class="client-label">First-time Visitor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="gallery">
+        <div class="section-header">
+            <span class="section-tag">Gallery</span>
+            <h2>Our Beautiful Work</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=350&h=350&fit=crop" alt="Nail art design 1" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=350&h=350&fit=crop" alt="Nail art design 2" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=350&h=350&fit=crop" alt="Massage therapy" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=350&h=350&fit=crop" alt="Spa candles and flowers" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=350&h=350&fit=crop" alt="Hot stone arrangement" loading="lazy"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=350&h=350&fit=crop" alt="Facial treatment" loading="lazy"></div>
+        </div>
+    </section>
+
+    <section class="section" id="booking">
+        <div class="section-header">
+            <span class="section-tag">Book Now</span>
+            <h2>Reserve Your Appointment</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="booking-wrapper">
+            <div class="booking-info">
+                <h3>Ready to Relax?</h3>
+                <p>Fill out the form and we'll confirm your appointment within 2 hours. Walk-ins are also welcome based on availability.</p>
+                <div class="booking-detail">
+                    <i class="fas fa-phone"></i>
+                    <span>(555) 123-4567</span>
+                </div>
+                <div class="booking-detail">
+                    <i class="fas fa-envelope"></i>
+                    <span>hello@serenityspa.com</span>
+                </div>
+                <div class="booking-detail">
+                    <i class="fas fa-location-dot"></i>
+                    <span>742 Serenity Lane, Beverly Hills, CA 90210</span>
+                </div>
+                <div class="booking-detail">
+                    <i class="fas fa-clock"></i>
+                    <span>Mon–Sat: 9am–8pm | Sun: 10am–6pm</span>
+                </div>
+            </div>
+            <form class="booking-form" id="bookingForm">
+                <input type="text" placeholder="Your Full Name" required>
+                <input type="email" placeholder="Email Address" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <select required>
+                    <option value="" disabled selected>Select a Service</option>
+                    <option>Manicure</option>
+                    <option>Pedicure</option>
+                    <option>Nail Art</option>
+                    <option>Swedish Massage</option>
+                    <option>Deep Tissue Massage</option>
+                    <option>Hot Stone Therapy</option>
+                    <option>Aromatherapy</option>
+                    <option>Facial Treatment</option>
+                    <option>Basic Bliss Package</option>
+                    <option>Serenity Duo Package</option>
+                    <option>Ultimate Escape Package</option>
+                </select>
+                <input type="date" required>
+                <textarea placeholder="Any special requests or notes..."></textarea>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-calendar-check"></i> Confirm Booking
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p>&copy; 2026 Serenity Spa — Nails & Massage. All rights reserved. | Designed with 💆‍♀️</p>
+    </footer>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            updateActiveLink();
+        });
+
+        function updateActiveLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollY = window.scrollY + 120;
+            let currentSection = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        const bookingForm = document.getElementById('bookingForm');
+        bookingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = bookingForm.querySelector('button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Appointment Booked!';
+            btn.style.background = '#8aab9e';
+            btn.style.color = '#fff';
+            bookingForm.reset();
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 3500);
+        });
+
+        const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -40px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .pricing-card, .testimonial-card, .gallery-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        window.addEventListener('load', () => {
+            updateActiveLink();
+            setTimeout(() => {
+                document.querySelectorAll('.service-card, .pricing-card, .testimonial-card, .gallery-item').forEach((el, i) => {
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, i * 70);
+                });
+            }, 200);
+        });
+    </script>
+</body>
+</html>
