@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthCare Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0b1a2e;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Buttons ── */
+        .btn-primary {
+            display: inline-block;
+            background: #0a7e8c;
+            color: #fff;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 8px 24px rgba(10, 126, 140, 0.30);
+        }
+
+        .btn-primary:hover {
+            background: #086a77;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: #0a7e8c;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 2px solid #0a7e8c;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: #0a7e8c;
+            color: #fff;
+        }
+
+        /* ── Section Headers ── */
+        .section-label {
+            display: inline-block;
+            background: rgba(10, 126, 140, 0.12);
+            color: #0a7e8c;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 6px 18px;
+            border-radius: 50px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: #0b1a2e;
+        }
+
+        .section-title span {
+            color: #0a7e8c;
+        }
+
+        .section-sub {
+            color: #4a5b6e;
+            font-size: 1.1rem;
+            max-width: 540px;
+            margin-top: 12px;
+        }
+
+        /* ── HEADER / NAV ── */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+            z-index: 999;
+            padding: 14px 0;
+            transition: background 0.3s ease;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #0b1a2e;
+        }
+
+        .logo i {
+            color: #0a7e8c;
+            font-size: 2rem;
+        }
+
+        .logo span {
+            color: #0a7e8c;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            color: #1e2f40;
+            transition: color 0.25s ease;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2.5px;
+            background: #0a7e8c;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: #0a7e8c;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: #0a7e8c;
+            color: #fff !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .nav-cta:hover {
+            background: #086a77;
+            transform: translateY(-2px);
+            color: #fff !important;
+        }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            background: #0b1a2e;
+            border-radius: 6px;
+            transition: 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(165deg, #f0f7fa 0%, #e6f0f5 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(10, 126, 140, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content .tagline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #0a7e8c;
+            margin-bottom: 12px;
+        }
+
+        .hero-content .tagline i {
+            font-size: 1.1rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: #0b1a2e;
+        }
+
+        .hero-content h1 span {
+            color: #0a7e8c;
+            position: relative;
+        }
+
+        .hero-content h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(10, 126, 140, 0.20);
+            border-radius: 4px;
+            z-index: -1;
+        }
+
+        .hero-content .hero-desc {
+            font-size: 1.15rem;
+            color: #2a3f54;
+            max-width: 480px;
+            margin: 20px 0 32px;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .hero-badges .badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-badges .badge i {
+            font-size: 1.6rem;
+            color: #0a7e8c;
+        }
+
+        .hero-badges .badge strong {
+            font-size: 1.2rem;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .hero-badges .badge span {
+            font-size: 0.85rem;
+            color: #4a5b6e;
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-image .img-placeholder {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(145deg, #d4e3ea, #b8ced9);
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #0a7e8c;
+            font-size: 6rem;
+            box-shadow: 0 30px 60px rgba(10, 126, 140, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image .img-placeholder::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(10, 126, 140, 0.05), transparent 60%);
+            border-radius: 32px;
+        }
+
+        .hero-image .img-placeholder i {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image .img-placeholder p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b1a2e;
+            margin-top: 12px;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 1px;
+        }
+
+        .floating-card {
+            position: absolute;
+            background: #fff;
+            padding: 16px 22px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: float 4s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .floating-card i {
+            color: #0a7e8c;
+            font-size: 1.3rem;
+        }
+
+        .floating-card.card-1 {
+            top: 10%;
+            right: -5%;
+            animation-delay: 0s;
+        }
+
+        .floating-card.card-2 {
+            bottom: 15%;
+            left: -8%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        /* ── WHY CHOOSE US ── */
+        .why-section {
+            padding: 80px 0 70px;
+            background: #fff;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 48px;
+        }
+
+        .why-card {
+            background: #f8fafc;
+            padding: 32px 28px;
+            border-radius: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .why-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            border-color: rgba(10, 126, 140, 0.15);
+            background: #fff;
+        }
+
+        .why-card .icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(10, 126, 140, 0.10);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #0a7e8c;
+            margin-bottom: 20px;
+        }
+
+        .why-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .why-card p {
+            color: #4a5b6e;
+            font-size: 0.95rem;
+        }
+
+        /* ── SERVICES ── */
+        .services-section {
+            padding: 80px 0 70px;
+            background: #f8fafc;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .services-header .section-sub {
+            margin: 12px auto 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 28px;
+        }
+
+        .service-card {
+            background: #fff;
+            padding: 32px 24px;
+            border-radius: 24px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            border: 1px solid #edf2f7;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 48px rgba(10, 126, 140, 0.08);
+            border-color: rgba(10, 126, 140, 0.15);
+        }
+
+        .service-card .icon {
+            font-size: 2.8rem;
+            color: #0a7e8c;
+            margin-bottom: 16px;
+        }
+
+        .service-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
+            color: #4a5b6e;
+        }
+
+        /* ── DOCTORS ── */
+        .doctors-section {
+            padding: 80px 0 70px;
+            background: #fff;
+        }
+
+        .doctors-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .doctors-header .section-sub {
+            margin: 12px auto 0;
+        }
+
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .doctor-card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 32px 24px 28px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            border-color: rgba(10, 126, 140, 0.12);
+            background: #fff;
+        }
+
+        .doctor-card .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #d4e3ea, #b8ced9);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #0a7e8c;
+        }
+
+        .doctor-card h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .doctor-card .specialty {
+            color: #0a7e8c;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 2px 0 12px;
+        }
+
+        .doctor-card p {
+            color: #4a5b6e;
+            font-size: 0.9rem;
+        }
+
+        .doctor-card .social {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .doctor-card .social a {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #edf2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e2f40;
+            transition: background 0.3s ease, color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .doctor-card .social a:hover {
+            background: #0a7e8c;
+            color: #fff;
+        }
+
+        /* ── CONTACT ── */
+        .contact-section {
+            padding: 80px 0 60px;
+            background: #f8fafc;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .contact-info h2 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 12px 0 16px;
+        }
+
+        .contact-info h2 span {
+            color: #0a7e8c;
+        }
+
+        .contact-info p {
+            color: #4a5b6e;
+            margin-bottom: 28px;
+            font-size: 1.05rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-details .detail {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 500;
+        }
+
+        .contact-details .detail i {
+            width: 44px;
+            height: 44px;
+            background: rgba(10, 126, 140, 0.10);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a7e8c;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            background: #fff;
+            padding: 40px 36px;
+            border-radius: 28px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid #edf2f7;
+        }
+
+        .contact-form h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 18px;
+        }
+
+        .contact-form label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #edf2f7;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: border 0.3s ease;
+            background: #fafcfc;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: #0a7e8c;
+            background: #fff;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .contact-form .btn-primary {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.05rem;
+            padding: 16px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #0b1a2e;
+            color: #cbd5e1;
+            padding: 40px 0 28px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .footer-brand .logo {
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand .logo i {
+            color: #5fc3d0;
+        }
+
+        .footer-brand .logo span {
+            color: #5fc3d0;
+        }
+
+        .footer-brand p {
+            font-size: 0.95rem;
+            max-width: 280px;
+            color: #94a3b8;
+        }
+
+        .footer-col h4 {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 16px;
+        }
+
+        .footer-col a {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            transition: color 0.25s ease;
+        }
+
+        .footer-col a:hover {
+            color: #5fc3d0;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 14px;
+        }
+
+        .footer-social a {
+            color: #94a3b8;
+            transition: color 0.25s ease;
+            font-size: 1.1rem;
+        }
+
+        .footer-social a:hover {
+            color: #5fc3d0;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .doctors-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content .hero-desc {
+                margin: 16px auto 28px;
+            }
+
+            .hero-badges {
+                justify-content: center;
+            }
+
+            .hero-image .img-placeholder {
+                max-width: 380px;
+                margin: 0 auto;
+            }
+
+            .floating-card {
+                display: none;
+            }
+
+            .why-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .contact-form {
+                padding: 32px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: #fff;
+                flex-direction: column;
+                padding: 80px 32px 40px;
+                gap: 20px;
+                box-shadow: -8px 0 40px rgba(0, 0, 0, 0.06);
+                transition: right 0.4s ease;
+                align-items: flex-start;
+            }
+
+            .nav-links.open {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.1rem;
+            }
+
+            .nav-links a::after {
+                display: none;
+            }
+
+            .nav-cta {
+                margin-top: 8px;
+            }
+
+            .hamburger {
+                display: flex;
+                z-index: 1000;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.4rem;
+            }
+
+            .hero-badges {
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+            }
+
+            .why-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .contact-form {
+                padding: 24px 16px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── HEADER ─── -->
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="logo">
+                <i class="fas fa-heartbeat"></i>
+                Health<span>Care</span>
+            </a>
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#why">Why Choose Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#doctors">Doctors</a></li>
+                    <li><a href="#contact" class="nav-cta">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero" id="home">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="tagline">
+                    <i class="fas fa-heart"></i>
+                    WeCareFor
+                </div>
+                <h1>
+                    Our Patients<br />
+                    <span>All The Time</span>
+                </h1>
+                <p class="hero-desc">
+                    Compassionate, expert care when you need it most. Your health
+                    is our mission — 24/7.
+                </p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="#contact" class="btn-primary">
+                        <i class="fas fa-calendar-check" style="margin-right: 8px;"></i> Book Appointment
+                    </a>
+                    <a href="#services" class="btn-outline">Explore Services</a>
+                </div>
+                <div class="hero-badges">
+                    <div class="badge">
+                        <i class="fas fa-user-md"></i>
+                        <div><strong>120+</strong><span>Experts</span></div>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-smile"></i>
+                        <div><strong>98%</strong><span>Satisfaction</span></div>
+                    </div>
+                    <div class="badge">
+                        <i class="fas fa-clock"></i>
+                        <div><strong>24/7</strong><span>Support</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="img-placeholder">
+                    <i class="fas fa-hospital-user"></i>
+                    <p>Healthcare Center</p>
+                </div>
+                <div class="floating-card card-1">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>Medical Services</span>
+                </div>
+                <div class="floating-card card-2">
+                    <i class="fas fa-user-md"></i>
+                    <span>Our Doctors</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── WHY CHOOSE US ─── -->
+    <section class="why-section" id="why">
+        <div class="container">
+            <div style="text-align: center;">
+                <span class="section-label">Why Choose Us</span>
+                <h2 class="section-title">
+                    Why Choose Our <br /><span>HealthCare Center</span>
+                </h2>
+                <p class="section-sub" style="margin: 12px auto 0;">
+                    We combine expertise, empathy, and innovation to deliver
+                    exceptional care.
+                </p>
+            </div>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="icon"><i class="fas fa-user-nurse"></i></div>
+                    <h3>Compassionate Care</h3>
+                    <p>Every patient is treated with dignity, respect, and genuine kindness.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon"><i class="fas fa-microscope"></i></div>
+                    <h3>Advanced Technology</h3>
+                    <p>State-of-the-art equipment and cutting-edge treatments for better outcomes.</p>
+                </div>
+                <div class="why-card">
+                    <div class="icon"><i class="fas fa-clock"></i></div>
+                    <h3>24/7 Availability</h3>
+                    <p>Round-the-clock support and emergency services you can count on.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── SERVICES ─── -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <div class="services-header">
+                <span class="section-label">Our Services</span>
+                <h2 class="section-title">
+                    Comprehensive <span>Medical Services</span>
+                </h2>
+                <p class="section-sub">
+                    From routine checkups to specialized treatments — we've got
+                    you covered.
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-heartbeat"></i></div>
+                    <h4>Cardiology</h4>
+                    <p>Heart health diagnostics and treatment.</p>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-brain"></i></div>
+                    <h4>Neurology</h4>
+                    <p>Expert care for brain and nervous system.</p>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-bone"></i></div>
+                    <h4>Orthopedics</h4>
+                    <p>Bone, joint, and muscle rehabilitation.</p>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-lungs"></i></div>
+                    <h4>Pulmonology</h4>
+                    <p>Respiratory care and lung health.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── DOCTORS ─── -->
+    <section class="doctors-section" id="doctors">
+        <div class="container">
+            <div class="doctors-header">
+                <span class="section-label">Our Doctors</span>
+                <h2 class="section-title">
+                    Meet Our <span>Healthcare</span> Team
+                </h2>
+                <p class="section-sub">
+                    Experienced professionals dedicated to your well-being.
+                </p>
+            </div>
+            <div class="doctors-grid">
+                <div class="doctor-card">
+                    <div class="avatar"><i class="fas fa-user-md"></i></div>
+                    <h4>Dr. Sarah Mitchell</h4>
+                    <div class="specialty">Cardiologist</div>
+                    <p>15+ years of experience in cardiac care.</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="avatar"><i class="fas fa-user-md"></i></div>
+                    <h4>Dr. James Park</h4>
+                    <div class="specialty">Neurologist</div>
+                    <p>Specialist in stroke and neurodegenerative disorders.</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="doctor-card">
+                    <div class="avatar"><i class="fas fa-user-md"></i></div>
+                    <h4>Dr. Emily Chen</h4>
+                    <div class="specialty">Orthopedic Surgeon</div>
+                    <p>Joint replacement and sports injury expert.</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── CONTACT ─── -->
+    <section class="contact-section" id="contact">
+        <div class="container contact-grid">
+            <div class="contact-info">
+                <span class="section-label">Contact</span>
+                <h2>
+                    Get in <span>Touch</span>
+                </h2>
+                <p>
+                    We're here to help. Reach out for appointments, questions,
+                    or emergency assistance.
+                </p>
+                <div class="contact-details">
+                    <div class="detail">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>+1 (800) 555‑0199</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>care@healthcarecenter.com</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>123 Medical Blvd, Suite 200, New York, NY 10001</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <h3>Send a Message</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="john@example.com" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        Health<span>Care</span>
+                    </a>
+                    <p>Your trusted partner in health and wellness. We care for our patients all the time.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <a href="#why">Why Choose Us</a>
+                    <a href="#services">Our Services</a>
+                    <a href="#doctors">Our Doctors</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <a href="#">Cardiology</a>
+                    <a href="#">Neurology</a>
+                    <a href="#">Orthopedics</a>
+                    <a href="#">Pulmonology</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="#">FAQs</a>
+                    <a href="#">Patient Portal</a>
+                    <a href="#">Insurance</a>
+                    <a href="#">Careers</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 HealthCare Center. All rights reserved.</span>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ─── JAVASCRIPT ─── -->
+    <script>
+        // ── Mobile Hamburger ──
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // ── Smooth scroll for anchor links (optional enhancement) ──
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    const offset = 80; // header height
+                    const top = targetEl.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ── Contact Form Submission ──
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Simple email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Simulate sending
+            const btn = contactForm.querySelector('.btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+                btn.style.background = '#0f7b6e';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    contactForm.reset();
+                    alert('Thank you! Your message has been sent.');
+                }, 2000);
+            }, 1500);
+        });
+
+        // ── Header shadow on scroll ──
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.06)';
+            } else {
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.04)';
+            }
+        });
+
+        // ── Intersection Observer for fade-in (optional polish) ──
+        const cards = document.querySelectorAll(
+            '.why-card, .service-card, .doctor-card'
+        );
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 80);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(24px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+
+</body>
+</html>
